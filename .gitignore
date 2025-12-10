@@ -1,3 +1,4 @@
+# Laravel
 /node_modules
 /public/build
 /public/hot
@@ -16,4 +17,30 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-.env
+
+# Next.js (view_utilisateurs/)
+view_utilisateurs/node_modules/
+view_utilisateurs/.next/
+view_utilisateurs/out/
+view_utilisateurs/.swc/
+view_utilisateurs/.turbo/
+view_utilisateurs/dist/
+
+# Grosses images (à mettre dans un CDN ou compresser)
+view_utilisateurs/public/image_hero_carousel/
+view_utilisateurs/public/images_before_after/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+build/
+*.tsbuildinfo
