@@ -1,0 +1,52 @@
+ProjectName : nextjs-clean-template
+Version: 1.0.0
+ModuleName: shop
+
+modules:
+  - name: shop
+    features:
+      - name: catalog
+        usecases:
+          - name: GetProducts
+            params: ""
+            returnType: "EntityProduct[]"
+            async: true
+          - name: GetProductById
+            params: "productId:string"
+            returnType: "EntityProduct | null"
+            async: true
+          - name: CreateProduct
+            params: "name:string,price:number,stock:number"
+            returnType: "EntityProduct | null"
+            async: true
+      - name: cart
+        usecases:
+          - name: AddToCart
+            params: "userId:string,productId:string,quantity:number"
+            returnType: "EntityCart"
+            async: true
+            related: catalog
+          - name: GetCart
+            params: "userId:string"
+            returnType: "EntityCart | null"
+            async: true
+          - name: RemoveFromCart
+            params: "userId:string,productId:string"
+            returnType: "EntityCart"
+            async: true
+      - name: order
+        usecases:
+          - name: CreateOrder
+            params: "userId:string,cartId:string"
+            returnType: "EntityOrder | null"
+            async: true
+            related: cart
+          - name: GetOrdersByUser
+            params: "userId:string"
+            returnType: "EntityOrder[]"
+            async: true
+          - name: CancelOrder
+            params: "orderId:string"
+            returnType: "boolean"
+            async: true
+

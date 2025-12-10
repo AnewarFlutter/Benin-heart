@@ -1,0 +1,40 @@
+ProjectName : nextjs-clean-template
+Version: 1.0.0
+ModuleName: event
+
+modules:
+  - name: event
+    features:
+      - name: event
+        usecases:
+          - name: CreateEvent
+            params: "title:string,date:Date,location:string"
+            returnType: "EntityEvent | null"
+            async: true
+          - name: GetEvents
+            params: ""
+            returnType: "EntityEvent[]"
+            async: true
+      - name: ticket
+        usecases:
+          - name: BuyTicket
+            params: "eventId:string,userId:string"
+            returnType: "EntityTicket | null"
+            async: true
+          - name: GetTicketsByEvent
+            params: "eventId:string"
+            returnType: "EntityTicket[]"
+            async: true
+            related: event
+      - name: attendee
+        usecases:
+          - name: RegisterAttendee
+            params: "eventId:string,userId:string"
+            returnType: "EntityAttendee | null"
+            async: true
+            related: event
+          - name: GetAttendeesByEvent
+            params: "eventId:string"
+            returnType: "EntityAttendee[]"
+            async: true
+            related: event

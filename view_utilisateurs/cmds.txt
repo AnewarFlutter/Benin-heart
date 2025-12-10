@@ -1,0 +1,20 @@
+-  Creer un nouveau module avec ses features en meme temps
+node feature_module_creator_script.js blog user post comment 
+'Usage: node feature_module_creator_script.js <moduleName> <featureName1> [<featureName2> ...]'
+
+- Creer un nouveau usecase dans une feature existante d'un module
+node module_feature_usecase_creator_script.js blog post GetPostsByUser "user:EntityUser" "EntityPost[]" async --related user
+'Usage: node module_feature_usecase_creator_script.js <moduleName> <featureName> <usecaseName> [params] [returnType] [async] [--related feature]'
+
+- Supprimer une feature existante d'un module existant 
+node feature_module_remover_script.js blog comment
+'Usage: node feature_module_remover_script.js <moduleName> <featureName1> <featureName2> ...
+
+- Supprimer un module entier directement
+node module_remover_script.js blog 
+'Usage: node module_remover_script.js <moduleName>'
+
+- Executer le fichier d'Orchestration pour la création des modules dans le style file-config
+node orchestrator.js modules_config/shop_config.yml
+Usage: node orchestrator.js <config.yml>
+
