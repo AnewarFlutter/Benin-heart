@@ -26,9 +26,7 @@ view_utilisateurs/.swc/
 view_utilisateurs/.turbo/
 view_utilisateurs/dist/
 
-# Grosses images (à mettre dans un CDN ou compresser)
-view_utilisateurs/public/image_hero_carousel/
-view_utilisateurs/public/images_before_after/
+
 
 # Logs
 *.log
