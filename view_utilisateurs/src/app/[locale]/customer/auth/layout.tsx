@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { Toaster } from "sonner"
 
 const ThemeIcon = ({ theme }: { theme: string | undefined }) => {
   const Icon = theme === "dark" ? Sun : Moon
@@ -48,6 +49,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       <main className="w-full min-h-screen">{children}</main>
       <MobileThemeToggle onClick={toggleTheme} />
       <DesktopThemeToggle onClick={toggleTheme} theme={theme} />
+      <Toaster />
     </>
   )
 }

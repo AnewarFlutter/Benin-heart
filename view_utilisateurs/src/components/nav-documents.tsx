@@ -38,11 +38,11 @@ export function NavDocuments({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Documents</SidebarGroupLabel>
+      <SidebarGroupLabel className="text-gray-900 dark:text-white">Documents</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild>
+            <SidebarMenuButton asChild className="text-gray-900 dark:text-white">
               <a href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
@@ -81,9 +81,9 @@ export function NavDocuments({
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
-          <SidebarMenuButton className="text-sidebar-foreground/70">
-            <IconDots className="text-sidebar-foreground/70" />
-            <span>More</span>
+          <SidebarMenuButton className="text-gray-600 dark:text-gray-300">
+            {/* <IconDots />
+            <span>Voir plus</span> */}
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

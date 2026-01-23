@@ -54,6 +54,12 @@ export const APP_IMAGES = {
         resetPasswordBackground: "/image_hero_carousel/_2.jpg",
         otpBackground: "/image_hero_carousel/_3.jpg",
     },
+
+    customerimages: {
+        tomeetsomeone1: "/customer_images/_1.jpg",
+        tomeetsomeone2: "/customer_images/_2.jpg",
+        tomeetsomeone3: "/customer_images/_3.jpg",
+    },
 } as const;
 
 /**

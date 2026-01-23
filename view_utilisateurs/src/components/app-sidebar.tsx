@@ -21,7 +21,7 @@ import {
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { NavSecondary } from "@/components/nav-secondary"
+import { LucideMessageCircle, ScanHeart, ThumbsUp } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -32,120 +32,61 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { APP_TEXTE } from "@/shared/constants/texte"
+import { APP_ROUTES } from "@/shared/constants/routes"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "satnaing",
+    email: "satnaingdev@gmail.com",
+    avatar: "/avatars/satnaing.jpg",
   },
   navMain: [
     {
-      title: "Dashboard",
-      url: "#",
+      title: "Tableau de bord",
+      url: APP_ROUTES.customer.root,
       icon: IconDashboard,
-    },
-    {
-      title: "Lifecycle",
-      url: "#",
-      icon: IconListDetails,
-    },
-    {
-      title: "Analytics",
-      url: "#",
-      icon: IconChartBar,
-    },
-    {
-      title: "Projects",
-      url: "#",
-      icon: IconFolder,
-    },
-    {
-      title: "Team",
-      url: "#",
-      icon: IconUsers,
-    },
-  ],
-  navClouds: [
-    {
-      title: "Capture",
-      icon: IconCamera,
       isActive: true,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
     },
     {
-      title: "Proposal",
-      icon: IconFileDescription,
-      url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      title: "Faire des rencontres",
+      url: APP_ROUTES.customer.tomeetsomeone,
+      icon: IconListDetails,
+      isActive: false,
+    },
+
+    {
+      title: "Likes reçus",
+      url: APP_ROUTES.customer.likes,
+      icon: ThumbsUp,
+      isActive: false,
     },
     {
-      title: "Prompts",
-      icon: IconFileAi,
+      title: "Coup de cœur",
       url: "#",
-      items: [
-        {
-          title: "Active Proposals",
-          url: "#",
-        },
-        {
-          title: "Archived",
-          url: "#",
-        },
-      ],
+      icon: ScanHeart ,
+      isActive: false,
     },
+    {
+      title: "Messages",
+      url: APP_ROUTES.customer.coversations,
+      icon: LucideMessageCircle,
+      isActive: false,
+    },
+
   ],
-  navSecondary: [
-    {
-      title: "Settings",
-      url: "#",
-      icon: IconSettings,
-    },
-    {
-      title: "Get Help",
-      url: "#",
-      icon: IconHelp,
-    },
-    {
-      title: "Search",
-      url: "#",
-      icon: IconSearch,
-    },
-  ],
+
+
   documents: [
     {
-      name: "Data Library",
-      url: "#",
-      icon: IconDatabase,
-    },
-    {
-      name: "Reports",
-      url: "#",
+      name: "Abonnement ",
+      url: APP_ROUTES.home.abonnements,
       icon: IconReport,
     },
     {
-      name: "Word Assistant",
-      url: "#",
-      icon: IconFileWord,
+      name: "Aide",
+      url: APP_ROUTES.home.faq,
+      icon: IconHelp,
     },
   ],
 }
@@ -158,11 +99,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-1.5 text-gray-900 dark:text-white"
             >
-              <a href="#">
+              <a href={APP_ROUTES.customer.root}>
                 <IconInnerShadowTop className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">{APP_TEXTE.logoText}</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -171,7 +112,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

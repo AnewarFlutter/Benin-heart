@@ -33,28 +33,23 @@ export const APP_ROUTES = {
         forgotPassword: "/customer/auth/forgot-password",
         resetPassword: "/customer/auth/reset-password",
     },
-
-    // Auth Delivery
-    deliveryAuth: {
-        login: "/delivery/auth/login",
-        register: "/delivery/auth/register",
-        logout: "/logout",
-        otp: "/delivery/auth/otp",
-        forgotPassword: "/delivery/auth/forgot-password",
-        resetPassword: "/delivery/auth/reset-password",
-    },
-
+   
+   
 
     //Checkout
     checkout: {
         root: "/checkout"
     },
 
-    beninHeart: {
-        root: "/accueil",
-        coversations: "/chat",
-        historique: "/historique",
+    // Customer Dashboard
+    customer: {
+        root: "/customer/home",
+        dashboard: "/customer/dashboard",
+        tomeetsomeone: "/customer/tomeetsomeone",
+        settings: "/customer/settings",
+        coversations: "/customer/chatlike",
         likes: "/likes",
+
     },
 
     // Profil utilisateur

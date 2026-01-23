@@ -1,10 +1,9 @@
 "use client"
 
 import {
-  IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
+  IconSettings,
   IconUserCircle,
 } from "@tabler/icons-react"
 
@@ -47,7 +46,7 @@ export function NavUser({
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground text-gray-900 dark:text-white"
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage src={user.avatar} alt={user.name} />
@@ -55,7 +54,7 @@ export function NavUser({
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
-                <span className="text-muted-foreground truncate text-xs">
+                <span className="text-gray-600 dark:text-gray-300 truncate text-xs">
                   {user.email}
                 </span>
               </div>
@@ -75,8 +74,8 @@ export function NavUser({
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="text-muted-foreground truncate text-xs">
+                  <span className="truncate font-medium text-gray-900 dark:text-white">{user.name}</span>
+                  <span className="text-gray-600 dark:text-gray-300 truncate text-xs">
                     {user.email}
                   </span>
                 </div>
@@ -86,21 +85,20 @@ export function NavUser({
             <DropdownMenuGroup>
               <DropdownMenuItem>
                 <IconUserCircle />
-                Account
+                Profile
+                <span className="text-muted-foreground ml-auto text-xs">⌘⇧P</span>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
+                <IconSettings />
+                Settings
+                <span className="text-muted-foreground ml-auto text-xs">⌘S</span>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem className="text-red-600 focus:text-red-600">
               <IconLogout />
-              Log out
+              Sign out
+              <span className="text-muted-foreground ml-auto text-xs">⌘⇧Q</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
