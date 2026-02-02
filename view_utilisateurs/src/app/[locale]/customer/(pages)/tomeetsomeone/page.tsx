@@ -255,6 +255,7 @@ export default function TomeetsomeonePage() {
               key={profile.id}
               profile={profile}
               onSwipe={index === 0 ? handleSwipe : () => {}}
+              isActive={index === 0}
               style={{
                 zIndex: 3 - index,
                 scale: 1 - index * 0.05,

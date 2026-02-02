@@ -25,9 +25,10 @@ interface TinderCardProps {
   };
   onSwipe: (direction: "left" | "right") => void;
   style?: MotionStyle;
+  isActive?: boolean;
 }
 
-export function TinderCard({ profile, onSwipe, style }: TinderCardProps) {
+export function TinderCard({ profile, onSwipe, style, isActive = true }: TinderCardProps) {
   const [exitX, setExitX] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isInfoOpen, setIsInfoOpen] = useState(false);
@@ -162,7 +163,7 @@ export function TinderCard({ profile, onSwipe, style }: TinderCardProps) {
         </div>
 
         {/* Boutons d'action en bas de la carte */}
-        <div className="flex items-center justify-center gap-3 px-4 relative z-50">
+        {isActive && <div className="flex items-center justify-center gap-3 px-4 relative z-50">
           {/* Bouton Passer (X) */}
           <button
             onClick={(e) => handleButtonAction("right", e)}
@@ -189,7 +190,7 @@ export function TinderCard({ profile, onSwipe, style }: TinderCardProps) {
           >
             <Heart className="h-6 w-6 text-pink-500 transition-colors group-hover:text-white group-hover:fill-white" />
           </button>
-        </div>
+        </div>}
       </div>
 
       {/* Modal d'informations du profil */}
