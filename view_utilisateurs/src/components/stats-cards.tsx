@@ -1,37 +1,86 @@
 "use client"
 
-import { IconHeart, IconSparkles, IconEye } from "@tabler/icons-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { TrendingUp } from "lucide-react"
+import { IconEye } from "@tabler/icons-react"
+import { PolarGrid, RadialBar, RadialBarChart } from "recharts"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
-import { Area, AreaChart, ResponsiveContainer } from "recharts"
 
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  type ChartConfig,
+} from "@/components/ui/chart"
+
+// === LIKES ===
 const likesData = [
-  { value: 890 },
-  { value: 920 },
-  { value: 950 },
-  { value: 980 },
-  { value: 1020 },
-  { value: 1100 },
-  { value: 1234 },
+  { category: "matchs", value: 104, fill: "var(--color-matchs)" },
+  { category: "sent", value: 310, fill: "var(--color-sent)" },
+  { category: "received", value: 820, fill: "var(--color-received)" },
 ]
 
+const likesConfig = {
+  value: {
+    label: "Total",
+  },
+  received: {
+    label: "Reçus",
+    color: "rgb(236, 72, 153)",
+  },
+  sent: {
+    label: "Envoyés",
+    color: "rgb(244, 150, 195)",
+  },
+  matchs: {
+    label: "Matchs",
+    color: "rgb(168, 34, 108)",
+  },
+} satisfies ChartConfig
+
+// === COUP DE COEUR ===
 const favoritesData = [
-  { value: 450 },
-  { value: 470 },
-  { value: 490 },
-  { value: 510 },
-  { value: 530 },
-  { value: 550 },
-  { value: 567 },
+  { category: "matchs", value: 42, fill: "var(--color-matchs)" },
+  { category: "sent", value: 145, fill: "var(--color-sent)" },
+  { category: "received", value: 380, fill: "var(--color-received)" },
 ]
+
+const favoritesConfig = {
+  value: {
+    label: "Total",
+  },
+  received: {
+    label: "Reçus",
+    color: "rgb(59, 130, 246)",
+  },
+  sent: {
+    label: "Envoyés",
+    color: "rgb(147, 197, 253)",
+  },
+  matchs: {
+    label: "Matchs",
+    color: "rgb(30, 64, 175)",
+  },
+} satisfies ChartConfig
 
 export function StatsCards() {
   return (
     <div className="grid gap-4 px-4 md:grid-cols-2 lg:px-6">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
+      {/* Likes */}
+      <Card className="flex flex-col">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+          <div>
+            <CardTitle className="text-sm font-medium">Total Likes</CardTitle>
+            <CardDescription>Répartition globale</CardDescription>
+          </div>
           <Button variant="ghost" size="sm" className="h-8 gap-1 px-2" asChild>
             <Link href="/customer/likes">
               <IconEye className="h-4 w-4 text-muted-foreground" />
@@ -39,70 +88,68 @@ export function StatsCards() {
             </Link>
           </Button>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">1,234</div>
-            <IconHeart className="h-8 w-8 sm:h-12 sm:w-12 text-pink-500 opacity-20" />
-          </div>
-          <p className="text-xs text-muted-foreground mb-4">
-            +20% par rapport au mois dernier
-          </p>
-          <ResponsiveContainer width="100%" height={80}>
-            <AreaChart data={likesData}>
-              <defs>
-                <linearGradient id="colorLikes" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="rgb(236, 72, 153)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="rgb(236, 72, 153)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="rgb(236, 72, 153)"
-                strokeWidth={2}
-                fill="url(#colorLikes)"
+        <CardContent className="flex-1 pb-0">
+          <ChartContainer
+            config={likesConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <RadialBarChart data={likesData} innerRadius={30} outerRadius={100}>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel nameKey="category" />}
               />
-            </AreaChart>
-          </ResponsiveContainer>
+              <PolarGrid gridType="circle" />
+              <RadialBar dataKey="value" />
+            </RadialBarChart>
+          </ChartContainer>
         </CardContent>
+        <CardFooter className="flex-col gap-2 text-sm">
+          <div className="flex items-center gap-2 leading-none font-medium">
+            En hausse de 20% ce mois <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="text-muted-foreground leading-none">
+            Total des likes sur les 6 derniers mois
+          </div>
+        </CardFooter>
       </Card>
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Coup de Coeur</CardTitle>
+      {/* Coup de Coeur */}
+      <Card className="flex flex-col">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-0">
+          <div>
+            <CardTitle className="text-sm font-medium">Coup de Coeur</CardTitle>
+            <CardDescription>Répartition globale</CardDescription>
+          </div>
           <Button variant="ghost" size="sm" className="h-8 gap-1 px-2" asChild>
-            <Link href="/customer/favorites">
+            <Link href="/customer/likes">
               <IconEye className="h-4 w-4 text-muted-foreground" />
               <span className="text-xs text-muted-foreground">Voir</span>
             </Link>
           </Button>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center justify-between">
-            <div className="text-2xl font-bold">567</div>
-            <IconSparkles className="h-8 w-8 sm:h-12 sm:w-12 text-yellow-500 opacity-20" />
-          </div>
-          <p className="text-xs text-muted-foreground mb-4">
-            +12% par rapport au mois dernier
-          </p>
-          <ResponsiveContainer width="100%" height={80}>
-            <AreaChart data={favoritesData}>
-              <defs>
-                <linearGradient id="colorFavorites" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="rgb(234, 179, 8)" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="rgb(234, 179, 8)"
-                strokeWidth={2}
-                fill="url(#colorFavorites)"
+        <CardContent className="flex-1 pb-0">
+          <ChartContainer
+            config={favoritesConfig}
+            className="mx-auto aspect-square max-h-[250px]"
+          >
+            <RadialBarChart data={favoritesData} innerRadius={30} outerRadius={100}>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel nameKey="category" />}
               />
-            </AreaChart>
-          </ResponsiveContainer>
+              <PolarGrid gridType="circle" />
+              <RadialBar dataKey="value" />
+            </RadialBarChart>
+          </ChartContainer>
         </CardContent>
+        <CardFooter className="flex-col gap-2 text-sm">
+          <div className="flex items-center gap-2 leading-none font-medium">
+            En hausse de 12% ce mois <TrendingUp className="h-4 w-4" />
+          </div>
+          <div className="text-muted-foreground leading-none">
+            Total des coup de coeur sur les 6 derniers mois
+          </div>
+        </CardFooter>
       </Card>
     </div>
   )

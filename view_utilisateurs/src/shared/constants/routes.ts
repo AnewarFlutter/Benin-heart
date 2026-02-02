@@ -48,8 +48,8 @@ export const APP_ROUTES = {
         tomeetsomeone: "/customer/tomeetsomeone",
         settings: "/customer/settings",
         coversations: "/customer/chatlike",
-        likes: "/likes",
-
+        likes: "/customer/likes",
+        favorites: "/customer/favorites",
     },
 
     // Profil utilisateur

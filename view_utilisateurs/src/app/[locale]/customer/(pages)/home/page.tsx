@@ -1,5 +1,5 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive"
 import { StatsCards } from "@/components/stats-cards"
+import { ChartVisitors } from "@/components/chart-visitors"
 import { BreadcrumbDemo } from "../_components/breadcrumb"
 
 export default function Page() {
@@ -10,7 +10,7 @@ export default function Page() {
       </div>
       <StatsCards />
       <div className="px-4 lg:px-6">
-        <ChartAreaInteractive />
+        <ChartVisitors />
       </div>
     </div>
   )

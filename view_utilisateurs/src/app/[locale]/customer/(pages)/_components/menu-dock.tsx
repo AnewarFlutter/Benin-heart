@@ -1,7 +1,7 @@
 'use client';
 import { MenuDock, MenuDockItem } from '@/components/ui/shadcn-io/menu-dock';
 import { IconDashboard, IconListDetails, IconHelp } from "@tabler/icons-react";
-import { ThumbsUp, ScanHeart, LucideMessageCircle } from "lucide-react";
+import { ThumbsUp, LucideMessageCircle } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/shared/constants/routes';
 
@@ -23,11 +23,6 @@ export function CustomerMenuDock() {
       label: 'Likes',
       icon: ThumbsUp as any,
       onClick: () => router.push(APP_ROUTES.customer.likes),
-    },
-    {
-      label: 'Favoris',
-      icon: ScanHeart as any,
-      onClick: () => router.push('#'),
     },
     {
       label: 'Messages',

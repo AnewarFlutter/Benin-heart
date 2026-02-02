@@ -21,7 +21,7 @@ import {
 
 import { NavDocuments } from "@/components/nav-documents"
 import { NavMain } from "@/components/nav-main"
-import { LucideMessageCircle, ScanHeart, ThumbsUp } from "lucide-react"
+import { LucideMessageCircle, ThumbsUp } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
 import {
   Sidebar,
@@ -59,12 +59,6 @@ const data = {
       title: "Likes reçus",
       url: APP_ROUTES.customer.likes,
       icon: ThumbsUp,
-      isActive: false,
-    },
-    {
-      title: "Coup de cœur",
-      url: "#",
-      icon: ScanHeart ,
       isActive: false,
     },
     {
