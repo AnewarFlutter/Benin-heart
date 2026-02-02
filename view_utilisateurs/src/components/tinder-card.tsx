@@ -87,7 +87,7 @@ export function TinderCard({ profile, onSwipe, style, isActive = true }: TinderC
     >
       <div className="flex flex-col items-center gap-4">
         <div
-          className="relative h-[550px] w-[360px] sm:h-[450px] sm:w-[320px] overflow-hidden rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-2xl"
+          className="relative h-[600px] w-[400px] sm:h-[500px] sm:w-[360px] overflow-hidden rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-2xl"
           onClick={handleImageNavigation}
         >
         {/* Indicateurs de photos stylisés */}
