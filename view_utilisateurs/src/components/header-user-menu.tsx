@@ -21,6 +21,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { APP_ROUTES } from "@/shared/constants/routes"
 
 export function HeaderUserMenu({
   user,
@@ -54,21 +56,25 @@ export function HeaderUserMenu({
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <IconUserCircle className="mr-2 size-4" />
-            Profile
-            <span className="text-muted-foreground ml-auto text-xs">⌘⇧P</span>
+          <DropdownMenuItem asChild>
+            <Link href={APP_ROUTES.customer.settings + "?section=profile"}>
+              <IconUserCircle className="mr-2 size-4" />
+              Profil
+              <span className="text-muted-foreground ml-auto text-xs">⌘⇧P</span>
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <IconSettings className="mr-2 size-4" />
-            Settings
-            <span className="text-muted-foreground ml-auto text-xs">⌘S</span>
+          <DropdownMenuItem asChild>
+            <Link href={APP_ROUTES.customer.settings}>
+              <IconSettings className="mr-2 size-4" />
+              Paramètres
+              <span className="text-muted-foreground ml-auto text-xs">⌘S</span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-red-600 focus:text-red-600">
           <IconLogout className="mr-2 size-4" />
-          Sign out
+          Se déconnecter
           <span className="text-muted-foreground ml-auto text-xs">⌘⇧Q</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

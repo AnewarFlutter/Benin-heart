@@ -27,6 +27,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import Link from "next/link"
+import { APP_ROUTES } from "@/shared/constants/routes"
 
 export function NavUser({
   user,
@@ -83,21 +85,25 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Profile
-                <span className="text-muted-foreground ml-auto text-xs">⌘⇧P</span>
+              <DropdownMenuItem asChild>
+                <Link href={APP_ROUTES.customer.settings + "?section=profile"}>
+                  <IconUserCircle />
+                  Profil
+                  <span className="text-muted-foreground ml-auto text-xs">⌘⇧P</span>
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconSettings />
-                Settings
-                <span className="text-muted-foreground ml-auto text-xs">⌘S</span>
+              <DropdownMenuItem asChild>
+                <Link href={APP_ROUTES.customer.settings}>
+                  <IconSettings />
+                  Paramètres
+                  <span className="text-muted-foreground ml-auto text-xs">⌘S</span>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="text-red-600 focus:text-red-600">
               <IconLogout />
-              Sign out
+              Se déconnecter
               <span className="text-muted-foreground ml-auto text-xs">⌘⇧Q</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
