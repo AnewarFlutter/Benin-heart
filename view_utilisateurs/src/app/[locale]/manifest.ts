@@ -2,23 +2,25 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: 'Next.js PWA',
-        short_name: 'NextPWA',
-        description: 'A Progressive Web App built with Next.js',
+        name: 'Benin Heart',
+        short_name: 'Benin Heart',
+        description: 'Plateforme de rencontre sérieuse',
         start_url: '/',
         display: 'standalone',
         background_color: '#ffffff',
         theme_color: '#000000',
         icons: [
             {
-                src: '/icon-192x192.png',
+                src: '/image_logo_site/_1.png',
                 sizes: '192x192',
                 type: 'image/png',
+                purpose: 'any',
             },
             {
-                src: '/icon-512x512.png',
+                src: '/image_logo_site/_1.png',
                 sizes: '512x512',
                 type: 'image/png',
+                purpose: 'any',
             },
         ],
     }
