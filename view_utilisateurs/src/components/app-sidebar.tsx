@@ -73,8 +73,8 @@ const data = {
 
   documents: [
     {
-      name: "Abonnement ",
-      url: APP_ROUTES.home.abonnements,
+      name: "Abonnement",
+      url: APP_ROUTES.customer.abonnement,
       icon: IconReport,
     },
     {

@@ -50,6 +50,7 @@ export const APP_ROUTES = {
         coversations: "/customer/chatlike",
         likes: "/customer/likes",
         favorites: "/customer/favorites",
+        abonnement: "/customer/abonnement",
     },
 
     // Profil utilisateur
