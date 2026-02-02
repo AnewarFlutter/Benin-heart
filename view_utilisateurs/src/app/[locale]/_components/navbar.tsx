@@ -67,13 +67,17 @@ export default function Navbar() {
         }
       ]
     },
-    { 
-      href: APP_ROUTES.home.pourquoiNousChoisir, 
-      label: 'Pourquoi nous choisir ?' 
+    {
+      href: APP_ROUTES.home.pourquoiNousChoisir,
+      label: 'Pourquoi nous choisir ?'
     },
-    { 
-      href: APP_ROUTES.home.contact, 
-      label: 'Contact' 
+    {
+      href: APP_ROUTES.customer.root,
+      label: 'Mon Espace utilisateur'
+    },
+    {
+      href: APP_ROUTES.home.contact,
+      label: 'Contact'
     },
     { 
       href: APP_ROUTES.home.faq, 

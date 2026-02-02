@@ -98,7 +98,25 @@ export function ChartVisitors() {
           </RadialBarChart>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col gap-2 text-sm">
+      <CardFooter className="flex-col gap-3 text-sm">
+        <div className="flex flex-wrap justify-center gap-4">
+          <div className="flex items-center gap-2">
+            <span
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: "var(--chart-1)" }}
+            />
+            <span className="text-muted-foreground text-xs">Desktop</span>
+            <span className="text-xs font-medium">{chartData[0].desktop.toLocaleString()}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span
+              className="h-3 w-3 rounded-full"
+              style={{ backgroundColor: "var(--chart-2)" }}
+            />
+            <span className="text-muted-foreground text-xs">Mobile</span>
+            <span className="text-xs font-medium">{chartData[0].mobile.toLocaleString()}</span>
+          </div>
+        </div>
         <div className="flex items-center gap-2 leading-none font-medium">
           En hausse de 5.2% ce mois <TrendingUp className="h-4 w-4" />
         </div>

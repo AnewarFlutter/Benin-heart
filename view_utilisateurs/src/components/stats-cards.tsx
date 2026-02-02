@@ -38,11 +38,11 @@ const likesConfig = {
   },
   sent: {
     label: "Envoyés",
-    color: "rgb(244, 150, 195)",
+    color: "rgb(251, 191, 36)",
   },
   matchs: {
     label: "Matchs",
-    color: "rgb(168, 34, 108)",
+    color: "rgb(34, 197, 94)",
   },
 } satisfies ChartConfig
 
@@ -59,15 +59,15 @@ const favoritesConfig = {
   },
   received: {
     label: "Reçus",
-    color: "rgb(59, 130, 246)",
+    color: "rgb(99, 102, 241)",
   },
   sent: {
     label: "Envoyés",
-    color: "rgb(147, 197, 253)",
+    color: "rgb(245, 158, 11)",
   },
   matchs: {
     label: "Matchs",
-    color: "rgb(30, 64, 175)",
+    color: "rgb(16, 185, 129)",
   },
 } satisfies ChartConfig
 
@@ -103,7 +103,21 @@ export function StatsCards() {
             </RadialBarChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
+        <CardFooter className="flex-col gap-3 text-sm">
+          <div className="flex flex-wrap justify-center gap-4">
+            {likesData.map((item) => (
+              <div key={item.category} className="flex items-center gap-2">
+                <span
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: likesConfig[item.category as keyof typeof likesConfig]?.color }}
+                />
+                <span className="text-muted-foreground text-xs">
+                  {likesConfig[item.category as keyof typeof likesConfig]?.label}
+                </span>
+                <span className="text-xs font-medium">{item.value}</span>
+              </div>
+            ))}
+          </div>
           <div className="flex items-center gap-2 leading-none font-medium">
             En hausse de 20% ce mois <TrendingUp className="h-4 w-4" />
           </div>
@@ -142,7 +156,21 @@ export function StatsCards() {
             </RadialBarChart>
           </ChartContainer>
         </CardContent>
-        <CardFooter className="flex-col gap-2 text-sm">
+        <CardFooter className="flex-col gap-3 text-sm">
+          <div className="flex flex-wrap justify-center gap-4">
+            {favoritesData.map((item) => (
+              <div key={item.category} className="flex items-center gap-2">
+                <span
+                  className="h-3 w-3 rounded-full"
+                  style={{ backgroundColor: favoritesConfig[item.category as keyof typeof favoritesConfig]?.color }}
+                />
+                <span className="text-muted-foreground text-xs">
+                  {favoritesConfig[item.category as keyof typeof favoritesConfig]?.label}
+                </span>
+                <span className="text-xs font-medium">{item.value}</span>
+              </div>
+            ))}
+          </div>
           <div className="flex items-center gap-2 leading-none font-medium">
             En hausse de 12% ce mois <TrendingUp className="h-4 w-4" />
           </div>

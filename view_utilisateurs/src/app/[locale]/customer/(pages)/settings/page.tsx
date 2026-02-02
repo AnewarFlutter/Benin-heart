@@ -11,12 +11,12 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon, Palette, User, Key, Bell, Settings } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { CalendarIcon, Palette, User, Key, Bell, Settings, Camera, Video, GraduationCap, Upload, Trash2, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
-type SettingsSection = 'profile' | 'account' | 'appearance' | 'notifications';
+type SettingsSection = 'profile' | 'account' | 'photos' | 'video' | 'education' | 'appearance' | 'notifications';
 
 export default function SettingsPage() {
   const searchParams = useSearchParams();
@@ -25,16 +25,27 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<SettingsSection>(section || 'profile');
   const [date, setDate] = useState<Date>();
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>('light');
+  const [photos, setPhotos] = useState<(string | null)[]>([
+    'https://i.pravatar.cc/400?img=5', null, null, null
+  ]);
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoFile, setVideoFile] = useState<File | null>(null);
+  const [videoError, setVideoError] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (section && ['profile', 'account', 'appearance', 'notifications'].includes(section)) {
-      setActiveSection(section);
+    if (section && ['profile', 'account', 'photos', 'video', 'education', 'appearance', 'notifications'].includes(section)) {
+      setActiveSection(section as SettingsSection);
     }
   }, [section]);
 
   const menuItems = [
     { id: 'profile' as SettingsSection, label: 'Profil', icon: User },
     { id: 'account' as SettingsSection, label: 'Compte', icon: Key },
+    { id: 'photos' as SettingsSection, label: 'Photos', icon: Camera },
+    { id: 'video' as SettingsSection, label: 'Vidéo', icon: Video },
+    { id: 'education' as SettingsSection, label: 'Études & Profession', icon: GraduationCap },
     { id: 'appearance' as SettingsSection, label: 'Apparence', icon: Palette },
     { id: 'notifications' as SettingsSection, label: 'Notifications', icon: Bell },
   ];
@@ -249,6 +260,248 @@ export default function SettingsPage() {
                     </div>
 
                     <Button onClick={() => toast.success("Compte mis à jour", { description: "Vos paramètres de compte ont été enregistrés" })}>Mettre à jour le compte</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Section Photos */}
+              {activeSection === 'photos' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold">Photos</h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Gérez vos photos de profil. La première photo est votre photo principale.
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                      {photos.map((photo, index) => (
+                        <div key={index} className="relative aspect-square rounded-lg border-2 border-dashed border-muted-foreground/30 overflow-hidden group">
+                          {photo ? (
+                            <>
+                              <img src={photo} alt={`Photo ${index + 1}`} className="h-full w-full object-cover" />
+                              <button
+                                onClick={() => {
+                                  const newPhotos = [...photos];
+                                  newPhotos[index] = null;
+                                  setPhotos(newPhotos);
+                                }}
+                                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <X className="h-3 w-3" />
+                              </button>
+                              {index === 0 && (
+                                <span className="absolute bottom-1 left-1 text-[10px] bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full font-medium">
+                                  Principale
+                                </span>
+                              )}
+                            </>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                photoInputRef.current?.setAttribute('data-index', String(index));
+                                photoInputRef.current?.click();
+                              }}
+                              className="h-full w-full flex flex-col items-center justify-center gap-2 hover:bg-muted/30 transition-colors"
+                            >
+                              <Camera className="h-6 w-6 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">Ajouter</span>
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        const index = Number(photoInputRef.current?.getAttribute('data-index') || 0);
+                        if (file) {
+                          const url = URL.createObjectURL(file);
+                          const newPhotos = [...photos];
+                          newPhotos[index] = url;
+                          setPhotos(newPhotos);
+                        }
+                        e.target.value = '';
+                      }}
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      Formats acceptés : JPG, PNG, WebP. Taille max : 5 MB par photo.
+                    </p>
+
+                    <Button onClick={() => toast.success("Photos mises à jour", { description: "Vos photos de profil ont été enregistrées" })}>Enregistrer les photos</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Section Vidéo */}
+              {activeSection === 'video' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold">Vidéo de vérification</h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Votre vidéo de présentation pour la vérification d'identité.
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-6">
+                    {!videoUrl ? (
+                      <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={(e) => {
+                          e.preventDefault();
+                          const file = e.dataTransfer.files?.[0];
+                          if (file) {
+                            if (!file.type.startsWith('video/')) {
+                              setVideoError('Le fichier doit être une vidéo (MP4, WebM, MOV)');
+                              return;
+                            }
+                            const sizeMB = file.size / (1024 * 1024);
+                            if (sizeMB > 50) {
+                              setVideoError(`Vidéo trop lourde (${sizeMB.toFixed(1)} MB). Maximum : 50 MB`);
+                              return;
+                            }
+                            setVideoError(null);
+                            setVideoFile(file);
+                            setVideoUrl(URL.createObjectURL(file));
+                          }
+                        }}
+                        onClick={() => videoInputRef.current?.click()}
+                        className="border-2 border-dashed border-muted-foreground/30 rounded-xl p-10 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-all"
+                      >
+                        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                          <Upload className="h-8 w-8 text-primary" />
+                        </div>
+                        <div className="text-center">
+                          <p className="font-medium">Cliquez ou glissez votre vidéo ici</p>
+                          <p className="text-xs text-muted-foreground mt-1">MP4, WebM ou MOV - Max 3 min, 50 MB</p>
+                        </div>
+                        <input
+                          ref={videoInputRef}
+                          type="file"
+                          accept="video/mp4,video/webm,video/quicktime"
+                          className="hidden"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              if (!file.type.startsWith('video/')) {
+                                setVideoError('Le fichier doit être une vidéo (MP4, WebM, MOV)');
+                                return;
+                              }
+                              const sizeMB = file.size / (1024 * 1024);
+                              if (sizeMB > 50) {
+                                setVideoError(`Vidéo trop lourde (${sizeMB.toFixed(1)} MB). Maximum : 50 MB`);
+                                return;
+                              }
+                              setVideoError(null);
+                              setVideoFile(file);
+                              setVideoUrl(URL.createObjectURL(file));
+                            }
+                            e.target.value = '';
+                          }}
+                        />
+                      </div>
+                    ) : (
+                      <div className="relative rounded-xl overflow-hidden bg-black">
+                        <video src={videoUrl} controls className="w-full max-h-[350px] object-contain" />
+                        <button
+                          onClick={() => {
+                            if (videoUrl) URL.revokeObjectURL(videoUrl);
+                            setVideoUrl(null);
+                            setVideoFile(null);
+                            setVideoError(null);
+                          }}
+                          className="absolute top-2 right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    )}
+
+                    {videoError && (
+                      <p className="text-sm text-destructive">{videoError}</p>
+                    )}
+
+                    <div className="bg-muted/50 p-4 rounded-lg">
+                      <p className="text-sm text-muted-foreground">
+                        Cette vidéo sera utilisée uniquement pour vérifier votre identité auprès de nos administrateurs et ne sera pas rendue publique. Présentez-vous brièvement en montrant clairement votre visage.
+                      </p>
+                    </div>
+
+                    <Button onClick={() => toast.success("Vidéo mise à jour", { description: "Votre vidéo de vérification a été enregistrée" })}>Enregistrer la vidéo</Button>
+                  </div>
+                </div>
+              )}
+
+              {/* Section Études & Profession */}
+              {activeSection === 'education' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-2xl font-semibold">Études & Profession</h2>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Mettez à jour votre parcours scolaire et professionnel.
+                    </p>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-6">
+                    {/* Education Level */}
+                    <div className="space-y-2">
+                      <Label htmlFor="education_level">Niveau d'études</Label>
+                      <Select defaultValue="bachelor">
+                        <SelectTrigger id="education_level">
+                          <SelectValue placeholder="Sélectionnez votre niveau" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="high_school">Lycée</SelectItem>
+                          <SelectItem value="bachelor">Licence</SelectItem>
+                          <SelectItem value="master">Master</SelectItem>
+                          <SelectItem value="phd">Doctorat</SelectItem>
+                          <SelectItem value="other">Autre</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Education Certificate */}
+                    <div className="space-y-2">
+                      <Label htmlFor="education_certificate">Justificatif de niveau d'études</Label>
+                      <Input
+                        id="education_certificate"
+                        type="file"
+                        accept="application/pdf"
+                      />
+                      <p className="text-sm text-muted-foreground">Format accepté : PDF (max 5 MB)</p>
+                    </div>
+
+                    <Separator />
+
+                    {/* Profession */}
+                    <div className="space-y-2">
+                      <Label htmlFor="profession">Profession</Label>
+                      <Input id="profession" placeholder="Ex: Ingénieur, Médecin..." />
+                    </div>
+
+                    {/* Profession Certificate */}
+                    <div className="space-y-2">
+                      <Label htmlFor="profession_certificate">Justificatif de profession</Label>
+                      <Input
+                        id="profession_certificate"
+                        type="file"
+                        accept="application/pdf"
+                      />
+                      <p className="text-sm text-muted-foreground">Format accepté : PDF (max 5 MB)</p>
+                    </div>
+
+                    <Button onClick={() => toast.success("Études & Profession mis à jour", { description: "Vos informations ont été enregistrées" })}>Mettre à jour</Button>
                   </div>
                 </div>
               )}

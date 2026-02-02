@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef, useCallback } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
@@ -25,7 +25,11 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { FileText, ArrowLeft, ArrowRight, Check, UserPlus, User, MapPin, GraduationCap, ShieldCheck, Camera } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+import { FileText, ArrowLeft, ArrowRight, Check, UserPlus, User, MapPin, GraduationCap, ShieldCheck, Camera, Video, Upload, Trash2, CalendarIcon } from "lucide-react"
+import { format } from "date-fns"
+import { fr } from "date-fns/locale"
 import { APP_ROUTES } from "@/shared/constants/routes"
 import { ProfilePhotosUpload } from "@/components/profile-photos-upload"
 
@@ -78,7 +82,11 @@ const signupSchema = z.object({
   photo_2: z.any().optional(),
   photo_3: z.any().optional(),
   photo_4: z.any().optional(),
-  // Étape 5
+  // Étape 5 - Vidéo de présentation
+  presentation_video: z.any().refine((file) => file !== undefined && file !== null, {
+    message: "La vidéo de présentation est obligatoire",
+  }),
+  // Étape 6
   id_type: z.enum(["passport", "national_id", "driver_license"], {
     required_error: "Type de pièce d'identité requis",
   }),
@@ -120,11 +128,160 @@ const steps = [
   },
   {
     id: 5,
+    title: "Vidéo",
+    description: "Présentez-vous",
+    icon: Video,
+  },
+  {
+    id: 6,
     title: "Identité",
     description: "Vérification d'identité",
     icon: ShieldCheck,
   },
 ]
+
+const MAX_VIDEO_SIZE_MB = 50
+const MAX_VIDEO_DURATION_SEC = 180 // 3 minutes
+
+function VideoUploadStep({
+  value,
+  onChange,
+  error,
+}: {
+  value: File | null | undefined
+  onChange: (file: File | null) => void
+  error?: string
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoPreviewRef = useRef<HTMLVideoElement>(null)
+  const [videoError, setVideoError] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+
+  const validateAndSetVideo = useCallback((file: File) => {
+    setVideoError(null)
+
+    // Vérifier le type
+    if (!file.type.startsWith("video/")) {
+      setVideoError("Le fichier doit être une vidéo (MP4, WebM, MOV)")
+      return
+    }
+
+    // Vérifier la taille (50 MB max)
+    const sizeMB = file.size / (1024 * 1024)
+    if (sizeMB > MAX_VIDEO_SIZE_MB) {
+      setVideoError(`La vidéo est trop lourde (${sizeMB.toFixed(1)} MB). Maximum : ${MAX_VIDEO_SIZE_MB} MB`)
+      return
+    }
+
+    // Vérifier la durée
+    const url = URL.createObjectURL(file)
+    const video = document.createElement("video")
+    video.preload = "metadata"
+    video.onloadedmetadata = () => {
+      URL.revokeObjectURL(video.src)
+      if (video.duration > MAX_VIDEO_DURATION_SEC) {
+        const mins = Math.floor(video.duration / 60)
+        const secs = Math.floor(video.duration % 60)
+        setVideoError(`La vidéo dure ${mins}m${secs}s. Maximum : 3 minutes`)
+        return
+      }
+      // Tout est bon
+      setPreviewUrl(URL.createObjectURL(file))
+      onChange(file)
+    }
+    video.onerror = () => {
+      URL.revokeObjectURL(video.src)
+      setVideoError("Impossible de lire cette vidéo. Essayez un autre format.")
+    }
+    video.src = url
+  }, [onChange])
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) validateAndSetVideo(file)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    const file = e.dataTransfer.files?.[0]
+    if (file) validateAndSetVideo(file)
+  }
+
+  const handleRemove = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(null)
+    setVideoError(null)
+    onChange(null)
+    if (fileInputRef.current) fileInputRef.current.value = ""
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4">
+      <div className="text-center mb-2">
+        <h3 className="text-lg font-semibold mb-2">Vidéo de présentation</h3>
+        <p className="text-sm text-muted-foreground">
+          Enregistrez ou uploadez une courte vidéo où vous vous présentez.
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Durée max : 3 minutes &bull; Taille max : {MAX_VIDEO_SIZE_MB} MB &bull; Formats : MP4, WebM, MOV
+        </p>
+      </div>
+
+      {!previewUrl && !value ? (
+        <div
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className="border-2 border-dashed border-muted-foreground/30 rounded-xl p-8 flex flex-col items-center justify-center gap-4 cursor-pointer hover:border-primary/50 hover:bg-muted/30 transition-all"
+        >
+          <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+            <Upload className="h-8 w-8 text-primary" />
+          </div>
+          <div className="text-center">
+            <p className="font-medium">Cliquez ou glissez votre vidéo ici</p>
+            <p className="text-xs text-muted-foreground mt-1">MP4, WebM ou MOV</p>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="video/mp4,video/webm,video/quicktime"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+        </div>
+      ) : (
+        <div className="relative rounded-xl overflow-hidden bg-black">
+          <video
+            ref={videoPreviewRef}
+            src={previewUrl || undefined}
+            controls
+            className="w-full max-h-[300px] object-contain"
+          />
+          <button
+            type="button"
+            onClick={handleRemove}
+            className="absolute top-2 right-2 h-8 w-8 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-colors"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {videoError && (
+        <p className="text-sm text-destructive text-center">{videoError}</p>
+      )}
+      {error && !videoError && (
+        <FormError message={error} />
+      )}
+
+      <div className="bg-muted/50 p-4 rounded-lg">
+        <p className="text-sm text-muted-foreground">
+          Cette vidéo sera utilisée uniquement pour vérifier votre identité auprès de nos administrateurs et ne sera pas rendue publique. Présentez-vous brièvement en montrant clairement votre visage.
+        </p>
+      </div>
+    </div>
+  )
+}
 
 interface MultiStepSignupFormProps extends Omit<React.ComponentProps<"form">, "onSubmit"> {
   onSubmit?: (data: SignupFormData) => void | Promise<void>
@@ -194,6 +351,8 @@ export function MultiStepSignupForm({
       case 4:
         return ["profile_photo", "photo_2", "photo_3", "photo_4"]
       case 5:
+        return ["presentation_video"]
+      case 6:
         return ["id_type", "id_document", "acceptPrivacyPolicy"]
       default:
         return []
@@ -388,10 +547,43 @@ export function MultiStepSignupForm({
 
               <Field>
                 <FieldLabel htmlFor="date_of_birth">Date de naissance *</FieldLabel>
-                <Input
-                  {...form.register("date_of_birth")}
-                  id="date_of_birth"
-                  type="date"
+                <Controller
+                  name="date_of_birth"
+                  control={form.control}
+                  render={({ field }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal h-9",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value
+                            ? format(new Date(field.value), "dd MMMM yyyy", { locale: fr })
+                            : "Sélectionnez une date"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          captionLayout="dropdown"
+                          selected={field.value ? new Date(field.value) : undefined}
+                          onSelect={(date) => {
+                            if (date) {
+                              field.onChange(format(date, "yyyy-MM-dd"))
+                            }
+                          }}
+                          fromYear={1940}
+                          toYear={new Date().getFullYear() - 18}
+                          defaultMonth={new Date(2000, 0)}
+                          locale={fr}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 />
                 <FormError message={form.formState.errors.date_of_birth?.message} />
               </Field>
@@ -503,8 +695,17 @@ export function MultiStepSignupForm({
             </div>
           )}
 
-          {/* Étape 5: Pièce d'identité */}
+          {/* Étape 5: Vidéo de présentation */}
           {currentStep === 5 && (
+            <VideoUploadStep
+              value={form.watch("presentation_video")}
+              onChange={(file) => form.setValue("presentation_video", file, { shouldValidate: true })}
+              error={form.formState.errors.presentation_video?.message as string | undefined}
+            />
+          )}
+
+          {/* Étape 6: Pièce d'identité */}
+          {currentStep === 6 && (
             <div className="grid grid-cols-1 gap-4">
               <Field>
                 <FieldLabel htmlFor="id_type">Type de pièce d'identité *</FieldLabel>

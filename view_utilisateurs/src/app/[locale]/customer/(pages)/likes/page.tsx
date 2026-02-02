@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { ThumbsUp, Heart, X, Star, MessageCircle, Filter, CheckCheck } from 'lucide-react';
+import { ThumbsUp, Heart, X, Star, MessageCircle, SlidersHorizontal, Filter, CheckCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { BreadcrumbDemo } from '../_components/breadcrumb';
@@ -160,7 +160,7 @@ export default function LikesPage() {
 
         {/* Filtre Select + icone */}
         <div className="flex items-center gap-3 mb-6">
-          <Filter className="h-4 w-4 text-muted-foreground shrink-0" />
+          <SlidersHorizontal className="h-4 w-4 text-muted-foreground shrink-0" />
           <span className="text-sm font-medium text-muted-foreground">Filtre</span>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-[220px]">
