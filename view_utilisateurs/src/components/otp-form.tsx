@@ -22,7 +22,7 @@ import { OTPConfig } from "@/types/auth-form.types"
 import { otpFormSchema, type OTPFormData } from "@/shared/constants/forms/auth"
 import { getValidationMessage } from "@/shared/constants/validation-messages"
 
-interface OTPFormProps extends React.ComponentProps<"div"> {
+interface OTPFormProps extends Omit<React.ComponentProps<"div">, "onSubmit"> {
   config: OTPConfig
   onSubmit?: (data: OTPFormData) => void | Promise<void>
   onResend?: () => void | Promise<void>

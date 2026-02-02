@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+ 
 
   allowedDevOrigins: [
     'local-origin.dev',

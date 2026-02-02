@@ -109,7 +109,7 @@ export function StatsCards() {
               <div key={item.category} className="flex items-center gap-2">
                 <span
                   className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: likesConfig[item.category as keyof typeof likesConfig]?.color }}
+                  style={{ backgroundColor: (likesConfig[item.category as keyof typeof likesConfig] as { color?: string })?.color }}
                 />
                 <span className="text-muted-foreground text-xs">
                   {likesConfig[item.category as keyof typeof likesConfig]?.label}
@@ -162,7 +162,7 @@ export function StatsCards() {
               <div key={item.category} className="flex items-center gap-2">
                 <span
                   className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: favoritesConfig[item.category as keyof typeof favoritesConfig]?.color }}
+                  style={{ backgroundColor: (favoritesConfig[item.category as keyof typeof favoritesConfig] as { color?: string })?.color }}
                 />
                 <span className="text-muted-foreground text-xs">
                   {favoritesConfig[item.category as keyof typeof favoritesConfig]?.label}

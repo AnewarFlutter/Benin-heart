@@ -68,7 +68,7 @@ const signupSchema = z.object({
   current_country: z.string().min(1, "Veuillez sélectionner votre pays actuel"),
   date_of_birth: z.string().min(1, "Date de naissance requise"),
   gender: z.enum(["male", "female", "other"], {
-    required_error: "Veuillez sélectionner votre genre",
+    message: "Veuillez sélectionner votre genre",
   }),
   // Étape 3
   education_level: z.string().min(1, "Niveau d'études requis"),
@@ -88,7 +88,7 @@ const signupSchema = z.object({
   }),
   // Étape 6
   id_type: z.enum(["passport", "national_id", "driver_license"], {
-    required_error: "Type de pièce d'identité requis",
+    message: "Type de pièce d'identité requis",
   }),
   id_document: z.any().optional(),
   acceptPrivacyPolicy: z.boolean().refine((val) => val === true, {
@@ -691,7 +691,7 @@ export function MultiStepSignupForm({
                 }}
               />
 
-              <FormError message={form.formState.errors.profile_photo?.message} />
+              <FormError message={form.formState.errors.profile_photo?.message as string | undefined} />
             </div>
           )}
 
