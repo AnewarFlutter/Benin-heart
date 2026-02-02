@@ -249,7 +249,7 @@ export default function TomeetsomeonePage() {
       </div>
       <div className="flex flex-1 w-full items-center justify-center overflow-hidden">
         {profiles.length > 0 ? (
-        <div className="relative h-[700px] w-[400px] sm:h-[600px] sm:w-[360px] overflow-hidden">
+        <div className="relative h-[calc(100dvh-180px)] w-[calc(100vw-32px)] max-w-[400px] sm:h-[530px] sm:w-[320px]">
           {profiles.slice(0, 3).reverse().map((profile, index) => (
             <TinderCard
               key={profile.id}
@@ -266,9 +266,9 @@ export default function TomeetsomeonePage() {
           ))}
         </div>
       ) : (
-        <div className="text-center p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-lg max-w-md">
+        <div className="text-center p-4 sm:p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-lg max-w-md mx-4">
           <div className="text-6xl mb-4">💕</div>
-          <h2 className="text-2xl font-bold mb-4">Plus de profils disponibles pour le moment</h2>
+          <h2 className="text-xl sm:text-2xl font-bold mb-4">Plus de profils disponibles pour le moment</h2>
           <p className="text-muted-foreground">
             Veuillez discuter avec les profils likés dans votre section message ou discuter avec les profils qui vous ont liké.
           </p>

@@ -87,7 +87,7 @@ export function TinderCard({ profile, onSwipe, style, isActive = true }: TinderC
     >
       <div className="flex flex-col items-center gap-4">
         <div
-          className="relative h-[600px] w-[400px] sm:h-[500px] sm:w-[360px] overflow-hidden rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-2xl"
+          className="relative h-[calc(100dvh-300px)] w-[calc(100vw-32px)] max-w-[400px] sm:h-[450px] sm:w-[320px] overflow-hidden rounded-3xl bg-gradient-to-br from-gray-100 to-gray-200 shadow-2xl"
           onClick={handleImageNavigation}
         >
         {/* Indicateurs de photos stylisés */}
@@ -125,14 +125,14 @@ export function TinderCard({ profile, onSwipe, style, isActive = true }: TinderC
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/0 to-black/20" />
 
         {/* Informations du profil avec style amélioré */}
-        <div className="absolute bottom-0 left-0 right-0 p-6 pb-8 z-20">
+        <div className="absolute bottom-0 left-0 right-0 p-4 pb-6 sm:p-6 sm:pb-8 z-20">
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.1 }}
           >
             <div className="flex items-center justify-between mb-2">
-              <h2 className="text-3xl font-bold text-white drop-shadow-lg">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white drop-shadow-lg">
                 {profile.name}
               </h2>
               <button

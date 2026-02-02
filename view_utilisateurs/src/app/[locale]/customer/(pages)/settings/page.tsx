@@ -42,12 +42,12 @@ export default function SettingsPage() {
   return (
     <> 
       <div className="container mx-auto p-6 flex flex-1 flex-col">
-        <div className="@container/main flex flex-1 flex-col gap-6 px-4 lg:px-6 py-6">
+        <div className="@container/main flex flex-1 flex-col gap-4 sm:gap-6 px-2 sm:px-4 lg:px-6 py-4 sm:py-6">
           {/* En-tête */}
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-3">
-              <Settings className="h-8 w-8 text-primary" />
-              <h1 className="text-3xl font-bold">{"Paramètres"}</h1>
+              <Settings className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+              <h1 className="text-2xl sm:text-3xl font-bold">{"Paramètres"}</h1>
             </div>
             <p className="text-muted-foreground">
               {"Gérez les paramètres de votre compte et définissez vos préférences."}
@@ -57,7 +57,7 @@ export default function SettingsPage() {
           <Separator />
 
           {/* Layout principal avec sidebar et contenu */}
-          <div className="flex flex-col lg:flex-row gap-8">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8">
             {/* Sidebar de navigation */}
             <aside className="lg:w-64 flex-shrink-0">
               <nav className="space-y-1">
@@ -272,7 +272,7 @@ export default function SettingsPage() {
                       <p className="text-sm text-muted-foreground">
                         Sélectionnez le thème pour le tableau de bord.
                       </p>
-                      <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                         <Card
                           className={cn(
                             "cursor-pointer border-2 transition-colors",

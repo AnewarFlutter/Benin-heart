@@ -42,7 +42,7 @@ export function StatsCards() {
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">1,234</div>
-            <IconHeart className="h-12 w-12 text-pink-500 opacity-20" />
+            <IconHeart className="h-8 w-8 sm:h-12 sm:w-12 text-pink-500 opacity-20" />
           </div>
           <p className="text-xs text-muted-foreground mb-4">
             +20% par rapport au mois dernier
@@ -80,7 +80,7 @@ export function StatsCards() {
         <CardContent>
           <div className="flex items-center justify-between">
             <div className="text-2xl font-bold">567</div>
-            <IconSparkles className="h-12 w-12 text-yellow-500 opacity-20" />
+            <IconSparkles className="h-8 w-8 sm:h-12 sm:w-12 text-yellow-500 opacity-20" />
           </div>
           <p className="text-xs text-muted-foreground mb-4">
             +12% par rapport au mois dernier

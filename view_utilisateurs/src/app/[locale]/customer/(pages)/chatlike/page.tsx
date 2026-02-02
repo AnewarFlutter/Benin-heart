@@ -553,7 +553,7 @@ export default function ChatPage() {
                 >
                   <div
                     className={cn(
-                      'max-w-[70%] rounded-lg px-4 py-2',
+                      'max-w-[85%] sm:max-w-[70%] rounded-lg px-3 sm:px-4 py-2',
                       message.isOwn
                         ? 'bg-primary text-primary-foreground'
                         : 'bg-white dark:bg-card border border-gray-200 dark:border-gray-700'
@@ -621,7 +621,7 @@ export default function ChatPage() {
   return (
     <div className="absolute inset-0 flex w-full overflow-hidden">
       {/* Desktop: Sidebar toujours visible */}
-      <div className="hidden md:block w-80 lg:w-96 h-full">
+      <div className="hidden md:block md:w-72 lg:w-80 xl:w-96 h-full">
         <ContactsList
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
