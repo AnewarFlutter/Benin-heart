@@ -249,7 +249,7 @@ export default function TomeetsomeonePage() {
       </div>
       <div className="flex flex-1 w-full items-center justify-center overflow-hidden">
         {profiles.length > 0 ? (
-        <div className="relative h-[650px] w-[360px] sm:h-[550px] sm:w-[320px]">
+        <div className="relative h-[650px] w-[360px] sm:h-[550px] sm:w-[320px] overflow-hidden">
           {profiles.slice(0, 3).reverse().map((profile, index) => (
             <TinderCard
               key={profile.id}
