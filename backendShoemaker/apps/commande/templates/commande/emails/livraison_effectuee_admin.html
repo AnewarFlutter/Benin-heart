@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livraison effectuee</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Livraison effectuee</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour,</p>
+
+            <p class="message">Une livraison a ete effectuee avec succes.</p>
+
+            <p class="message">Une commande vient d'etre livree et receptionnee par le client.</p>
+
+            <div class="info-box">
+                <h3>Details de la livraison</h3>
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Client :</span>
+                    <span class="value">{{ client.get_full_name|default:client.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date de livraison :</span>
+                    <span class="value">{{ commande.date_livraison_effective|date:"d/m/Y à H:i"|default:"Aujourd'hui" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Nombre de produits :</span>
+                    <span class="value">{{ nombre_produits }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Montant total :</span>
+                    <span class="value">{{ commande.montant_final }} FCFA</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Statut du paiement :</span>
+                    <span class="value">{{ commande.get_statut_paiement_display|default:"En attente" }}</span>
+                </div>
+                {% if livreur %}
+                <div class="info-row">
+                    <span class="label">Livreur :</span>
+                    <span class="value">{{ livreur.user.get_full_name|default:livreur.user.email }}</span>
+                </div>
+                {% endif %}
+                {% if commande.moyen_paiement %}
+                <div class="info-row">
+                    <span class="label">Moyen de paiement :</span>
+                    <span class="value">{{ commande.moyen_paiement.nom }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="message"><strong>Adresse de livraison :</strong></p>
+            <div class="note-box">
+                <p style="margin: 0;">{{ commande.adresse_collecte }}</p>
+            </div>
+
+            <div class="note-box">
+                <p style="margin: 0;"><strong>Note :</strong> Cette commande a ete marquee comme "Terminee". Le client a recu un email de confirmation.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

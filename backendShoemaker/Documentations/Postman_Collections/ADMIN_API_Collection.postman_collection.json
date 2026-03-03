@@ -1,0 +1,1621 @@
+{
+	"info": {
+		"_postman_id": "admin-shoemaker-api",
+		"name": "Shoemaker API - ADMIN (Administrateur)",
+		"description": "Collection complète des endpoints ADMIN de l'API Shoemaker.\n\n## Authentification Requise\nTous les endpoints nécessitent :\n- Connexion avec context: \"ADMIN\" ou \"SUPERADMIN\"\n- Token JWT dans le header Authorization: Bearer {{access_token}}\n\n## Variables d'environnement\n- `base_url`: http://localhost:8000\n- `access_token`: Token JWT (auto-rempli après login)\n- `refresh_token`: Refresh token JWT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "🔐 Authentification Admin",
+			"item": [
+				{
+					"name": "Connexion Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('access_token', jsonData.access);",
+									"    pm.environment.set('refresh_token', jsonData.refresh);",
+									"    console.log('✅ Tokens admin sauvegardés');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"admin@shoemaker.sn\",\n    \"password\": \"admin123\",\n    \"context\": \"ADMIN\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login", ""]
+						},
+						"description": "Connexion en tant qu'administrateur.\n\n**Contextes possibles :**\n- ADMIN : Administrateur\n- SUPERADMIN : Super administrateur"
+					},
+					"response": []
+				},
+				{
+					"name": "Rafraîchir le Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    const jsonData = pm.response.json();",
+									"    pm.environment.set('access_token', jsonData.access);",
+									"    console.log('✅ Token rafraîchi');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "token", "refresh", ""]
+						},
+						"description": "Rafraîchir le token d'accès lorsqu'il expire (après 24h)."
+					},
+					"response": []
+				},
+				{
+					"name": "Déconnexion Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "logout", ""]
+						},
+						"description": "Déconnexion de l'administrateur. Ajoute le refresh token à la blacklist."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints d'authentification pour les administrateurs."
+		},
+		{
+			"name": "👥 Gestion des Utilisateurs",
+			"item": [
+				{
+					"name": "Liste des Utilisateurs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/?page=1&search=&role=&is_active=&is_verified=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Numéro de page (pagination)"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Recherche par email, nom, prénom"
+								},
+								{
+									"key": "role",
+									"value": "",
+									"description": "Filtrer par rôle (CLIENT, DELIVERY, ADMIN)"
+								},
+								{
+									"key": "is_active",
+									"value": "",
+									"description": "Filtrer par statut actif (true/false)"
+								},
+								{
+									"key": "is_verified",
+									"value": "",
+									"description": "Filtrer par vérification (true/false)"
+								}
+							]
+						},
+						"description": "Récupère la liste paginée de tous les utilisateurs avec filtres optionnels."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Utilisateur",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000",
+									"description": "UUID de l'utilisateur"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'un utilisateur par son UUID."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Utilisateur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"nouveau@example.com\",\n    \"password\": \"password123\",\n    \"password_confirm\": \"password123\",\n    \"first_name\": \"Prénom\",\n    \"last_name\": \"Nom\",\n    \"phone\": \"+221 77 123 45 67\",\n    \"role\": \"CLIENT\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ""]
+						},
+						"description": "Crée un nouvel utilisateur.\n\n**Rôles possibles :** CLIENT, DELIVERY, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Utilisateur",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Nouveau Prénom\",\n    \"last_name\": \"Nouveau Nom\",\n    \"phone\": \"+221 77 999 88 77\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie les informations d'un utilisateur existant."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Utilisateur",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime définitivement un utilisateur de la base de données."
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Utilisateurs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", "statistics", ""]
+						},
+						"description": "Récupère les statistiques globales des utilisateurs :\n- Total utilisateurs\n- Par rôle (CLIENT, DELIVERY, ADMIN)\n- Actifs/Inactifs\n- Vérifiés/Non vérifiés\n- Bloqués\n- Supprimés (soft delete)"
+					},
+					"response": []
+				},
+				{
+					"name": "Gérer les Rôles",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"roles\": [\"CLIENT\", \"DELIVERY\"],\n    \"action\": \"add\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/manage_roles/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "manage_roles", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Gère les rôles d'un utilisateur.\n\n**Actions possibles :**\n- `add` : Ajouter des rôles\n- `remove` : Retirer des rôles\n- `set` : Définir exactement ces rôles (remplace tous les rôles existants)\n\n**Rôles disponibles :** CLIENT, DELIVERY, ADMIN, SUPERADMIN"
+					},
+					"response": []
+				},
+				{
+					"name": "Bloquer/Débloquer un Utilisateur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_blocked\": true,\n    \"reason\": \"Activité suspecte détectée\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/block_unblock/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "block_unblock", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Bloque ou débloque temporairement un utilisateur.\n\n**Paramètres :**\n- `is_blocked` (boolean) : true pour bloquer, false pour débloquer\n- `reason` (string, optionnel) : Raison du blocage"
+					},
+					"response": []
+				},
+				{
+					"name": "Activer/Désactiver un Utilisateur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_active\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/activate_deactivate/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "activate_deactivate", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Active ou désactive un compte utilisateur.\n\n**Paramètres :**\n- `is_active` (boolean) : true pour activer, false pour désactiver"
+					},
+					"response": []
+				},
+				{
+					"name": "Valider l'OTP (Override Admin)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"is_verified\": true,\n    \"clear_otp\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/validate_otp/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "validate_otp", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Permet à l'admin de forcer la validation du compte utilisateur sans vérifier l'OTP.\n\n**Paramètres :**\n- `is_verified` (boolean) : true pour vérifier le compte\n- `clear_otp` (boolean) : true pour effacer le code OTP après validation"
+					},
+					"response": []
+				},
+				{
+					"name": "Réinitialiser le Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"new_password\": \"nouveaumotdepasse123\",\n    \"new_password_confirm\": \"nouveaumotdepasse123\",\n    \"send_email\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/reset_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "reset_password", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Réinitialise le mot de passe d'un utilisateur (admin uniquement, sans vérifier l'ancien mot de passe).\n\n**Paramètres :**\n- `new_password` : Nouveau mot de passe (min 8 caractères)\n- `new_password_confirm` : Confirmation\n- `send_email` (boolean) : Envoyer un email de notification à l'utilisateur"
+					},
+					"response": []
+				},
+				{
+					"name": "Suppression Logique (Soft Delete)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/soft_delete/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "soft_delete", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Suppression logique d'un utilisateur (marqué comme supprimé mais reste en base).\n\nL'utilisateur ne pourra plus se connecter mais ses données sont préservées."
+					},
+					"response": []
+				},
+				{
+					"name": "Restaurer un Utilisateur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/:uuid/restore/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "users", ":uuid", "restore", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Restaure un utilisateur supprimé logiquement (soft delete)."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion complète des utilisateurs par l'administrateur."
+		},
+		{
+			"name": "🚚 Gestion des Livreurs",
+			"item": [
+				{
+					"name": "Liste des Livreurs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/delivery-persons/?page=1&is_available=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "delivery-persons", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "is_available",
+									"value": "",
+									"description": "Filtrer par disponibilité (true/false)"
+								}
+							]
+						},
+						"description": "Récupère la liste de tous les livreurs avec leurs informations de profil."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Livreur",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/delivery-persons/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "delivery-persons", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'un livreur incluant :\n- Informations utilisateur\n- Disponibilité\n- Position GPS actuelle\n- Statistiques de livraisons"
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Livreurs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/delivery-persons/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "delivery-persons", "statistics", ""]
+						},
+						"description": "Récupère les statistiques globales des livreurs :\n- Total livreurs\n- Disponibles/Indisponibles\n- Actifs/Inactifs\n- Nombre de livraisons par livreur"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des livreurs et suivi de leurs activités."
+		},
+		{
+			"name": "🛠️ Gestion des Services",
+			"item": [
+				{
+					"name": "Liste des Services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/?page=1&statut=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "statut",
+									"value": "",
+									"description": "Filtrer par statut (actif, inactif, brouillon)"
+								}
+							]
+						},
+						"description": "Récupère la liste de tous les services (actifs, inactifs et brouillons)."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Service",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'un service."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Service",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Ressemelage complet\",\n    \"description\": \"Remplacement complet de la semelle de la chaussure avec matériaux de qualité.\",\n    \"prix_minimum_ht\": 35.00,\n    \"tva\": 20.00,\n    \"delai_minimum_jours\": 3,\n    \"delai_maximum_jours\": 5,\n    \"nombre_heures_delai_maximum\": 120,\n    \"statut\": \"actif\",\n    \"icone\": \"shoe-repair\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", ""]
+						},
+						"description": "Crée un nouveau service de réparation.\n\n**Statuts possibles :**\n- `actif` : Visible et disponible pour les clients\n- `inactif` : Non disponible\n- `brouillon` : En cours de création"
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Service",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Ressemelage complet - Premium\",\n    \"prix_minimum_ht\": 45.00,\n    \"statut\": \"actif\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie un service existant. Mise à jour partielle autorisée (PATCH-like)."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Service",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime définitivement un service.\n\n⚠️ Attention : Vérifier qu'aucune commande n'utilise ce service avant de le supprimer."
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Services",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/services/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "services", "statistics", ""]
+						},
+						"description": "Récupère les statistiques des services :\n- Total services\n- Par statut (actif, inactif, brouillon)\n- Services les plus demandés\n- Revenus par service"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion du catalogue de services de réparation."
+		},
+		{
+			"name": "📦 Gestion des Commandes",
+			"item": [
+				{
+					"name": "Liste des Commandes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/commandes/?page=1&statut_commande=&statut_paiement=&search=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "commandes", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "statut_commande",
+									"value": "",
+									"description": "en_attente, validee, collectee, en_reparation, reparee, en_attente_livraison, livree, terminee, annulee"
+								},
+								{
+									"key": "statut_paiement",
+									"value": "",
+									"description": "en_attente, paye, rembourse"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Recherche par code_unique ou nom client"
+								}
+							]
+						},
+						"description": "Récupère la liste de toutes les commandes avec filtres."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'une Commande",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/commandes/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "commandes", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Récupère tous les détails d'une commande :\n- Informations client\n- Produits et services\n- Créneaux de collecte/livraison\n- Livreurs assignés\n- Historique des statuts"
+					},
+					"response": []
+				},
+				{
+					"name": "Mettre à Jour le Statut",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"statut_commande\": \"validee\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/commandes/:uuid/update_status/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "commandes", ":uuid", "update_status", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Change le statut d'une commande.\n\n**Workflow des statuts :**\n1. `en_attente` → Commande créée\n2. `validee` → Validée par admin\n3. `collectee` → Collectée par livreur\n4. `en_reparation` → En cours de réparation\n5. `reparee` → Réparation terminée\n6. `en_attente_livraison` → Prête à livrer\n7. `livree` → Livrée au client\n8. `terminee` → Commande terminée\n9. `annulee` → Annulée"
+					},
+					"response": []
+				},
+				{
+					"name": "Assigner un Livreur",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"delivery_person_uuid\": \"550e8400-e29b-41d4-a716-446655440000\",\n    \"type_assignation\": \"collecte\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/commandes/:uuid/assign_delivery_person/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "commandes", ":uuid", "assign_delivery_person", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Assigne un livreur à une commande pour la collecte ou la livraison.\n\n**Types d'assignation :**\n- `collecte` : Pour aller chercher la commande chez le client\n- `livraison` : Pour livrer la commande réparée"
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Commandes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/commandes/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "commandes", "statistics", ""]
+						},
+						"description": "Récupère les statistiques des commandes :\n- Total commandes\n- Par statut\n- Chiffre d'affaires\n- Commandes du jour/semaine/mois\n- Temps moyen de traitement"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion complète des commandes clients."
+		},
+		{
+			"name": "💰 Moyens de Paiement",
+			"item": [
+				{
+					"name": "Liste des Moyens de Paiement",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/moyens-paiement/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "moyens-paiement", ""]
+						},
+						"description": "Récupère la liste de tous les moyens de paiement configurés."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Moyen de Paiement",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Wave\",\n    \"actif\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/moyens-paiement/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "moyens-paiement", ""]
+						},
+						"description": "Ajoute un nouveau moyen de paiement.\n\n**Exemples :** Carte bancaire, Espèces, Wave, Orange Money, PayPal"
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Moyen de Paiement",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom\": \"Wave\",\n    \"actif\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/moyens-paiement/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "moyens-paiement", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie un moyen de paiement existant."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Moyen de Paiement",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/moyens-paiement/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "moyens-paiement", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime un moyen de paiement.\n\n⚠️ Vérifier qu'aucune commande ne l'utilise."
+					},
+					"response": []
+				}
+			],
+			"description": "Configuration des moyens de paiement acceptés."
+		},
+		{
+			"name": "🎟️ Codes Promo",
+			"item": [
+				{
+					"name": "Liste des Codes Promo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-promo/?actif=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-promo", ""],
+							"query": [
+								{
+									"key": "actif",
+									"value": "",
+									"description": "Filtrer par statut actif (true/false)"
+								}
+							]
+						},
+						"description": "Récupère la liste de tous les codes promotionnels."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Code Promo",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"PROMO2025\",\n    \"type_reduction\": \"pourcentage\",\n    \"valeur\": 15.00,\n    \"date_debut\": \"2025-01-01\",\n    \"date_fin\": \"2025-12-31\",\n    \"utilisations_max\": 100,\n    \"actif\": true,\n    \"description\": \"Promotion 15% pour l'année 2025\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-promo/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-promo", ""]
+						},
+						"description": "Crée un nouveau code promotionnel.\n\n**Types de réduction :**\n- `pourcentage` : Réduction en %\n- `montant` : Réduction en montant fixe (FCFA)"
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Code Promo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actif\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-promo/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-promo", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie un code promotionnel existant."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Code Promo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-promo/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-promo", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime un code promotionnel."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des codes promotionnels et réductions."
+		},
+		{
+			"name": "📅 Créneaux Horaires",
+			"item": [
+				{
+					"name": "Liste des Créneaux",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/?date=&actif=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", ""],
+							"query": [
+								{
+									"key": "date",
+									"value": "",
+									"description": "Filtrer par date (YYYY-MM-DD)"
+								},
+								{
+									"key": "actif",
+									"value": "",
+									"description": "Filtrer par statut actif (true/false)"
+								}
+							]
+						},
+						"description": "Récupère la liste de tous les créneaux horaires de collecte/livraison."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Créneau",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"date\": \"2025-12-30\",\n    \"heure_debut\": \"09:00:00\",\n    \"heure_fin\": \"12:00:00\",\n    \"duree_limite_minutes\": 30,\n    \"capacite_max\": 10,\n    \"reservations_actuelles\": 0,\n    \"actif\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", ""]
+						},
+						"description": "Crée un nouveau créneau horaire.\n\n**Paramètres :**\n- `duree_limite_minutes` : Délai avant le début du créneau après lequel il devient indisponible\n- `capacite_max` : Nombre maximum de réservations\n- `reservations_actuelles` : Nombre actuel de réservations"
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Créneau",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"capacite_max\": 15,\n    \"actif\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie un créneau existant."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Créneau",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime un créneau.\n\n⚠️ Impossible si des commandes sont déjà assignées à ce créneau."
+					},
+					"response": []
+				},
+				{
+					"name": "Activer/Désactiver un Créneau",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"actif\": false\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/:uuid/toggle_actif/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", ":uuid", "toggle_actif", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Active ou désactive un créneau rapidement."
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Créneaux",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/creneaux/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "creneaux", "statistics", ""]
+						},
+						"description": "Récupère les statistiques des créneaux :\n- Total créneaux\n- Taux d'occupation moyen\n- Créneaux les plus demandés\n- Créneaux disponibles par jour"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des créneaux horaires de collecte et livraison."
+		},
+		{
+			"name": "💵 Devis",
+			"item": [
+				{
+					"name": "Liste des Demandes de Devis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/devis/?statut=&search=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "devis", ""],
+							"query": [
+								{
+									"key": "statut",
+									"value": "",
+									"description": "en_attente, en_cours, envoye, accepte, refuse, expire"
+								},
+								{
+									"key": "search",
+									"value": "",
+									"description": "Recherche par nom, email ou code devis"
+								}
+							]
+						},
+						"description": "Récupère toutes les demandes de devis des clients."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Devis",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/devis/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "devis", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'une demande de devis incluant les produits."
+					},
+					"response": []
+				},
+				{
+					"name": "Répondre à un Devis",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"statut\": \"envoye\",\n    \"montant_total_ht\": 85.00,\n    \"montant_total_ttc\": 102.00,\n    \"message_admin\": \"Bonjour, voici notre proposition de devis détaillée pour vos chaussures.\",\n    \"date_expiration\": \"2025-12-31\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/devis/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "devis", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Répond à une demande de devis avec les tarifs et un message.\n\n**Workflow :**\n1. `en_attente` → Demande reçue\n2. `en_cours` → En cours de traitement\n3. `envoye` → Devis envoyé au client\n4. `accepte` → Client accepte\n5. `refuse` → Client refuse\n6. `expire` → Date d'expiration dépassée"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des demandes de devis clients."
+		},
+		{
+			"name": "📞 Contact",
+			"item": [
+				{
+					"name": "Liste des Messages de Contact",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/contacts/?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "contacts", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Récupère tous les messages envoyés via le formulaire de contact."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Message",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/contacts/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "contacts", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Récupère les détails d'un message de contact."
+					},
+					"response": []
+				},
+				{
+					"name": "Récupérer les Infos de Contact",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/contact-info/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "contact-info", ""]
+						},
+						"description": "Récupère les informations de contact de l'entreprise (singleton)."
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier les Infos de Contact",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"adresse\": \"Avenue Malick Sy, Dakar\",\n    \"ville\": \"Dakar\",\n    \"pays\": \"Sénégal\",\n    \"telephones\": [\n        \"+221 33 123 45 67\",\n        \"+221 77 123 45 67\"\n    ],\n    \"emails\": [\n        \"contact@shoemaker.sn\",\n        \"info@shoemaker.sn\"\n    ],\n    \"horaires\": {\n        \"Lundi - Vendredi\": \"9h00 - 18h00\",\n        \"Samedi\": \"10h00 - 16h00\",\n        \"Dimanche\": \"Fermé\"\n    },\n    \"url_site\": \"https://shoemaker.sn\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/contact-info/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "contact-info", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie les informations de contact de l'entreprise affichées aux clients."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des messages de contact et informations de l'entreprise."
+		},
+		{
+			"name": "❓ FAQ",
+			"item": [
+				{
+					"name": "Liste des FAQ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/faq/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "faq", ""]
+						},
+						"description": "Récupère toutes les questions fréquentes."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer une FAQ",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\": \"Quels sont vos délais de réparation ?\",\n    \"answer\": \"Nos délais de réparation varient entre 3 et 7 jours selon le type de service demandé. Pour les réparations simples comme le changement de talon, comptez 2 à 3 jours. Pour les réparations complexes comme le ressemelage complet, prévoyez 5 à 7 jours.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/faq/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "faq", ""]
+						},
+						"description": "Ajoute une nouvelle question fréquente."
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier une FAQ",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"question\": \"Quels sont vos délais de réparation ?\",\n    \"answer\": \"Nos délais de réparation varient entre 2 et 5 jours selon le type de service demandé.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/faq/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "faq", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie une question fréquente existante."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer une FAQ",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/faq/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "faq", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime une question fréquente."
+					},
+					"response": []
+				},
+				{
+					"name": "Création en Masse (Bulk)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"faqs\": [\n        {\n            \"question\": \"Acceptez-vous les paiements mobiles ?\",\n            \"answer\": \"Oui, nous acceptons Wave, Orange Money et Free Money.\"\n        },\n        {\n            \"question\": \"Proposez-vous la collecte à domicile ?\",\n            \"answer\": \"Oui, nous proposons un service de collecte et livraison à domicile partout à Dakar.\"\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/faq/bulk_create/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "faq", "bulk_create", ""]
+						},
+						"description": "Crée plusieurs FAQ en une seule requête."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion de la Foire Aux Questions."
+		},
+		{
+			"name": "⭐ Témoignages",
+			"item": [
+				{
+					"name": "Liste des Témoignages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/temoignages/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "temoignages", ""]
+						},
+						"description": "Récupère tous les témoignages clients."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer un Témoignage",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fatou Diop\",\n    \"profession\": \"Entrepreneure\",\n    \"description\": \"Service impeccable ! Mes chaussures préférées ont retrouvé une seconde vie. Je recommande vivement Shoemaker pour la qualité du travail et le respect des délais.\",\n    \"photo\": null\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/temoignages/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "temoignages", ""]
+						},
+						"description": "Ajoute un nouveau témoignage client."
+					},
+					"response": []
+				},
+				{
+					"name": "Modifier un Témoignage",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fatou Diop\",\n    \"profession\": \"Chef d'entreprise\",\n    \"description\": \"Service exceptionnel ! Je recommande à 100%.\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/temoignages/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "temoignages", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Modifie un témoignage existant."
+					},
+					"response": []
+				},
+				{
+					"name": "Supprimer un Témoignage",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/temoignages/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "temoignages", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "550e8400-e29b-41d4-a716-446655440000"
+								}
+							]
+						},
+						"description": "Supprime un témoignage."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des témoignages clients affichés sur le site."
+		},
+		{
+			"name": "🔢 Codes de Collecte",
+			"item": [
+				{
+					"name": "Liste des Codes de Collecte",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-collecte/?est_utilise=",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-collecte", ""],
+							"query": [
+								{
+									"key": "est_utilise",
+									"value": "",
+									"description": "Filtrer par statut d'utilisation (true/false)"
+								}
+							]
+						},
+						"description": "Récupère tous les codes de collecte générés pour les produits."
+					},
+					"response": []
+				},
+				{
+					"name": "Générer des Codes",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombre\": 50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-collecte/generate/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-collecte", "generate", ""]
+						},
+						"description": "Génère un lot de codes de collecte uniques.\n\nCes codes seront assignés automatiquement aux produits lors de la création des commandes."
+					},
+					"response": []
+				},
+				{
+					"name": "Statistiques des Codes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-collecte/statistics/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-collecte", "statistics", ""]
+						},
+						"description": "Récupère les statistiques des codes de collecte :\n- Total codes générés\n- Codes disponibles\n- Codes utilisés\n- Codes par commande"
+					},
+					"response": []
+				},
+				{
+					"name": "Télécharger les Codes (CSV)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/admin/codes-collecte/download/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "admin", "codes-collecte", "download", ""]
+						},
+						"description": "Télécharge tous les codes de collecte au format CSV."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des codes de collecte pour le suivi des produits."
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

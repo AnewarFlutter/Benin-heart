@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de réception de votre message</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .greeting { font-size: 16px; margin-bottom: 20px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .recap { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .recap .label { font-weight: 600; color: #333333; margin-bottom: 4px; font-size: 14px; }
+        .recap .value { color: #555555; margin-bottom: 15px; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
+        .recap .value:last-child { margin-bottom: 0; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Message bien reçu</h1>
+        </div>
+        <div class="content">
+            <div class="greeting">Bonjour {{ contact_name }},</div>
+            <div class="message">
+                Nous avons bien reçu votre message et nous vous répondrons dans les plus brefs délais.
+            </div>
+            <div class="message">Voici un récapitulatif de votre message :</div>
+            <div class="recap">
+                <div class="label">Sujet :</div>
+                <div class="value">{{ contact_sujet }}</div>
+                <div class="label">Votre message :</div>
+                <div class="value">{{ contact_message }}</div>
+            </div>
+            <div class="message">
+                Notre équipe traite toutes les demandes avec attention. Vous recevrez une réponse personnalisée par email sous 24 à 48 heures ouvrées.
+            </div>
+            <div class="message">
+                Merci de votre confiance,<br>
+                <strong>L'équipe Allocireur</strong>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Allocireur - Service de réparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rappel - Collecte dans 1 heure</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-box p { font-size: 14px; color: #555555; margin: 6px 0; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .alert-text { font-size: 16px; font-weight: 600; color: #333333; text-align: center; padding: 15px; border: 1px solid #e0e0e0; margin: 20px 0; }
+        .checklist { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .checklist h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .checklist ul { list-style-type: disc; padding-left: 20px; }
+        .checklist li { padding: 6px 0; font-size: 14px; color: #555555; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Rappel - Collecte dans 1 heure</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ user.get_full_name|default:user.email }},</p>
+
+            <div class="alert-text">
+                Votre collecte est prevue dans environ 1 heure !
+            </div>
+
+            <p class="message">Notre livreur arrivera bientot pour recuperer vos chaussures.</p>
+
+            <div class="info-box">
+                <h3>Informations de collecte</h3>
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date :</span>
+                    <span class="value">{{ commande.date_collecte|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Creneau horaire :</span>
+                    <span class="value"><strong>{{ commande.creneau_horaire }}</strong></span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Adresse :</span>
+                    <span class="value">{{ commande.adresse_collecte }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Telephone de contact :</span>
+                    <span class="value">{{ commande.telephone_collecte }}</span>
+                </div>
+            </div>
+
+            {% if livreur %}
+            <div class="info-box">
+                <h3>Votre livreur</h3>
+                <p><strong>Nom :</strong> {{ livreur.user.get_full_name|default:livreur.user.email }}</p>
+                {% if livreur.user.telephone %}
+                <p><strong>Telephone :</strong> {{ livreur.user.telephone }}</p>
+                {% endif %}
+                <p style="margin-top: 10px; font-size: 13px; color: #777777;">
+                    En cas de besoin, vous pouvez contacter directement le livreur.
+                </p>
+            </div>
+            {% endif %}
+
+            <div class="checklist">
+                <h3>Checklist avant la collecte :</h3>
+                <ul>
+                    <li>Vos chaussures sont pretes et accessibles</li>
+                    <li>Vous etes disponible a l'adresse indiquee</li>
+                    <li>Votre telephone est a portee de main</li>
+                    <li>Vous avez verifie les details de la commande</li>
+                </ul>
+            </div>
+
+            <div class="note-box">
+                <p style="margin: 0;"><strong>Besoin de reporter ?</strong></p>
+                <p style="margin: 5px 0 0 0;">Si vous ne pouvez pas etre present, contactez-nous immediatement au <strong>{{ commande.telephone_collecte }}</strong> ou repondez a cet email.</p>
+            </div>
+
+            <p class="message">Merci de votre ponctualite !</p>
+
+            <p class="message"><strong>L'equipe Allocireur</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

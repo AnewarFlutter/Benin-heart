@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commande en attente de collecte</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-box p { font-size: 14px; color: #555555; margin: 6px 0; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        ol { font-size: 14px; color: #555555; line-height: 1.8; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Commande en attente de collecte</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ user.get_full_name|default:user.email }},</p>
+
+            <p class="message">Bonne nouvelle ! Votre commande a ete confirmee par notre livreur.</p>
+
+            <p class="message">Votre commande <strong>{{ commande.code_unique }}</strong> est maintenant en attente de collecte.</p>
+
+            <div class="info-box">
+                <h3>Informations de collecte</h3>
+                <p><strong>Date :</strong> {{ commande.date_collecte|date:"d/m/Y" }}</p>
+                <p><strong>Creneau horaire :</strong> {{ commande.creneau_horaire }}</p>
+                <p><strong>Adresse :</strong> {{ commande.adresse_collecte }}</p>
+                <p><strong>Telephone de contact :</strong> {{ commande.telephone_collecte }}</p>
+                {% if commande.note_collecte %}
+                <p><strong>Note :</strong> {{ commande.note_collecte }}</p>
+                {% endif %}
+            </div>
+
+            {% if livreur %}
+            <div class="info-box">
+                <h3>Votre livreur</h3>
+                <p><strong>Nom :</strong> {{ livreur.user.get_full_name|default:livreur.user.email }}</p>
+                {% if livreur.user.telephone %}
+                <p><strong>Telephone :</strong> {{ livreur.user.telephone }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="info-box">
+                <h3>Rappel - Details de votre commande</h3>
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Montant total :</span>
+                    <span class="value">{{ commande.montant_final }} FCFA</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Moyen de paiement :</span>
+                    <span class="value">{{ commande.moyen_paiement.nom }}</span>
+                </div>
+            </div>
+
+            <p class="label" style="font-size: 14px;">Prochaines etapes :</p>
+            <ol>
+                <li>Preparez vos chaussures pour la collecte</li>
+                <li>Soyez present a l'adresse indiquee pendant le creneau horaire</li>
+                <li>Remettez vos chaussures au livreur</li>
+                <li>Nous effectuerons les reparations necessaires</li>
+                <li>Vous serez informe des que vos chaussures seront pretes pour la livraison</li>
+            </ol>
+
+            <div class="note-box">
+                <p style="margin: 0;"><strong>Rappel important :</strong> Vous recevrez un email de rappel 1 heure avant l'arrivee du livreur.</p>
+            </div>
+
+            <p class="message">Merci de votre confiance !</p>
+
+            <p class="message"><strong>L'equipe Allocireur</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,235 @@
+# Docker Compose for PRODUCTION
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: shoemaker_db_prod
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - shoemaker-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # Redis
+  redis:
+    image: redis:7-alpine
+    container_name: shoemaker_redis_prod
+    hostname: shoemaker-redis
+    command: redis-server --protected-mode no
+    volumes:
+      - redis_data:/data
+    networks:
+      - shoemaker-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # pgAdmin (for database management)
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: shoemaker_pgadmin_prod
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@shoemaker.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'True'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - shoemaker-network
+    restart: always
+
+  celery_worker:
+    build:
+      context: .
+      network: host
+      dockerfile: Dockerfile
+    container_name: shoemaker_celery_worker_prod
+    entrypoint: []
+    command: >
+      sh -c "
+        echo 'Waiting for PostgreSQL...' &&
+        while ! pg_isready -h db -p 5432 -U postgres > /dev/null 2>&1; do sleep 0.1; done &&
+        echo 'PostgreSQL ready' &&
+        echo 'Waiting for Redis...' &&
+        while ! timeout 1 bash -c 'echo > /dev/tcp/redis/6379' 2>/dev/null; do sleep 0.1; done &&
+        echo 'Redis ready' &&
+        echo 'Starting Celery Worker...' &&
+        celery -A config worker --loglevel=info
+      "
+    env_file:
+      - .env
+    environment:
+      - DEBUG=False
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # REDIS_URL vient du fichier .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks:
+      - shoemaker-network
+    restart: always
+
+  # Celery Beat
+  celery_beat:
+    build:
+      context: .
+      network: host
+      dockerfile: Dockerfile
+    container_name: shoemaker_celery_beat_prod
+    entrypoint: []
+    command: >
+      sh -c "
+        echo 'Waiting for PostgreSQL...' &&
+        while ! pg_isready -h db -p 5432 -U postgres > /dev/null 2>&1; do sleep 0.1; done &&
+        echo 'PostgreSQL ready' &&
+        echo 'Waiting for Redis...' &&
+        while ! timeout 1 bash -c 'echo > /dev/tcp/redis/6379' 2>/dev/null; do sleep 0.1; done &&
+        echo 'Redis ready' &&
+        echo 'Starting Celery Beat...' &&
+        celery -A config beat --loglevel=info
+      "
+    env_file:
+      - .env
+    environment:
+      - DEBUG=False
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      web:
+        condition: service_started
+    networks:
+      - shoemaker-network
+    restart: always
+
+  web:
+    build:
+      context: .
+      network: host
+      dockerfile: Dockerfile
+    container_name: shoemaker_web_prod
+    command: /app/entrypoint.sh
+    env_file:
+      - .env
+    volumes:
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+      - ./logs:/app/logs
+    ports:
+      - "8030:8000"
+    expose:
+      - 8000
+    environment:
+      - DEBUG=False
+      - ENVIRONMENT=production
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_HOST=db
+      - DB_PORT=5432
+      # REDIS_URL vient du fichier .env
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - CSRF_TRUSTED_ORIGINS=${CSRF_TRUSTED_ORIGINS}
+      - CORS_ALLOWED_ORIGINS=${CORS_ALLOWED_ORIGINS}
+    depends_on:
+      db:
+        condition: service_healthy
+      # redis:
+      #   condition: service_healthy
+    networks:
+      - shoemaker-network
+    restart: always
+  # ==================== NGINX & SSL ====================
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: shoemaker_nginx_prod
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ../nginx/nginx-shoemaker.conf:/etc/nginx/nginx.conf:ro
+      - certbot_conf:/etc/letsencrypt:ro
+      - certbot_www:/var/www/certbot:ro
+      - static_volume:/var/www/shoemaker/static:ro
+      - media_volume:/var/www/shoemaker/media:ro
+    depends_on:
+      - web
+    networks:
+      - shoemaker-network
+    restart: always
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Certbot for SSL (Let's Encrypt)
+  certbot:
+    image: certbot/certbot
+    container_name: shoemaker_certbot_prod
+    volumes:
+      - certbot_conf:/etc/letsencrypt
+      - certbot_www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - shoemaker-network
+    restart: always
+
+volumes:
+  postgres_data:
+  redis_data:
+  static_volume:
+  media_volume:
+  pgadmin_data:
+  certbot_conf:
+  certbot_www:
+
+networks:
+  shoemaker-network:
+    external: true

@@ -1,0 +1,5654 @@
+openapi: 3.0.3
+info:
+  title: Shoemaker API
+  version: 1.0.0
+  description: API de gestion de réparation de chaussures avec système de livraison
+paths:
+  /api/admin/codes-collecte/:
+    get:
+      operationId: admin_codes_collecte_list
+      description: Récupère la liste des codes (filtrables par statut utilise)
+      summary: Liste des codes de collecte
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - ADMIN - Codes Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCodeCollecteList'
+          description: ''
+  /api/admin/codes-collecte/{id}/:
+    get:
+      operationId: admin_codes_collecte_retrieve
+      description: Récupère les détails d'un code de collecte
+      summary: Détails d'un code
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Code de collecte.
+        required: true
+      tags:
+      - ADMIN - Codes Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeCollecte'
+          description: ''
+    delete:
+      operationId: admin_codes_collecte_destroy
+      description: Supprimer un code de collecte (uniquement si non utilisé)
+      summary: Supprimer un code
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Code de collecte.
+        required: true
+      tags:
+      - ADMIN - Codes Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/codes-collecte/download/:
+    get:
+      operationId: admin_codes_collecte_download_retrieve
+      description: Télécharge un fichier texte avec tous les codes disponibles
+      summary: Télécharger les codes disponibles
+      tags:
+      - ADMIN - Codes Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeCollecte'
+          description: ''
+  /api/admin/codes-collecte/statistics/:
+    get:
+      operationId: admin_codes_collecte_statistics_retrieve
+      description: Récupère les statistiques des codes de collecte
+      summary: Statistiques des codes
+      tags:
+      - ADMIN - Codes Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeCollecte'
+          description: ''
+  /api/admin/codes-promo/:
+    get:
+      operationId: admin_codes_promo_list
+      description: Récupère la liste de tous les codes promo
+      summary: Liste des codes promo
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - ADMIN - Code promo
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminCodePromoList'
+          description: ''
+    post:
+      operationId: admin_codes_promo_create
+      description: Créer un nouveau code promo
+      summary: Créer un code promo
+      tags:
+      - ADMIN - Code promo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCodePromo'
+          description: ''
+  /api/admin/codes-promo/{id}/:
+    get:
+      operationId: admin_codes_promo_retrieve
+      description: Récupère les détails d'un code promo spécifique
+      summary: Détails d'un code promo
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Code promo.
+        required: true
+      tags:
+      - ADMIN - Code promo
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCodePromo'
+          description: ''
+    put:
+      operationId: admin_codes_promo_update
+      description: Modifier un code promo existant
+      summary: Modifier un code promo
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Code promo.
+        required: true
+      tags:
+      - ADMIN - Code promo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCodePromoRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCodePromo'
+          description: ''
+    delete:
+      operationId: admin_codes_promo_destroy
+      description: Supprimer un code promo
+      summary: Supprimer un code promo
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Code promo.
+        required: true
+      tags:
+      - ADMIN - Code promo
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/commandes/:
+    get:
+      operationId: admin_commandes_list
+      description: 'Récupère la liste de toutes les commandes (filtres: statut_paiement,
+        statut_commande, user_id)'
+      summary: Liste des commandes
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - ADMIN - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminCommandeListList'
+          description: ''
+  /api/admin/commandes/{id}/:
+    get:
+      operationId: admin_commandes_retrieve
+      description: Récupère les détails complets d'une commande
+      summary: Détails d'une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+    put:
+      operationId: admin_commandes_update
+      description: Modifier les informations d'une commande existante
+      summary: Modifier une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Commande
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCommandeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCommandeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCommandeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+    delete:
+      operationId: admin_commandes_destroy
+      description: Supprimer définitivement une commande
+      summary: Supprimer une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/commandes/{id}/assign-delivery-livraison/:
+    post:
+      operationId: admin_commandes_assign_delivery_livraison_create
+      description: Assigne un livreur disponible pour la livraison finale d'une commande
+        réparée. Le livreur recevra une notification par email avec la date de livraison
+        prévue. La commande doit être au statut 'prête' pour pouvoir être assignée.
+      summary: Assigner un livreur pour la livraison finale
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Livraison Finale
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonLivraisonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonLivraisonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonLivraisonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+  /api/admin/commandes/{id}/assign_delivery_person/:
+    post:
+      operationId: admin_commandes_assign_delivery_person_create
+      description: Assigne un livreur disponible pour collecter les chaussures chez
+        le client. Le livreur recevra une notification par email avec les détails
+        de la collecte.
+      summary: Assigner un livreur pour la collecte
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Collecte
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignDeliveryPersonRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+  /api/admin/commandes/{id}/update_status/:
+    post:
+      operationId: admin_commandes_update_status_create
+      description: Modifier le statut de paiement et/ou le statut de la commande
+      summary: Changer le statut d'une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Commande.
+        required: true
+      tags:
+      - ADMIN - Commande
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UpdateStatutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UpdateStatutRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+  /api/admin/commandes/checkout/:
+    post:
+      operationId: admin_commandes_checkout_create
+      description: 'Créer une nouvelle commande pour un utilisateur spécifique (ex:
+        commande téléphonique)'
+      summary: Créer une commande pour un client (checkout admin)
+      tags:
+      - ADMIN - CREATION Commande
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCheckoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCheckoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCheckoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCheckout'
+          description: ''
+  /api/admin/commandes/statistics/:
+    get:
+      operationId: admin_commandes_statistics_retrieve
+      description: Récupère les statistiques globales des commandes
+      summary: Statistiques des commandes
+      tags:
+      - ADMIN - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCommande'
+          description: ''
+  /api/admin/contacts/:
+    get:
+      operationId: admin_contacts_list
+      description: Récupère la liste de tous les messages de contact reçus (réservé
+        aux administrateurs).
+      summary: Lister tous les messages de contact
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Admin - Contact
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminContactList'
+          description: ''
+  /api/admin/contacts/{id}/:
+    get:
+      operationId: admin_contacts_retrieve
+      description: Récupère les détails complets d'un message de contact spécifique
+        (réservé aux administrateurs).
+      summary: Détails d'un message de contact
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Contact.
+        required: true
+      tags:
+      - Admin - Contact
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminContact'
+          description: ''
+  /api/admin/delivery-persons/:
+    get:
+      operationId: admin_delivery_persons_list
+      description: Récupère la liste de tous les livreurs avec leurs profils
+      summary: Liste des livreurs
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Gestion des livreurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDeliveryPersonList'
+          description: ''
+    post:
+      operationId: admin_delivery_persons_create
+      description: Créer un nouveau profil de livreur
+      summary: Créer un profil livreur
+      tags:
+      - Admin - Gestion des livreurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPerson'
+          description: ''
+  /api/admin/delivery-persons/{id}/:
+    get:
+      operationId: admin_delivery_persons_retrieve
+      description: Récupère les détails complets d'un livreur spécifique
+      summary: Détails d'un livreur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Livreur.
+        required: true
+      tags:
+      - Admin - Gestion des livreurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPerson'
+          description: ''
+    put:
+      operationId: admin_delivery_persons_update
+      description: Modifier complètement un profil de livreur
+      summary: Modifier un livreur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Livreur.
+        required: true
+      tags:
+      - Admin - Gestion des livreurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeliveryPersonRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPerson'
+          description: ''
+    delete:
+      operationId: admin_delivery_persons_destroy
+      description: Supprimer un profil de livreur
+      summary: Supprimer un livreur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Livreur.
+        required: true
+      tags:
+      - Admin - Gestion des livreurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/delivery-persons/statistics/:
+    get:
+      operationId: admin_delivery_persons_statistics_retrieve
+      description: Récupère les statistiques des livreurs (total, disponibles)
+      summary: Statistiques des livreurs
+      tags:
+      - Admin - Gestion des livreurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryPerson'
+          description: ''
+  /api/admin/logout/:
+    post:
+      operationId: admin_logout_create
+      description: Logout and blacklist both access and refresh tokens
+      summary: Logout admin
+      tags:
+      - Admin - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Logout'
+          description: ''
+  /api/admin/moyens-paiement/:
+    get:
+      operationId: admin_moyens_paiement_list
+      description: Récupère la liste de tous les moyens de paiement
+      summary: Liste des moyens de paiement
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - ADMIN - Moyen de paiement
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminMoyenPaiementList'
+          description: ''
+    post:
+      operationId: admin_moyens_paiement_create
+      description: Créer un nouveau moyen de paiement
+      summary: Créer un moyen de paiement
+      tags:
+      - ADMIN - Moyen de paiement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMoyenPaiement'
+          description: ''
+  /api/admin/moyens-paiement/{id}/:
+    get:
+      operationId: admin_moyens_paiement_retrieve
+      description: Récupère les détails d'un moyen de paiement spécifique
+      summary: Détails d'un moyen de paiement
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Moyen de paiement.
+        required: true
+      tags:
+      - ADMIN - Moyen de paiement
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMoyenPaiement'
+          description: ''
+    put:
+      operationId: admin_moyens_paiement_update
+      description: Modifier un moyen de paiement existant
+      summary: Modifier un moyen de paiement
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Moyen de paiement.
+        required: true
+      tags:
+      - ADMIN - Moyen de paiement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminMoyenPaiementRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMoyenPaiement'
+          description: ''
+    delete:
+      operationId: admin_moyens_paiement_destroy
+      description: Supprimer un moyen de paiement
+      summary: Supprimer un moyen de paiement
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Moyen de paiement.
+        required: true
+      tags:
+      - ADMIN - Moyen de paiement
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/services/:
+    get:
+      operationId: admin_services_list
+      description: Récupère la liste de tous les services (admin)
+      summary: Liste des services
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - ADMIN - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminServiceListList'
+          description: ''
+    post:
+      operationId: admin_services_create
+      description: Créer un nouveau service (admin uniquement)
+      summary: Créer un nouveau service
+      tags:
+      - ADMIN - Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminService'
+          description: ''
+  /api/admin/services/{id}/:
+    get:
+      operationId: admin_services_retrieve
+      description: Récupère les détails d'un service spécifique
+      summary: Détails d'un service
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Service.
+        required: true
+      tags:
+      - ADMIN - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminService'
+          description: ''
+    put:
+      operationId: admin_services_update
+      description: Modifier complètement un service existant
+      summary: Modifier un service
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Service.
+        required: true
+      tags:
+      - ADMIN - Service
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminServiceRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminService'
+          description: ''
+    delete:
+      operationId: admin_services_destroy
+      description: Suppression définitive d'un service
+      summary: Supprimer un service
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Service.
+        required: true
+      tags:
+      - ADMIN - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/services/statistics/:
+    get:
+      operationId: admin_services_statistics_retrieve
+      description: Récupère les statistiques des services
+      summary: Statistiques des services
+      tags:
+      - ADMIN - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminService'
+          description: ''
+  /api/admin/users/:
+    get:
+      operationId: admin_users_list
+      description: Récupère la liste de tous les utilisateurs (clients, livreurs,
+        admins). Filtrable par rôle, statut, recherche
+      summary: Liste des utilisateurs
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Admin - Gestion des utilisateurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedUserListList'
+          description: ''
+    post:
+      operationId: admin_users_create
+      description: Créer un nouvel utilisateur (client, livreur ou admin)
+      summary: Créer un utilisateur
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/:
+    get:
+      operationId: admin_users_retrieve
+      description: Récupère les détails complets d'un utilisateur spécifique
+      summary: Détails d'un utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    put:
+      operationId: admin_users_update
+      description: Modifier complètement un utilisateur existant
+      summary: Modifier un utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+    delete:
+      operationId: admin_users_destroy
+      description: Suppression DÉFINITIVE d'un utilisateur (utiliser soft_delete à
+        la place pour conserver les données)
+      summary: Supprimer définitivement un utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/users/{id}/activate_deactivate/:
+    post:
+      operationId: admin_users_activate_deactivate_create
+      description: Activer ou désactiver un compte utilisateur (is_active)
+      summary: Activer/désactiver un compte utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivateDeactivateUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ActivateDeactivateUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ActivateDeactivateUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/block_unblock/:
+    post:
+      operationId: admin_users_block_unblock_create
+      description: Bloquer ou débloquer temporairement un compte utilisateur avec
+        raison optionnelle
+      summary: Bloquer/débloquer un compte utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BlockUnblockUserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BlockUnblockUserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/BlockUnblockUserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/change_password/:
+    post:
+      operationId: admin_users_change_password_create
+      description: Modifier le mot de passe d'un utilisateur avec vérification de
+        l'ancien mot de passe
+      summary: Modifier le mot de passe
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminChangePasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminChangePasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminChangePasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/manage_roles/:
+    post:
+      operationId: admin_users_manage_roles_create
+      description: Modifier le rôle d'un utilisateur (CLIENT, DELIVERY, ADMIN, SUPERADMIN)
+      summary: Gérer les rôles d'un utilisateur
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManageRolesRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ManageRolesRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ManageRolesRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/reset_password/:
+    post:
+      operationId: admin_users_reset_password_create
+      description: Réinitialiser le mot de passe d'un utilisateur sans vérification
+        de l'ancien mot de passe
+      summary: Réinitialiser le mot de passe
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminResetPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminResetPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminResetPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/restore/:
+    post:
+      operationId: admin_users_restore_create
+      description: Restaurer un compte utilisateur précédemment supprimé (soft delete)
+      summary: Restaurer un compte supprimé
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/{id}/soft_delete/:
+    delete:
+      operationId: admin_users_soft_delete_destroy
+      description: Suppression logique d'un compte utilisateur. Le compte est marqué
+        comme supprimé mais les données sont conservées
+      summary: Supprimer un compte (soft delete)
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/admin/users/{id}/validate_otp/:
+    post:
+      operationId: admin_users_validate_otp_create
+      description: Permet à un admin de valider ou invalider manuellement l'OTP d'un
+        utilisateur
+      summary: Valider/invalider l'OTP manuellement
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Utilisateur.
+        required: true
+      tags:
+      - Admin - Gestion des utilisateurs
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ValidateOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ValidateOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ValidateOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/admin/users/statistics/:
+    get:
+      operationId: admin_users_statistics_retrieve
+      description: Récupère les statistiques globales des utilisateurs (total, par
+        rôle, par statut)
+      summary: Statistiques des utilisateurs
+      tags:
+      - Admin - Gestion des utilisateurs
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+          description: ''
+  /api/client/commandes/:
+    get:
+      operationId: client_commandes_list
+      description: Récupère la liste de toutes mes commandes
+      summary: Liste de mes commandes
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Client - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClientCommandeListList'
+          description: ''
+  /api/client/commandes/{id}/:
+    get:
+      operationId: client_commandes_retrieve
+      description: Récupère les détails complets d'une de mes commandes
+      summary: Détails d'une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Client - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCommande'
+          description: ''
+  /api/client/commandes/{id}/cancel/:
+    post:
+      operationId: client_commandes_cancel_create
+      description: Annuler une de mes commandes (si statut le permet)
+      summary: Annuler une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Client - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCommande'
+          description: ''
+  /api/client/commandes/{id}/tracking/:
+    get:
+      operationId: client_commandes_tracking_retrieve
+      description: Obtenir le suivi détaillé d'une commande avec timeline et statut
+        par produit
+      summary: Suivre ma commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Client - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientCommande'
+          description: ''
+  /api/client/commandes/checkout/:
+    post:
+      operationId: client_commandes_checkout_create
+      description: Créer une nouvelle commande avec produits et services
+      summary: Créer une commande (checkout)
+      tags:
+      - Client - Commande
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+          description: ''
+  /api/client/contacts/:
+    post:
+      operationId: client_contacts_create
+      description: Permet à un utilisateur d'envoyer un message via le formulaire
+        de contact. L'utilisateur reçoit une confirmation par email et les administrateurs
+        configurés sont notifiés.
+      summary: Envoyer un message de contact
+      tags:
+      - Client - Contact
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientContactRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ClientContactRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ClientContactRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientContact'
+          description: ''
+  /api/client/forgot_password/:
+    post:
+      operationId: client_forgot_password_create
+      description: Request password reset OTP code (email or phone)
+      summary: Forgot password
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/logout/:
+    post:
+      operationId: client_logout_create
+      description: Logout and blacklist both access and refresh tokens
+      summary: Logout client
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/register/:
+    post:
+      operationId: client_register_create
+      description: Register a new CLIENT user and send OTP verification code via email
+      summary: Register new client
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/resend_otp/:
+    post:
+      operationId: client_resend_otp_create
+      description: Resend OTP verification code to client email
+      summary: Resend OTP code
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/resend_otp_forgot_password/:
+    post:
+      operationId: client_resend_otp_forgot_password_create
+      description: Resend OTP code for password reset
+      summary: Resend OTP for forgot password
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/reset_password/:
+    post:
+      operationId: client_reset_password_create
+      description: Reset password after OTP verification
+      summary: Reset password
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/services/:
+    get:
+      operationId: client_services_list
+      description: Récupère la liste de tous les services actifs (accès public)
+      summary: Liste des services disponibles
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - Client - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedClientServiceList'
+          description: ''
+  /api/client/services/{id}/:
+    get:
+      operationId: client_services_retrieve
+      description: Récupère les détails d'un service spécifique (accès public)
+      summary: Détails d'un service
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this Service.
+        required: true
+      tags:
+      - Client - Service
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClientService'
+          description: ''
+  /api/client/verify_otp/:
+    post:
+      operationId: client_verify_otp_create
+      description: Verify OTP code to activate client account
+      summary: Verify OTP code
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/client/verify_otp_forgot_password/:
+    post:
+      operationId: client_verify_otp_forgot_password_create
+      description: Verify OTP code sent for password reset
+      summary: Verify OTP for forgot password
+      tags:
+      - Client - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/commandes/:
+    get:
+      operationId: delivery_commandes_list
+      description: Récupère la liste de toutes les commandes assignées au livreur
+        connecté
+      summary: Liste de mes commandes assignées
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      tags:
+      - DELIVERY - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedDeliveryCommandeListList'
+          description: ''
+  /api/delivery/commandes/{id}/:
+    get:
+      operationId: delivery_commandes_retrieve
+      description: Récupère les détails complets d'une commande assignée
+      summary: Détails d'une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - DELIVERY - Commande
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/commandes/{id}/assign-code/:
+    post:
+      operationId: delivery_commandes_assign_code_create
+      description: Assigne un code de collecte unique à une paire de chaussures. Le
+        code doit avoir été préalablement collé physiquement sur la paire. Cette action
+        enregistre la collecte effective de la paire.
+      summary: Assigner un code à une paire de chaussures
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Delivery - Collecte
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignCodeRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AssignCodeRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AssignCodeRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/commandes/{id}/confirm_commande/:
+    post:
+      operationId: delivery_commandes_confirm_commande_create
+      description: Le livreur confirme qu'il a pris en charge la commande. Le client
+        sera notifié par email.
+      summary: Confirmer la prise en charge d'une commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - DELIVERY - Commande
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/commandes/{id}/validate-collecte/:
+    post:
+      operationId: delivery_commandes_validate_collecte_create
+      description: Valide que toutes les paires de chaussures ont été collectées avec
+        leurs codes. Vérifie que chaque produit a un code assigné avant de changer
+        le statut à 'collectée'. Envoie automatiquement des notifications au client
+        et aux administrateurs.
+      summary: Valider la collecte complète de la commande
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Delivery - Collecte
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/commandes/{id}/validate-livraison/:
+    post:
+      operationId: delivery_commandes_validate_livraison_create
+      description: Marque une commande comme livrée au client après réparation. Cette
+        action finalise le cycle complet de la commande. Des notifications sont automatiquement
+        envoyées au client et aux administrateurs.
+      summary: Valider la livraison finale au client
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Delivery - Livraison Finale
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/DeliveryCommandeDetailRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/commandes/codes-disponibles/:
+    get:
+      operationId: delivery_commandes_codes_disponibles_retrieve
+      description: Récupère la liste de tous les codes de collecte disponibles (non
+        utilisés). Ces codes doivent être collés sur chaque paire de chaussures lors
+        de la collecte.
+      summary: Liste des codes de collecte disponibles
+      tags:
+      - Delivery - Collecte
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeliveryCommandeDetail'
+          description: ''
+  /api/delivery/forgot_password/:
+    post:
+      operationId: delivery_forgot_password_create
+      description: Request password reset OTP code (email or phone)
+      summary: Forgot password
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/logout/:
+    post:
+      operationId: delivery_logout_create
+      description: Logout and blacklist both access and refresh tokens
+      summary: Logout delivery
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/LogoutRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/register/:
+    post:
+      operationId: delivery_register_create
+      description: Register a new DELIVERY user and send OTP verification code via
+        email
+      summary: Register new delivery person
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/resend_otp/:
+    post:
+      operationId: delivery_resend_otp_create
+      description: Resend OTP verification code to delivery email
+      summary: Resend OTP code
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/resend_otp_forgot_password/:
+    post:
+      operationId: delivery_resend_otp_forgot_password_create
+      description: Resend OTP code for password reset
+      summary: Resend OTP for forgot password
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/reset_password/:
+    post:
+      operationId: delivery_reset_password_create
+      description: Reset password after OTP verification
+      summary: Reset password
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/verify_otp/:
+    post:
+      operationId: delivery_verify_otp_create
+      description: Verify OTP code to activate delivery account
+      summary: Verify OTP code
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/delivery/verify_otp_forgot_password/:
+    post:
+      operationId: delivery_verify_otp_forgot_password_create
+      description: Verify OTP code sent for password reset
+      summary: Verify OTP for forgot password
+      tags:
+      - Delivery - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyOTPForgotPasswordRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Register'
+          description: ''
+  /api/faq/:
+    get:
+      operationId: faq_list
+      description: Récupère la liste de toutes les questions fréquemment posées (accessible
+        à tous).
+      summary: Lister toutes les FAQ
+      parameters:
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - in: query
+        name: question
+        schema:
+          type: string
+      - name: search
+        required: false
+        in: query
+        description: A search term.
+        schema:
+          type: string
+      tags:
+      - Client - FAQ
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedFaqList'
+          description: ''
+    post:
+      operationId: faq_create
+      description: Permet de créer une nouvelle question FAQ (réservé aux administrateurs).
+      summary: Créer une nouvelle FAQ
+      tags:
+      - Admin - FAQ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+          description: ''
+  /api/faq/{id}/:
+    get:
+      operationId: faq_retrieve
+      description: Récupère les détails complets d'une question FAQ spécifique (accessible
+        à tous).
+      summary: Détails d'une FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this faq.
+        required: true
+      tags:
+      - Client - FAQ
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+          description: ''
+    put:
+      operationId: faq_update
+      description: Permet de modifier complètement une question FAQ existante (réservé
+        aux administrateurs).
+      summary: Modifier une FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this faq.
+        required: true
+      tags:
+      - Admin - FAQ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FaqRequest'
+        required: true
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+          description: ''
+    patch:
+      operationId: faq_partial_update
+      description: Permet de modifier partiellement une question FAQ existante (réservé
+        aux administrateurs).
+      summary: Modifier partiellement une FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this faq.
+        required: true
+      tags:
+      - Admin - FAQ
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFaqRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFaqRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFaqRequest'
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Faq'
+          description: ''
+    delete:
+      operationId: faq_destroy
+      description: Permet de supprimer une question FAQ (réservé aux administrateurs).
+      summary: Supprimer une FAQ
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this faq.
+        required: true
+      tags:
+      - Admin - FAQ
+      security:
+      - jwtAuth: []
+      - BearerAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/login/:
+    post:
+      operationId: login_create
+      description: |-
+        Login with email or phone and password. Returns JWT access and refresh tokens.
+
+        Body: {"identifier": "email or phone", "password": "password"}
+      summary: Login (all roles)
+      tags:
+      - Client - Authentication
+      - Delivery - Authentication
+      - Admin - Authentication
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CustomTokenObtainPairRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomTokenObtainPair'
+          description: ''
+  /api/token/refresh/:
+    post:
+      operationId: token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefreshRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+components:
+  schemas:
+    ActionEnum:
+      enum:
+      - add
+      - remove
+      - set
+      type: string
+      description: |-
+        * `add` - add
+        * `remove` - remove
+        * `set` - set
+    ActivateDeactivateUserRequest:
+      type: object
+      description: Serializer for activating/deactivating user account.
+      properties:
+        is_active:
+          type: boolean
+          description: True pour activer, False pour désactiver
+      required:
+      - is_active
+    AdminChangePasswordRequest:
+      type: object
+      description: Serializer for admin changing user password (with current password
+        check).
+      properties:
+        current_password:
+          type: string
+          writeOnly: true
+          minLength: 1
+          description: Mot de passe actuel de l'utilisateur
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+          description: Nouveau mot de passe
+        new_password_confirm:
+          type: string
+          writeOnly: true
+          minLength: 1
+          description: Confirmation du nouveau mot de passe
+      required:
+      - current_password
+      - new_password
+      - new_password_confirm
+    AdminCheckout:
+      type: object
+      description: Serializer for admin checkout process (create commande for a user).
+      properties:
+        user_id:
+          type: integer
+          description: ID de l'utilisateur pour lequel créer la commande
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCheckoutProduit'
+        moyen_paiement_id:
+          type: integer
+        code_promo:
+          type: string
+          nullable: true
+        collecte:
+          $ref: '#/components/schemas/AdminCheckoutCollecte'
+      required:
+      - collecte
+      - moyen_paiement_id
+      - produits
+      - user_id
+    AdminCheckoutCollecte:
+      type: object
+      description: Serializer for collecte information during admin checkout.
+      properties:
+        adresse:
+          type: string
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone:
+          type: string
+          maxLength: 20
+        date:
+          type: string
+          format: date
+        creneau:
+          type: string
+          maxLength: 50
+        note:
+          type: string
+      required:
+      - adresse
+      - creneau
+      - date
+      - telephone
+    AdminCheckoutCollecteRequest:
+      type: object
+      description: Serializer for collecte information during admin checkout.
+      properties:
+        adresse:
+          type: string
+          minLength: 1
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone:
+          type: string
+          minLength: 1
+          maxLength: 20
+        date:
+          type: string
+          format: date
+        creneau:
+          type: string
+          minLength: 1
+          maxLength: 50
+        note:
+          type: string
+      required:
+      - adresse
+      - creneau
+      - date
+      - telephone
+    AdminCheckoutProduit:
+      type: object
+      description: Serializer for product data during admin checkout.
+      properties:
+        description:
+          type: string
+          maxLength: 500
+        marque:
+          type: string
+          maxLength: 100
+        modele:
+          type: string
+          maxLength: 100
+        couleur:
+          type: string
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+        note_utilisateur:
+          type: string
+        services_ids:
+          type: array
+          items:
+            type: integer
+          description: Liste des IDs de services à appliquer à ce produit
+          minItems: 1
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+      - services_ids
+    AdminCheckoutProduitRequest:
+      type: object
+      description: Serializer for product data during admin checkout.
+      properties:
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        marque:
+          type: string
+          minLength: 1
+          maxLength: 100
+        modele:
+          type: string
+          minLength: 1
+          maxLength: 100
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 50
+        photo:
+          type: string
+          format: binary
+        note_utilisateur:
+          type: string
+        services_ids:
+          type: array
+          items:
+            type: integer
+          description: Liste des IDs de services à appliquer à ce produit
+          minItems: 1
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+      - services_ids
+    AdminCheckoutRequest:
+      type: object
+      description: Serializer for admin checkout process (create commande for a user).
+      properties:
+        user_id:
+          type: integer
+          description: ID de l'utilisateur pour lequel créer la commande
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCheckoutProduitRequest'
+        moyen_paiement_id:
+          type: integer
+        code_promo:
+          type: string
+          nullable: true
+        collecte:
+          $ref: '#/components/schemas/AdminCheckoutCollecteRequest'
+      required:
+      - collecte
+      - moyen_paiement_id
+      - produits
+      - user_id
+    AdminCodePromo:
+      type: object
+      description: Serializer for admin code promo management.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          title: Code promo
+          description: 'Code unique (ex: NOEL2025)'
+          maxLength: 50
+        type_reduction:
+          allOf:
+          - $ref: '#/components/schemas/TypeReductionEnum'
+          title: Type de réduction
+        valeur:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: 'Pourcentage (ex: 20 pour 20%) ou montant fixe (ex: 50.00)'
+        date_debut:
+          type: string
+          format: date-time
+          title: Date de début
+        date_fin:
+          type: string
+          format: date-time
+          title: Date de fin
+        actif:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+        est_valide:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code
+      - created_at
+      - date_debut
+      - date_fin
+      - est_valide
+      - id
+      - type_reduction
+      - updated_at
+      - valeur
+    AdminCodePromoRequest:
+      type: object
+      description: Serializer for admin code promo management.
+      properties:
+        code:
+          type: string
+          minLength: 1
+          title: Code promo
+          description: 'Code unique (ex: NOEL2025)'
+          maxLength: 50
+        type_reduction:
+          allOf:
+          - $ref: '#/components/schemas/TypeReductionEnum'
+          title: Type de réduction
+        valeur:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: 'Pourcentage (ex: 20 pour 20%) ou montant fixe (ex: 50.00)'
+        date_debut:
+          type: string
+          format: date-time
+          title: Date de début
+        date_fin:
+          type: string
+          format: date-time
+          title: Date de fin
+        actif:
+          type: boolean
+        description:
+          type: string
+          nullable: true
+      required:
+      - code
+      - date_debut
+      - date_fin
+      - type_reduction
+      - valeur
+    AdminCommande:
+      type: object
+      description: Serializer for admin commande detail (read).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        user:
+          type: integer
+          title: Client
+        user_email:
+          type: string
+          format: email
+          readOnly: true
+        user_nom_complet:
+          type: string
+          readOnly: true
+        montant_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_reduction:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Montant réduction
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        moyen_paiement:
+          type: integer
+          title: Moyen de paiement
+        moyen_paiement_nom:
+          type: string
+          readOnly: true
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        code_promo:
+          type: integer
+          nullable: true
+        code_promo_code:
+          type: string
+          readOnly: true
+          nullable: true
+        delivery_person:
+          type: integer
+          nullable: true
+          title: Livreur collecte
+        delivery_person_nom:
+          type: string
+          readOnly: true
+        date_assignation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'assignation collecte
+        date_confirmation_livreur:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date de confirmation livreur collecte
+        rappel_envoye:
+          type: boolean
+          title: Rappel 1h avant envoyé
+        adresse_collecte:
+          type: string
+          title: Adresse de collecte
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone_collecte:
+          type: string
+          title: Téléphone
+          maxLength: 20
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          title: Créneau horaire
+          maxLength: 50
+        note_collecte:
+          type: string
+          nullable: true
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCommandeProduit'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - adresse_collecte
+      - code_promo_code
+      - code_unique
+      - created_at
+      - creneau_horaire
+      - date_collecte
+      - delivery_person_nom
+      - id
+      - montant_final
+      - montant_ht
+      - montant_ttc
+      - montant_tva
+      - moyen_paiement
+      - moyen_paiement_nom
+      - produits
+      - telephone_collecte
+      - updated_at
+      - user
+      - user_email
+      - user_nom_complet
+    AdminCommandeList:
+      type: object
+      description: Serializer for listing commandes (admin).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        user_email:
+          type: string
+          format: email
+          readOnly: true
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        moyen_paiement_nom:
+          type: string
+          readOnly: true
+        delivery_person_nom:
+          type: string
+          readOnly: true
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        nombre_produits:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code_unique
+      - created_at
+      - date_collecte
+      - delivery_person_nom
+      - id
+      - montant_final
+      - moyen_paiement_nom
+      - nombre_produits
+      - user_email
+    AdminCommandeProduit:
+      type: object
+      description: Serializer for products in a command (read only).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        marque:
+          type: string
+          maxLength: 100
+        modele:
+          type: string
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCommandeProduitService'
+          readOnly: true
+      required:
+      - couleur
+      - description
+      - id
+      - marque
+      - modele
+      - photo
+      - services
+    AdminCommandeProduitRequest:
+      type: object
+      description: Serializer for products in a command (read only).
+      properties:
+        description:
+          type: string
+          minLength: 1
+        marque:
+          type: string
+          minLength: 1
+          maxLength: 100
+        modele:
+          type: string
+          minLength: 1
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 50
+        photo:
+          type: string
+          format: binary
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+    AdminCommandeProduitService:
+      type: object
+      description: Serializer for services applied to a product (read only).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        service:
+          type: integer
+          title: Service (référence)
+        nom_service:
+          type: string
+          title: Nom du service
+          maxLength: 255
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - id
+      - montant_tva
+      - nom_service
+      - prix_ht
+      - prix_ttc
+      - service
+      - tva
+    AdminCommandeProduitServiceRequest:
+      type: object
+      description: Serializer for services applied to a product (read only).
+      properties:
+        service:
+          type: integer
+          title: Service (référence)
+        nom_service:
+          type: string
+          minLength: 1
+          title: Nom du service
+          maxLength: 255
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - montant_tva
+      - nom_service
+      - prix_ht
+      - prix_ttc
+      - service
+      - tva
+    AdminCommandeRequest:
+      type: object
+      description: Serializer for admin commande detail (read).
+      properties:
+        user:
+          type: integer
+          title: Client
+        montant_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        montant_reduction:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          title: Montant réduction
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        moyen_paiement:
+          type: integer
+          title: Moyen de paiement
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        code_promo:
+          type: integer
+          nullable: true
+        delivery_person:
+          type: integer
+          nullable: true
+          title: Livreur collecte
+        date_assignation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'assignation collecte
+        date_confirmation_livreur:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date de confirmation livreur collecte
+        rappel_envoye:
+          type: boolean
+          title: Rappel 1h avant envoyé
+        adresse_collecte:
+          type: string
+          minLength: 1
+          title: Adresse de collecte
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone_collecte:
+          type: string
+          minLength: 1
+          title: Téléphone
+          maxLength: 20
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          minLength: 1
+          title: Créneau horaire
+          maxLength: 50
+        note_collecte:
+          type: string
+          nullable: true
+      required:
+      - adresse_collecte
+      - creneau_horaire
+      - date_collecte
+      - montant_final
+      - montant_ht
+      - montant_ttc
+      - montant_tva
+      - moyen_paiement
+      - telephone_collecte
+      - user
+    AdminContact:
+      type: object
+      description: Serializer for Contact model (Admin view).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        sujet:
+          type: string
+          maxLength: 255
+        message:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - id
+      - message
+      - name
+      - sujet
+      - updated_at
+    AdminMoyenPaiement:
+      type: object
+      description: Serializer for admin moyen paiement management.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom:
+          type: string
+          maxLength: 100
+        code:
+          type: string
+          description: 'Code unique (ex: carte, especes, paypal)'
+          maxLength: 50
+        description:
+          type: string
+          nullable: true
+        actif:
+          type: boolean
+        icone:
+          type: string
+          nullable: true
+          title: Icône
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code
+      - created_at
+      - id
+      - nom
+      - updated_at
+    AdminMoyenPaiementRequest:
+      type: object
+      description: Serializer for admin moyen paiement management.
+      properties:
+        nom:
+          type: string
+          minLength: 1
+          maxLength: 100
+        code:
+          type: string
+          minLength: 1
+          description: 'Code unique (ex: carte, especes, paypal)'
+          maxLength: 50
+        description:
+          type: string
+          nullable: true
+        actif:
+          type: boolean
+        icone:
+          type: string
+          nullable: true
+          title: Icône
+          maxLength: 255
+      required:
+      - code
+      - nom
+    AdminResetPasswordRequest:
+      type: object
+      description: Serializer for admin password reset.
+      properties:
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+          description: Nouveau mot de passe (minimum 8 caractères)
+        new_password_confirm:
+          type: string
+          writeOnly: true
+          minLength: 1
+          description: Confirmation du nouveau mot de passe
+        send_email:
+          type: boolean
+          default: true
+          description: Envoyer un email de notification à l'utilisateur
+      required:
+      - new_password
+      - new_password_confirm
+    AdminService:
+      type: object
+      description: Serializer for admin service management.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom:
+          type: string
+          title: Nom du service
+          maxLength: 255
+        description:
+          type: string
+        prix_minimum_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Prix minimum hors taxe
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+          description: 'Taux de TVA en pourcentage (ex: 20.00 pour 20%)'
+        prix_minimum_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          description: Prix minimum toutes taxes comprises
+        montant_tva:
+          type: string
+          readOnly: true
+        delai_minimum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Délai minimum (jours)
+          description: Délai minimum en jours
+        delai_maximum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          title: Délai maximum (jours)
+          description: Délai maximum en jours (optionnel)
+        nombre_heures_delai_maximum:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Nombre d'heures (délai maximum)
+          description: Heures calculées depuis delai_max ou delai_min
+        statut:
+          $ref: '#/components/schemas/StatutEnum'
+        icone:
+          type: string
+          nullable: true
+          title: Icône
+          maxLength: 255
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - delai_minimum_jours
+      - description
+      - id
+      - montant_tva
+      - nom
+      - nombre_heures_delai_maximum
+      - prix_minimum_ht
+      - prix_minimum_ttc
+      - tva
+      - updated_at
+    AdminServiceList:
+      type: object
+      description: Serializer for listing services (admin).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom:
+          type: string
+          title: Nom du service
+          maxLength: 255
+        prix_minimum_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Prix minimum hors taxe
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+          description: 'Taux de TVA en pourcentage (ex: 20.00 pour 20%)'
+        prix_minimum_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          nullable: true
+          description: Prix minimum toutes taxes comprises
+        delai_minimum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Délai minimum (jours)
+          description: Délai minimum en jours
+        delai_maximum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          title: Délai maximum (jours)
+          description: Délai maximum en jours (optionnel)
+        statut:
+          $ref: '#/components/schemas/StatutEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - delai_minimum_jours
+      - id
+      - nom
+      - prix_minimum_ht
+      - tva
+    AdminServiceRequest:
+      type: object
+      description: Serializer for admin service management.
+      properties:
+        nom:
+          type: string
+          minLength: 1
+          title: Nom du service
+          maxLength: 255
+        description:
+          type: string
+          minLength: 1
+        prix_minimum_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          description: Prix minimum hors taxe
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+          description: 'Taux de TVA en pourcentage (ex: 20.00 pour 20%)'
+        delai_minimum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Délai minimum (jours)
+          description: Délai minimum en jours
+        delai_maximum_jours:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          nullable: true
+          title: Délai maximum (jours)
+          description: Délai maximum en jours (optionnel)
+        nombre_heures_delai_maximum:
+          type: integer
+          maximum: 2147483647
+          minimum: -2147483648
+          title: Nombre d'heures (délai maximum)
+          description: Heures calculées depuis delai_max ou delai_min
+        statut:
+          $ref: '#/components/schemas/StatutEnum'
+        icone:
+          type: string
+          nullable: true
+          title: Icône
+          maxLength: 255
+      required:
+      - delai_minimum_jours
+      - description
+      - nom
+      - nombre_heures_delai_maximum
+      - prix_minimum_ht
+      - tva
+    AssignCodeRequest:
+      type: object
+      description: Serializer for assigning a code to a product.
+      properties:
+        produit_id:
+          type: integer
+          description: ID du produit (chaussure) auquel assigner le code
+        code:
+          type: string
+          minLength: 1
+          description: Code de collecte à assigner
+          maxLength: 20
+      required:
+      - code
+      - produit_id
+    AssignDeliveryPersonLivraisonRequest:
+      type: object
+      description: Serializer for assigning a delivery person for delivery (livraison).
+      properties:
+        delivery_person_id:
+          type: integer
+          description: ID du livreur à assigner pour la livraison
+        date_livraison:
+          type: string
+          format: date
+          description: Date de livraison prévue
+      required:
+      - date_livraison
+      - delivery_person_id
+    AssignDeliveryPersonRequest:
+      type: object
+      description: Serializer for assigning a delivery person to a commande.
+      properties:
+        delivery_person_id:
+          type: integer
+          description: ID du livreur à assigner à cette commande
+      required:
+      - delivery_person_id
+    BlockUnblockUserRequest:
+      type: object
+      description: Serializer for blocking/unblocking user account.
+      properties:
+        is_blocked:
+          type: boolean
+          description: True pour bloquer, False pour débloquer
+        reason:
+          type: string
+          description: Raison du blocage (optionnel)
+      required:
+      - is_blocked
+    Checkout:
+      type: object
+      description: Serializer for checkout process.
+      properties:
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckoutProduit'
+        moyen_paiement_id:
+          type: integer
+        code_promo:
+          type: string
+          nullable: true
+        collecte:
+          $ref: '#/components/schemas/CheckoutCollecte'
+      required:
+      - collecte
+      - moyen_paiement_id
+      - produits
+    CheckoutCollecte:
+      type: object
+      description: Serializer for collecte information during checkout.
+      properties:
+        adresse:
+          type: string
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone:
+          type: string
+          maxLength: 20
+        date:
+          type: string
+          format: date
+        creneau:
+          type: string
+          maxLength: 50
+        note:
+          type: string
+      required:
+      - adresse
+      - creneau
+      - date
+      - telephone
+    CheckoutCollecteRequest:
+      type: object
+      description: Serializer for collecte information during checkout.
+      properties:
+        adresse:
+          type: string
+          minLength: 1
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone:
+          type: string
+          minLength: 1
+          maxLength: 20
+        date:
+          type: string
+          format: date
+        creneau:
+          type: string
+          minLength: 1
+          maxLength: 50
+        note:
+          type: string
+      required:
+      - adresse
+      - creneau
+      - date
+      - telephone
+    CheckoutProduit:
+      type: object
+      description: Serializer for product data during checkout.
+      properties:
+        description:
+          type: string
+          maxLength: 500
+        marque:
+          type: string
+          maxLength: 100
+        modele:
+          type: string
+          maxLength: 100
+        couleur:
+          type: string
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+        note_utilisateur:
+          type: string
+        services_ids:
+          type: array
+          items:
+            type: integer
+          description: Liste des IDs de services à appliquer à ce produit
+          minItems: 1
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+      - services_ids
+    CheckoutProduitRequest:
+      type: object
+      description: Serializer for product data during checkout.
+      properties:
+        description:
+          type: string
+          minLength: 1
+          maxLength: 500
+        marque:
+          type: string
+          minLength: 1
+          maxLength: 100
+        modele:
+          type: string
+          minLength: 1
+          maxLength: 100
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 50
+        photo:
+          type: string
+          format: binary
+        note_utilisateur:
+          type: string
+        services_ids:
+          type: array
+          items:
+            type: integer
+          description: Liste des IDs de services à appliquer à ce produit
+          minItems: 1
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+      - services_ids
+    CheckoutRequest:
+      type: object
+      description: Serializer for checkout process.
+      properties:
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/CheckoutProduitRequest'
+        moyen_paiement_id:
+          type: integer
+        code_promo:
+          type: string
+          nullable: true
+        collecte:
+          $ref: '#/components/schemas/CheckoutCollecteRequest'
+      required:
+      - collecte
+      - moyen_paiement_id
+      - produits
+    ClientCommande:
+      type: object
+      description: Serializer for client command detail view.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        montant_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        montant_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        montant_reduction:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+          title: Montant réduction
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        statut_paiement:
+          allOf:
+          - $ref: '#/components/schemas/StatutPaiementEnum'
+          readOnly: true
+        moyen_paiement_nom:
+          type: string
+          readOnly: true
+        statut_commande:
+          allOf:
+          - $ref: '#/components/schemas/StatutCommandeEnum'
+          readOnly: true
+        adresse_collecte:
+          type: string
+          readOnly: true
+          title: Adresse de collecte
+        telephone_collecte:
+          type: string
+          readOnly: true
+          title: Téléphone
+        date_collecte:
+          type: string
+          format: date
+          readOnly: true
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          readOnly: true
+          title: Créneau horaire
+        note_collecte:
+          type: string
+          readOnly: true
+          nullable: true
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientCommandeProduit'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - adresse_collecte
+      - code_unique
+      - created_at
+      - creneau_horaire
+      - date_collecte
+      - id
+      - montant_final
+      - montant_ht
+      - montant_reduction
+      - montant_ttc
+      - montant_tva
+      - moyen_paiement_nom
+      - note_collecte
+      - produits
+      - statut_commande
+      - statut_paiement
+      - telephone_collecte
+    ClientCommandeList:
+      type: object
+      description: Serializer for listing client commands.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+        statut_paiement:
+          allOf:
+          - $ref: '#/components/schemas/StatutPaiementEnum'
+          readOnly: true
+        statut_commande:
+          allOf:
+          - $ref: '#/components/schemas/StatutCommandeEnum'
+          readOnly: true
+        moyen_paiement_nom:
+          type: string
+          readOnly: true
+        date_collecte:
+          type: string
+          format: date
+          readOnly: true
+          title: Date de collecte
+        nombre_produits:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code_unique
+      - created_at
+      - date_collecte
+      - id
+      - montant_final
+      - moyen_paiement_nom
+      - nombre_produits
+      - statut_commande
+      - statut_paiement
+    ClientCommandeProduit:
+      type: object
+      description: Serializer for products in client command view.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        marque:
+          type: string
+          maxLength: 100
+        modele:
+          type: string
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientCommandeProduitService'
+          readOnly: true
+      required:
+      - couleur
+      - description
+      - id
+      - marque
+      - modele
+      - photo
+      - services
+    ClientCommandeProduitRequest:
+      type: object
+      description: Serializer for products in client command view.
+      properties:
+        description:
+          type: string
+          minLength: 1
+        marque:
+          type: string
+          minLength: 1
+          maxLength: 100
+        modele:
+          type: string
+          minLength: 1
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 50
+        photo:
+          type: string
+          format: binary
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+    ClientCommandeProduitService:
+      type: object
+      description: Serializer for services in client command view.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom_service:
+          type: string
+          title: Nom du service
+          maxLength: 255
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - id
+      - montant_tva
+      - nom_service
+      - prix_ht
+      - prix_ttc
+      - tva
+    ClientCommandeProduitServiceRequest:
+      type: object
+      description: Serializer for services in client command view.
+      properties:
+        nom_service:
+          type: string
+          minLength: 1
+          title: Nom du service
+          maxLength: 255
+        prix_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          title: TVA (%)
+        montant_tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - montant_tva
+      - nom_service
+      - prix_ht
+      - prix_ttc
+      - tva
+    ClientContact:
+      type: object
+      description: Serializer for Contact model (Client view - creation only).
+      properties:
+        name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        sujet:
+          type: string
+          maxLength: 255
+        message:
+          type: string
+      required:
+      - email
+      - message
+      - name
+      - sujet
+    ClientContactRequest:
+      type: object
+      description: Serializer for Contact model (Client view - creation only).
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 255
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        sujet:
+          type: string
+          minLength: 1
+          maxLength: 255
+        message:
+          type: string
+          minLength: 1
+      required:
+      - email
+      - message
+      - name
+      - sujet
+    ClientService:
+      type: object
+      description: Serializer for client service viewing (public).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom:
+          type: string
+          readOnly: true
+          title: Nom du service
+        description:
+          type: string
+          readOnly: true
+        prix_minimum_ht:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+          description: Prix minimum hors taxe
+        tva:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+          title: TVA (%)
+          description: 'Taux de TVA en pourcentage (ex: 20.00 pour 20%)'
+        prix_minimum_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+          description: Prix minimum toutes taxes comprises
+        montant_tva:
+          type: string
+          readOnly: true
+        delai_minimum_jours:
+          type: integer
+          readOnly: true
+          title: Délai minimum (jours)
+          description: Délai minimum en jours
+        delai_maximum_jours:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: Délai maximum (jours)
+          description: Délai maximum en jours (optionnel)
+        nombre_heures_delai_maximum:
+          type: integer
+          readOnly: true
+          title: Nombre d'heures (délai maximum)
+          description: Heures calculées depuis delai_max ou delai_min
+        icone:
+          type: string
+          readOnly: true
+          nullable: true
+          title: Icône
+      required:
+      - delai_maximum_jours
+      - delai_minimum_jours
+      - description
+      - icone
+      - id
+      - montant_tva
+      - nom
+      - nombre_heures_delai_maximum
+      - prix_minimum_ht
+      - prix_minimum_ttc
+      - tva
+    CodeCollecte:
+      type: object
+      description: Serializer for code collecte.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          title: Code unique
+          maxLength: 20
+        genere_par:
+          type: integer
+          title: Généré par
+        genere_par_nom:
+          type: string
+          readOnly: true
+        utilise:
+          type: boolean
+          title: Utilisé
+        date_utilisation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'utilisation
+        commande_produit:
+          type: integer
+          nullable: true
+          title: Produit associé
+        commande_numero:
+          type: string
+          readOnly: true
+        produit_details:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - code
+      - commande_numero
+      - created_at
+      - genere_par
+      - genere_par_nom
+      - id
+      - produit_details
+    ContextEnum:
+      enum:
+      - CLIENT
+      - DELIVERY
+      - ADMIN
+      - SUPERADMIN
+      type: string
+      description: |-
+        * `CLIENT` - CLIENT
+        * `DELIVERY` - DELIVERY
+        * `ADMIN` - ADMIN
+        * `SUPERADMIN` - SUPERADMIN
+    CustomTokenObtainPair:
+      type: object
+      description: |-
+        Custom JWT serializer to allow login with email OR phone.
+        Includes context (role) verification for security.
+      properties:
+        identifier:
+          type: string
+        context:
+          allOf:
+          - $ref: '#/components/schemas/ContextEnum'
+          description: |-
+            User role context (CLIENT, DELIVERY, ADMIN, or SUPERADMIN)
+
+            * `CLIENT` - CLIENT
+            * `DELIVERY` - DELIVERY
+            * `ADMIN` - ADMIN
+            * `SUPERADMIN` - SUPERADMIN
+      required:
+      - context
+      - identifier
+    CustomTokenObtainPairRequest:
+      type: object
+      description: |-
+        Custom JWT serializer to allow login with email OR phone.
+        Includes context (role) verification for security.
+      properties:
+        identifier:
+          type: string
+          minLength: 1
+        password:
+          type: string
+          writeOnly: true
+          minLength: 1
+        context:
+          allOf:
+          - $ref: '#/components/schemas/ContextEnum'
+          description: |-
+            User role context (CLIENT, DELIVERY, ADMIN, or SUPERADMIN)
+
+            * `CLIENT` - CLIENT
+            * `DELIVERY` - DELIVERY
+            * `ADMIN` - ADMIN
+            * `SUPERADMIN` - SUPERADMIN
+      required:
+      - context
+      - identifier
+      - password
+    DeliveryCommandeDetail:
+      type: object
+      description: Serializer for detailed view of a commande (delivery).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        client_nom:
+          type: string
+          readOnly: true
+        client_email:
+          type: string
+          format: email
+          readOnly: true
+        client_telephone:
+          type: string
+          readOnly: true
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          title: Créneau horaire
+          maxLength: 50
+        adresse_collecte:
+          type: string
+          title: Adresse de collecte
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone_collecte:
+          type: string
+          title: Téléphone
+          maxLength: 20
+        note_collecte:
+          type: string
+          nullable: true
+        produits:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryCommandeProduit'
+          readOnly: true
+        date_assignation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'assignation collecte
+        date_confirmation_livreur:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date de confirmation livreur collecte
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - adresse_collecte
+      - client_email
+      - client_nom
+      - client_telephone
+      - code_unique
+      - created_at
+      - creneau_horaire
+      - date_collecte
+      - id
+      - montant_final
+      - produits
+      - telephone_collecte
+    DeliveryCommandeDetailRequest:
+      type: object
+      description: Serializer for detailed view of a commande (delivery).
+      properties:
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          minLength: 1
+          title: Créneau horaire
+          maxLength: 50
+        adresse_collecte:
+          type: string
+          minLength: 1
+          title: Adresse de collecte
+        latitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        longitude:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,7})?$
+          nullable: true
+        telephone_collecte:
+          type: string
+          minLength: 1
+          title: Téléphone
+          maxLength: 20
+        note_collecte:
+          type: string
+          nullable: true
+        date_assignation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'assignation collecte
+        date_confirmation_livreur:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date de confirmation livreur collecte
+      required:
+      - adresse_collecte
+      - creneau_horaire
+      - date_collecte
+      - montant_final
+      - telephone_collecte
+    DeliveryCommandeList:
+      type: object
+      description: Serializer for listing commandes assigned to delivery person.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        code_unique:
+          type: string
+          readOnly: true
+          title: Code commande
+        client_nom:
+          type: string
+          readOnly: true
+        montant_final:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+        date_collecte:
+          type: string
+          format: date
+          title: Date de collecte
+        creneau_horaire:
+          type: string
+          title: Créneau horaire
+          maxLength: 50
+        adresse_collecte:
+          type: string
+          title: Adresse de collecte
+        nombre_produits:
+          type: string
+          readOnly: true
+        date_assignation:
+          type: string
+          format: date-time
+          nullable: true
+          title: Date d'assignation collecte
+      required:
+      - adresse_collecte
+      - client_nom
+      - code_unique
+      - creneau_horaire
+      - date_collecte
+      - id
+      - montant_final
+      - nombre_produits
+    DeliveryCommandeProduit:
+      type: object
+      description: Serializer for products in a commande (delivery view).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        description:
+          type: string
+        marque:
+          type: string
+          maxLength: 100
+        modele:
+          type: string
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          maxLength: 50
+        photo:
+          type: string
+          format: uri
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        services:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryCommandeProduitService'
+          readOnly: true
+      required:
+      - couleur
+      - description
+      - id
+      - marque
+      - modele
+      - photo
+      - services
+    DeliveryCommandeProduitRequest:
+      type: object
+      description: Serializer for products in a commande (delivery view).
+      properties:
+        description:
+          type: string
+          minLength: 1
+        marque:
+          type: string
+          minLength: 1
+          maxLength: 100
+        modele:
+          type: string
+          minLength: 1
+          title: Modèle
+          maxLength: 100
+        couleur:
+          type: string
+          minLength: 1
+          maxLength: 50
+        photo:
+          type: string
+          format: binary
+        note_utilisateur:
+          type: string
+          nullable: true
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - couleur
+      - description
+      - marque
+      - modele
+      - photo
+    DeliveryCommandeProduitService:
+      type: object
+      description: Serializer for services in a product (delivery view).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        nom_service:
+          type: string
+          title: Nom du service
+          maxLength: 255
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - id
+      - nom_service
+      - prix_ttc
+    DeliveryCommandeProduitServiceRequest:
+      type: object
+      description: Serializer for services in a product (delivery view).
+      properties:
+        nom_service:
+          type: string
+          minLength: 1
+          title: Nom du service
+          maxLength: 255
+        prix_ttc:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+      required:
+      - nom_service
+      - prix_ttc
+    DeliveryPerson:
+      type: object
+      description: Serializer for DeliveryPerson model.
+      properties:
+        user:
+          allOf:
+          - $ref: '#/components/schemas/User'
+          readOnly: true
+        is_available:
+          type: boolean
+        current_location_lat:
+          type: number
+          format: double
+          nullable: true
+        current_location_lon:
+          type: number
+          format: double
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - updated_at
+      - user
+    DeliveryPersonRequest:
+      type: object
+      description: Serializer for DeliveryPerson model.
+      properties:
+        is_available:
+          type: boolean
+        current_location_lat:
+          type: number
+          format: double
+          nullable: true
+        current_location_lon:
+          type: number
+          format: double
+          nullable: true
+    Faq:
+      type: object
+      description: Serializer for FAQ model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        question:
+          type: string
+          maxLength: 255
+        answer:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - answer
+      - created_at
+      - id
+      - question
+      - updated_at
+    FaqRequest:
+      type: object
+      description: Serializer for FAQ model.
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 255
+        answer:
+          type: string
+          minLength: 1
+      required:
+      - answer
+      - question
+    ForgotPasswordRequest:
+      type: object
+      description: Serializer for forgot password request.
+      properties:
+        identifier:
+          type: string
+          minLength: 1
+          description: Email or phone number
+      required:
+      - identifier
+    Logout:
+      type: object
+      description: |-
+        Serializer for logout request.
+        Requires refresh_token to blacklist both access and refresh tokens.
+      properties:
+        refresh_token:
+          type: string
+          description: Refresh token to blacklist
+      required:
+      - refresh_token
+    LogoutRequest:
+      type: object
+      description: |-
+        Serializer for logout request.
+        Requires refresh_token to blacklist both access and refresh tokens.
+      properties:
+        refresh_token:
+          type: string
+          minLength: 1
+          description: Refresh token to blacklist
+      required:
+      - refresh_token
+    ManageRolesRequest:
+      type: object
+      description: Serializer for adding/removing roles.
+      properties:
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RolesEnum'
+          description: Liste des rôles à ajouter ou retirer
+        action:
+          allOf:
+          - $ref: '#/components/schemas/ActionEnum'
+          description: |-
+            Action: 'add' (ajouter), 'remove' (retirer), 'set' (définir exactement)
+
+            * `add` - add
+            * `remove` - remove
+            * `set` - set
+      required:
+      - action
+      - roles
+    PaginatedAdminCodePromoList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCodePromo'
+    PaginatedAdminCommandeListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminCommandeList'
+    PaginatedAdminContactList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminContact'
+    PaginatedAdminMoyenPaiementList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminMoyenPaiement'
+    PaginatedAdminServiceListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminServiceList'
+    PaginatedClientCommandeListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientCommandeList'
+    PaginatedClientServiceList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClientService'
+    PaginatedCodeCollecteList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CodeCollecte'
+    PaginatedDeliveryCommandeListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryCommandeList'
+    PaginatedDeliveryPersonList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DeliveryPerson'
+    PaginatedFaqList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Faq'
+    PaginatedUserListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserList'
+    PatchedFaqRequest:
+      type: object
+      description: Serializer for FAQ model.
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 255
+        answer:
+          type: string
+          minLength: 1
+    Register:
+      type: object
+      description: Serializer for user registration.
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        role:
+          type: string
+          readOnly: true
+      required:
+      - email
+      - role
+    RegisterRequest:
+      type: object
+      description: Serializer for user registration.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        password_confirm:
+          type: string
+          writeOnly: true
+          minLength: 1
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+      required:
+      - email
+      - password
+      - password_confirm
+    ResendOTPRequest:
+      type: object
+      description: Serializer for resending OTP.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+      required:
+      - email
+    ResetPasswordRequest:
+      type: object
+      description: Serializer for resetting password after OTP verification.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        new_password:
+          type: string
+          writeOnly: true
+          minLength: 8
+        new_password_confirm:
+          type: string
+          writeOnly: true
+          minLength: 1
+      required:
+      - email
+      - new_password
+      - new_password_confirm
+    RolesEnum:
+      enum:
+      - CLIENT
+      - DELIVERY
+      - ADMIN
+      - SUPERADMIN
+      type: string
+      description: |-
+        * `CLIENT` - Client
+        * `DELIVERY` - Delivery Person
+        * `ADMIN` - Administrator
+        * `SUPERADMIN` - Super Administrator
+    StatutCommandeEnum:
+      enum:
+      - nouvelle
+      - confirmee
+      - en_collecte
+      - collectee
+      - en_cours
+      - prete
+      - en_livraison
+      - terminee
+      - annulee
+      type: string
+      description: |-
+        * `nouvelle` - Nouvelle
+        * `confirmee` - Confirmée
+        * `en_collecte` - En collecte
+        * `collectee` - Collectée
+        * `en_cours` - En cours
+        * `prete` - Prête
+        * `en_livraison` - En livraison
+        * `terminee` - Terminée
+        * `annulee` - Annulée
+    StatutEnum:
+      enum:
+      - actif
+      - inactif
+      - brouillon
+      type: string
+      description: |-
+        * `actif` - Actif
+        * `inactif` - Inactif
+        * `brouillon` - Brouillon
+    StatutPaiementEnum:
+      enum:
+      - en_attente
+      - paye
+      - echoue
+      - rembourse
+      type: string
+      description: |-
+        * `en_attente` - En attente
+        * `paye` - Payé
+        * `echoue` - Échoué
+        * `rembourse` - Remboursé
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+    TokenRefreshRequest:
+      type: object
+      properties:
+        refresh:
+          type: string
+          minLength: 1
+      required:
+      - refresh
+    TypeReductionEnum:
+      enum:
+      - pourcentage
+      - montant_fixe
+      type: string
+      description: |-
+        * `pourcentage` - Pourcentage
+        * `montant_fixe` - Montant fixe
+    UpdateStatutRequest:
+      type: object
+      description: Serializer for updating command status.
+      properties:
+        statut_paiement:
+          $ref: '#/components/schemas/StatutPaiementEnum'
+        statut_commande:
+          $ref: '#/components/schemas/StatutCommandeEnum'
+    User:
+      type: object
+      description: Serializer for User model - Admin version with all fields.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        username:
+          type: string
+          title: Nom d’utilisateur
+          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
+            et les caractères « @ », « . », « + », « - » et « _ ».
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        roles:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Actif
+          description: Précise si l’utilisateur doit être considéré comme actif. Décochez
+            ceci plutôt que de supprimer le compte.
+        is_verified:
+          type: boolean
+        is_staff:
+          type: boolean
+          title: Statut équipe
+          description: Précise si l’utilisateur peut se connecter à ce site d'administration.
+        is_superuser:
+          type: boolean
+          title: Statut super-utilisateur
+          description: Précise que l’utilisateur possède toutes les permissions sans
+            les assigner explicitement.
+        is_blocked:
+          type: boolean
+          description: Compte bloqué temporairement
+        is_deleted:
+          type: boolean
+          description: Suppression logique du compte
+        deleted_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          description: Date de suppression
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - deleted_at
+      - email
+      - full_name
+      - id
+      - roles
+      - updated_at
+      - username
+    UserList:
+      type: object
+      description: Serializer for listing users (lighter version).
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        email:
+          type: string
+          format: email
+          maxLength: 254
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        full_name:
+          type: string
+          readOnly: true
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        roles:
+          type: string
+          readOnly: true
+        is_active:
+          type: boolean
+          title: Actif
+          description: Précise si l’utilisateur doit être considéré comme actif. Décochez
+            ceci plutôt que de supprimer le compte.
+        is_verified:
+          type: boolean
+        is_blocked:
+          type: boolean
+          description: Compte bloqué temporairement
+        is_deleted:
+          type: boolean
+          description: Suppression logique du compte
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - email
+      - full_name
+      - id
+      - roles
+    UserRequest:
+      type: object
+      description: Serializer for User model - Admin version with all fields.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        username:
+          type: string
+          minLength: 1
+          title: Nom d’utilisateur
+          description: Requis. 150 caractères maximum. Uniquement des lettres, nombres
+            et les caractères « @ », « . », « + », « - » et « _ ».
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        first_name:
+          type: string
+          title: Prénom
+          maxLength: 150
+        last_name:
+          type: string
+          title: Nom
+          maxLength: 150
+        phone:
+          type: string
+          nullable: true
+          maxLength: 20
+        is_active:
+          type: boolean
+          title: Actif
+          description: Précise si l’utilisateur doit être considéré comme actif. Décochez
+            ceci plutôt que de supprimer le compte.
+        is_verified:
+          type: boolean
+        is_staff:
+          type: boolean
+          title: Statut équipe
+          description: Précise si l’utilisateur peut se connecter à ce site d'administration.
+        is_superuser:
+          type: boolean
+          title: Statut super-utilisateur
+          description: Précise que l’utilisateur possède toutes les permissions sans
+            les assigner explicitement.
+        is_blocked:
+          type: boolean
+          description: Compte bloqué temporairement
+        is_deleted:
+          type: boolean
+          description: Suppression logique du compte
+      required:
+      - email
+      - username
+    ValidateOTPRequest:
+      type: object
+      description: Serializer for admin OTP validation override.
+      properties:
+        is_verified:
+          type: boolean
+          description: True pour valider l'OTP, False pour invalider
+        clear_otp:
+          type: boolean
+          default: true
+          description: Si True, efface le code OTP après validation
+      required:
+      - is_verified
+    VerifyOTPForgotPasswordRequest:
+      type: object
+      description: Serializer for verifying OTP for forgot password.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        otp_code:
+          type: string
+          minLength: 6
+          maxLength: 6
+      required:
+      - email
+      - otp_code
+    VerifyOTPRequest:
+      type: object
+      description: Serializer for OTP verification.
+      properties:
+        email:
+          type: string
+          format: email
+          minLength: 1
+        otp_code:
+          type: string
+          minLength: 6
+          maxLength: 6
+      required:
+      - email
+      - otp_code
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

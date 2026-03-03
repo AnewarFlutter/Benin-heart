@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annulation d'assignation</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Annulation d'assignation</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ livreur.user.get_full_name|default:livreur.user.email }},</p>
+
+            <p class="message">
+                {% if type_assignation == 'collecte' %}
+                Vous n'etes plus assigne pour la collecte de cette commande.
+                {% else %}
+                Vous n'etes plus assigne pour la livraison de cette commande.
+                {% endif %}
+            </p>
+
+            <p class="message">Nous vous informons que vous n'etes plus assigne {% if type_assignation == 'collecte' %}a la collecte{% else %}a la livraison{% endif %} de la commande <strong>#{{ commande.code_unique }}</strong>.</p>
+
+            <p class="message">Un autre livreur a ete assigne pour cette mission.</p>
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date de la commande :</span>
+                    <span class="value">{{ commande.created_at|date:"d/m/Y a H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Statut actuel :</span>
+                    <span class="value">{{ commande.get_statut_commande_display }}</span>
+                </div>
+                {% if type_assignation == 'collecte' %}
+                <div class="info-row">
+                    <span class="label">Date de collecte prevue :</span>
+                    <span class="value">{{ commande.date_collecte|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Creneau horaire :</span>
+                    <span class="value">{{ commande.creneau_horaire }}</span>
+                </div>
+                {% endif %}
+                {% if type_assignation == 'livraison' and commande.date_livraison %}
+                <div class="info-row">
+                    <span class="label">Date de livraison prevue :</span>
+                    <span class="value">{{ commande.date_livraison|date:"d/m/Y" }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="note-box">
+                <h3 style="margin-top: 0; font-size: 16px; font-weight: 600; color: #333333;">Action requise</h3>
+                <p><strong>Vous n'avez aucune action a effectuer pour cette commande.</strong></p>
+                <p>Veuillez ne pas vous presenter {% if type_assignation == 'collecte' %}a l'adresse de collecte{% else %}a l'adresse de livraison{% endif %}.</p>
+            </div>
+
+            <p class="message">Si vous avez des questions concernant cette annulation, n'hesitez pas a contacter l'equipe administrative.</p>
+
+            <p class="message"><strong>L'equipe Allocireur</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,862 @@
+{
+	"info": {
+		"_postman_id": "client-api-shoemaker-2025",
+		"name": "Shoemaker API - CLIENT",
+		"description": "Collection complète des endpoints API pour les clients de l'application Shoemaker.\n\n**Développeurs Backend:**\n- DAMALA Mohamed (dmlattanda@gmail.com)\n- Ismaila Diakhate\n\n**Date:** Décembre 2025\n\n**Authentification:**\nLa plupart des endpoints nécessitent un token JWT Bearer obtenu via l'endpoint de connexion.\n\n**Usage:**\n1. Inscrivez-vous via /register\n2. Vérifiez votre email avec le code OTP via /verify_otp\n3. Connectez-vous via /login\n4. Le token d'accès sera automatiquement sauvegardé dans la variable d'environnement {{access_token}}\n5. Utilisez les autres endpoints avec ce token",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentification Client",
+			"item": [
+				{
+					"name": "Inscription Client",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Jean\",\n    \"last_name\": \"Dupont\",\n    \"email\": \"jean.dupont@example.com\",\n    \"phone\": \"+33612345678\",\n    \"password\": \"MotDePasse123!\",\n    \"password_confirm\": \"MotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/register/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "register", ""]
+						},
+						"description": "Inscrit un nouveau client et envoie un code OTP par email pour vérification du compte.\n\n**Accès:** Public\n\n**Champs requis:**\n- first_name: Prénom\n- last_name: Nom de famille\n- email: Adresse email (unique)\n- phone: Numéro de téléphone\n- password: Mot de passe\n- password_confirm: Confirmation du mot de passe"
+					},
+					"response": []
+				},
+				{
+					"name": "Vérifier Code OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jean.dupont@example.com\",\n    \"otp_code\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/verify_otp/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "verify_otp", ""]
+						},
+						"description": "Vérifie le code OTP reçu par email pour activer le compte client.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- otp_code: Code à 6 chiffres reçu par email\n\n**Note:** Le code OTP expire après 10 minutes."
+					},
+					"response": []
+				},
+				{
+					"name": "Renvoyer Code OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jean.dupont@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/resend_otp/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "resend_otp", ""]
+						},
+						"description": "Renvoie un nouveau code OTP par email pour la vérification du compte.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte"
+					},
+					"response": []
+				},
+				{
+					"name": "Connexion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access);",
+									"    pm.environment.set(\"refresh_token\", jsonData.refresh);",
+									"    console.log(\"Tokens sauvegardés avec succès\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"jean.dupont@example.com\",\n    \"password\": \"MotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login", ""]
+						},
+						"description": "Connecte un client et retourne les tokens JWT (access et refresh).\n\n**Accès:** Public\n\n**Champs requis:**\n- identifier: Email ou numéro de téléphone\n- password: Mot de passe\n\n**Note:** Les tokens sont automatiquement sauvegardés dans les variables d'environnement."
+					},
+					"response": []
+				},
+				{
+					"name": "Rafraîchir Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access);",
+									"    if (jsonData.refresh) {",
+									"        pm.environment.set(\"refresh_token\", jsonData.refresh);",
+									"    }",
+									"    console.log(\"Token d'accès rafraîchi\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "token", "refresh", ""]
+						},
+						"description": "Rafraîchit le token d'accès en utilisant le refresh token.\n\n**Accès:** Public\n\n**Champs requis:**\n- refresh: Refresh token obtenu lors de la connexion\n\n**Note:** Retourne un nouveau access token (et parfois un nouveau refresh token si rotation activée)."
+					},
+					"response": []
+				},
+				{
+					"name": "Mot de Passe Oublié",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"jean.dupont@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "forgot_password", ""]
+						},
+						"description": "Demande un code OTP pour réinitialiser le mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- identifier: Email ou numéro de téléphone\n\n**Note:** Un code OTP sera envoyé par email pour vérification."
+					},
+					"response": []
+				},
+				{
+					"name": "Vérifier OTP Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jean.dupont@example.com\",\n    \"otp_code\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/verify_otp_forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "verify_otp_forgot_password", ""]
+						},
+						"description": "Vérifie le code OTP pour la réinitialisation du mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- otp_code: Code à 6 chiffres reçu par email"
+					},
+					"response": []
+				},
+				{
+					"name": "Renvoyer OTP Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jean.dupont@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/resend_otp_forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "resend_otp_forgot_password", ""]
+						},
+						"description": "Renvoie un nouveau code OTP pour la réinitialisation du mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte"
+					},
+					"response": []
+				},
+				{
+					"name": "Réinitialiser Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"jean.dupont@example.com\",\n    \"new_password\": \"NouveauMotDePasse123!\",\n    \"confirm_password\": \"NouveauMotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/reset_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "reset_password", ""]
+						},
+						"description": "Réinitialise le mot de passe après vérification OTP.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- new_password: Nouveau mot de passe\n- confirm_password: Confirmation du nouveau mot de passe\n\n**Note:** Vous devez d'abord avoir vérifié le code OTP."
+					},
+					"response": []
+				},
+				{
+					"name": "Déconnexion",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "logout", ""]
+						},
+						"description": "Déconnecte le client et met les tokens (access et refresh) en liste noire.\n\n**Accès:** Authentifié (CLIENT)\n\n**Champs requis:**\n- refresh_token: Token de rafraîchissement à invalider\n\n**Headers requis:**\n- Authorization: Bearer {access_token}"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints pour l'authentification et la gestion du compte client"
+		},
+		{
+			"name": "🛠️ Services",
+			"item": [
+				{
+					"name": "Liste des Services Disponibles",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/services/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "services", ""]
+						},
+						"description": "Récupère la liste de tous les services actifs disponibles pour les clients.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Retourne:**\n- Liste des services avec nom, description, prix minimum HT, TVA, image, etc."
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation des services de réparation disponibles"
+		},
+		{
+			"name": "💰 Moyens de Paiement",
+			"item": [
+				{
+					"name": "Liste des Moyens de Paiement",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/moyens-paiement/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "moyens-paiement", ""]
+						},
+						"description": "Récupère la liste de tous les moyens de paiement actifs.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Retourne:**\n- Liste des moyens de paiement avec nom, description, logo, actif"
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Moyen de Paiement",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/moyens-paiement/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "moyens-paiement", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID du moyen de paiement"
+								}
+							]
+						},
+						"description": "Récupère les détails d'un moyen de paiement spécifique.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres:**\n- uuid: Identifiant unique du moyen de paiement"
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation des moyens de paiement disponibles"
+		},
+		{
+			"name": "📦 Mes Commandes",
+			"item": [
+				{
+					"name": "Liste de Mes Commandes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/commandes/?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "commandes", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Numéro de page (pagination)"
+								}
+							]
+						},
+						"description": "Récupère la liste paginée de toutes mes commandes.\n\n**Accès:** Authentifié (CLIENT)\n\n**Paramètres de requête:**\n- page: Numéro de page pour la pagination (optionnel)\n\n**Retourne:**\n- Liste de mes commandes avec statuts, montants, dates, produits"
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'une Commande",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/commandes/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "commandes", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'une de mes commandes.\n\n**Accès:** Authentifié (CLIENT) - Propriétaire uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Retourne:**\n- Détails complets: produits, services, statuts, montants, adresse de collecte, etc."
+					},
+					"response": []
+				},
+				{
+					"name": "Créer une Commande (Checkout)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"moyen_paiement_id\": 1,\n    \"code_promo\": \"PROMO10\",\n    \"collecte\": {\n        \"adresse\": \"123 Rue de la République, 75001 Paris\",\n        \"latitude\": 48.8566,\n        \"longitude\": 2.3522,\n        \"telephone\": \"+33612345678\",\n        \"date\": \"2025-12-30\",\n        \"creneau_id\": 1,\n        \"note\": \"Sonner à l'interphone\"\n    },\n    \"produits\": [\n        {\n            \"description\": \"Chaussures en cuir noir\",\n            \"marque\": \"Nike\",\n            \"modele\": \"Air Max\",\n            \"couleur\": \"Noir\",\n            \"note_utilisateur\": \"Rayure au talon gauche\",\n            \"services_ids\": [1, 2]\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/commandes/checkout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "commandes", "checkout", ""]
+						},
+						"description": "Crée une nouvelle commande avec produits et services (processus de checkout).\n\n**Accès:** Authentifié (CLIENT)\n\n**Champs requis:**\n- moyen_paiement_id: ID du moyen de paiement\n- collecte: Informations de collecte (adresse, téléphone, date, créneau)\n- produits: Liste des produits avec services sélectionnés\n\n**Champs optionnels:**\n- code_promo: Code promo à appliquer\n- collecte.creneau_texte: Texte libre si système de créneaux désactivé\n- collecte.note: Note pour le livreur\n\n**Note:** Les prix sont calculés côté serveur pour la sécurité. Des emails de confirmation seront envoyés."
+					},
+					"response": []
+				},
+				{
+					"name": "Annuler une Commande",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/commandes/:uuid/cancel/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "commandes", ":uuid", "cancel", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Annule une de mes commandes (si le statut le permet).\n\n**Accès:** Authentifié (CLIENT) - Propriétaire uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Conditions:**\n- La commande ne doit pas être terminée ou déjà annulée\n- La commande ne doit pas être payée (sinon contacter le support)\n\n**Note:** Les réservations de créneaux seront automatiquement libérées."
+					},
+					"response": []
+				},
+				{
+					"name": "Suivre une Commande (Tracking)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/commandes/:uuid/tracking/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "commandes", ":uuid", "tracking", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Obtient le suivi détaillé d'une commande avec timeline et statut par produit.\n\n**Accès:** Authentifié (CLIENT) - Propriétaire uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Retourne:**\n- Statut global de la commande\n- Timeline des événements\n- Statut détaillé pour chaque produit (paire de chaussures)"
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion et suivi de mes commandes"
+		},
+		{
+			"name": "📅 Créneaux Horaires",
+			"item": [
+				{
+					"name": "Liste des Créneaux Disponibles",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/creneaux/?date=2025-12-30",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "creneaux", ""],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-12-30",
+									"description": "Filtrer par date exacte (YYYY-MM-DD)"
+								},
+								{
+									"key": "date_debut",
+									"value": "2025-12-30",
+									"description": "Date de début (YYYY-MM-DD)",
+									"disabled": true
+								},
+								{
+									"key": "date_fin",
+									"value": "2026-01-05",
+									"description": "Date de fin (YYYY-MM-DD)",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Récupère la liste des créneaux horaires disponibles pour réservation.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres de requête:**\n- date: Filtrer par date exacte (YYYY-MM-DD)\n- date_debut: Date de début pour une plage (YYYY-MM-DD)\n- date_fin: Date de fin pour une plage (YYYY-MM-DD)\n\n**Note:** Seuls les créneaux disponibles (actifs, non complets, délai non dépassé) sont retournés."
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Créneau",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/creneaux/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "creneaux", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID du créneau"
+								}
+							]
+						},
+						"description": "Récupère les détails d'un créneau horaire spécifique.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres:**\n- uuid: Identifiant unique du créneau\n\n**Retourne:**\n- Date, heures, capacité, réservations actuelles, disponibilité"
+					},
+					"response": []
+				},
+				{
+					"name": "Configuration des Créneaux",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/creneaux/config/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "creneaux", "config", ""]
+						},
+						"description": "Récupère la configuration du système de créneaux pour savoir si les créneaux prédéfinis sont requis ou non.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Retourne:**\n- actif: Boolean indiquant si le système de créneaux est activé\n- description: Description de la configuration\n\n**Note:** Si actif=false, les clients peuvent saisir un créneau en texte libre lors du checkout."
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation des créneaux horaires de collecte disponibles"
+		},
+		{
+			"name": "💵 Devis",
+			"item": [
+				{
+					"name": "Soumettre une Demande de Devis",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nom_complet\": \"Jean Dupont\",\n    \"email\": \"jean.dupont@example.com\",\n    \"telephone\": \"+33612345678\",\n    \"informations_supplementaires\": \"Besoin urgent\",\n    \"produits\": [\n        {\n            \"marque\": \"Nike\",\n            \"type_chaussure\": \"Baskets\",\n            \"services_souhaites\": \"Réparation semelle + nettoyage\",\n            \"description\": \"Semelle décollée\"\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/devis/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "devis", ""]
+						},
+						"description": "Permet de soumettre une demande de devis pour des chaussures.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Champs requis:**\n- nom_complet: Nom complet du demandeur\n- email: Adresse email pour recevoir la réponse\n- telephone: Numéro de téléphone\n- produits: Liste d'au moins une paire de chaussures avec:\n  - marque: Marque de la chaussure\n  - type_chaussure: Type de chaussure\n  - services_souhaites: Services demandés\n\n**Champs optionnels:**\n- informations_supplementaires: Informations complémentaires\n- produits[].photo: Photo de la chaussure (multipart/form-data)\n- produits[].description: Description des problèmes\n\n**Note:** Des emails de confirmation seront envoyés au client et aux administrateurs."
+					},
+					"response": []
+				}
+			],
+			"description": "Demande de devis pour réparation de chaussures"
+		},
+		{
+			"name": "📞 Contact",
+			"item": [
+				{
+					"name": "Envoyer un Message de Contact",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Jean Dupont\",\n    \"email\": \"jean.dupont@example.com\",\n    \"sujet\": \"Question sur les services\",\n    \"message\": \"Bonjour, je voudrais savoir si vous réparez les chaussures de sport...\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/client/contact/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "contact", ""]
+						},
+						"description": "Envoie un message via le formulaire de contact.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Champs requis:**\n- name: Nom complet de l'expéditeur\n- email: Adresse email de l'expéditeur\n- message: Contenu du message\n\n**Champs optionnels:**\n- sujet: Sujet du message\n\n**Note:** L'utilisateur recevra une confirmation par email et les administrateurs configurés seront notifiés."
+					},
+					"response": []
+				},
+				{
+					"name": "Informations de Contact de l'Entreprise",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/contact-info/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "contact-info", ""]
+						},
+						"description": "Récupère les informations de contact de l'entreprise.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Retourne:**\n- Adresse complète\n- Numéros de téléphone\n- Adresses email\n- Horaires d'ouverture\n- Liens réseaux sociaux\n- Coordonnées GPS"
+					},
+					"response": []
+				}
+			],
+			"description": "Contact avec l'entreprise et informations de contact"
+		},
+		{
+			"name": "❓ FAQ",
+			"item": [
+				{
+					"name": "Liste des FAQ",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/faq/?search=livraison",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "faq", ""],
+							"query": [
+								{
+									"key": "search",
+									"value": "livraison",
+									"description": "Rechercher dans questions et réponses"
+								},
+								{
+									"key": "question",
+									"value": "Comment",
+									"description": "Filtrer par question",
+									"disabled": true
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Tri: created_at, -created_at, question, -question",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Récupère la liste de toutes les questions fréquemment posées.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres de requête:**\n- search: Rechercher dans les questions et réponses\n- question: Filtrer par question\n- ordering: Trier les résultats (created_at, -created_at, question, -question)\n\n**Retourne:**\n- Liste des FAQ avec questions, réponses et dates"
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'une FAQ",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/faq/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "faq", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la FAQ"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'une question FAQ spécifique.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres:**\n- uuid: Identifiant unique de la FAQ"
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation des questions fréquemment posées"
+		},
+		{
+			"name": "⭐ Témoignages",
+			"item": [
+				{
+					"name": "Liste des Témoignages",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/temoignages/?search=&ordering=-created_at",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "temoignages", ""],
+							"query": [
+								{
+									"key": "search",
+									"value": "",
+									"description": "Rechercher dans nom et profession"
+								},
+								{
+									"key": "ordering",
+									"value": "-created_at",
+									"description": "Tri: created_at, -created_at"
+								}
+							]
+						},
+						"description": "Récupère la liste de tous les témoignages clients publiés.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres de requête:**\n- search: Rechercher dans nom et profession\n- ordering: Trier par date (created_at, -created_at)\n\n**Retourne:**\n- Liste des témoignages avec nom, profession, message, note, photo, date"
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation des témoignages clients"
+		},
+		{
+			"name": "🎟️ Codes Promo",
+			"item": [
+				{
+					"name": "Liste des Codes Promo Actifs",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/codes-promo/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "codes-promo", ""]
+						},
+						"description": "Récupère la liste de tous les codes promo actuellement valides et actifs.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Retourne:**\n- Liste des codes promo actifs avec:\n  - Code\n  - Description\n  - Type de réduction (pourcentage ou montant fixe)\n  - Valeur\n  - Dates de validité\n  - Conditions d'utilisation"
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'un Code Promo",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/client/codes-promo/:code/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "client", "codes-promo", ":code", ""],
+							"variable": [
+								{
+									"key": "code",
+									"value": "PROMO10",
+									"description": "Code du promo (ex: PROMO10)"
+								}
+							]
+						},
+						"description": "Récupère les détails d'un code promo spécifique par son code.\n\n**Accès:** Public (pas d'authentification requise)\n\n**Paramètres:**\n- code: Le code promo à vérifier (ex: PROMO10)\n\n**Retourne:**\n- Détails complets du code promo\n- Validité et conditions d'utilisation\n\n**Note:** Permet de vérifier la validité d'un code avant de créer une commande."
+					},
+					"response": []
+				}
+			],
+			"description": "Consultation et vérification des codes promotionnels"
+		}
+	]
+}

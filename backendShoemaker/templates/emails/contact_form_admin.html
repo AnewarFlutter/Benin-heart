@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau message de contact</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .greeting { font-size: 16px; margin-bottom: 20px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box .label { font-weight: 600; color: #333333; margin-bottom: 4px; font-size: 14px; }
+        .info-box .value { color: #555555; margin-bottom: 15px; font-size: 14px; }
+        .info-box .value:last-child { margin-bottom: 0; }
+        .message-content { border: 1px solid #e0e0e0; padding: 15px; margin: 10px 0 15px 0; color: #333333; font-size: 14px; white-space: pre-wrap; word-wrap: break-word; }
+        .timestamp { font-size: 12px; color: #999999; margin-top: 10px; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nouveau message de contact</h1>
+        </div>
+        <div class="content">
+            <div class="greeting">Bonjour,</div>
+            <div class="message">
+                Vous avez reçu un nouveau message depuis le formulaire de contact du site Allocireur.
+            </div>
+            <div class="info-box">
+                <div class="label">De :</div>
+                <div class="value">{{ contact_name }} ({{ contact_email }}){% if contact_phone %} - Tél: {{ contact_phone }}{% endif %}</div>
+                <div class="label">Sujet :</div>
+                <div class="value">{{ contact_sujet }}</div>
+                <div class="label">Message :</div>
+                <div class="message-content">{{ contact_message }}</div>
+                <div class="timestamp">Reçu le {{ contact_created_at|date:"d/m/Y à H:i" }}</div>
+            </div>
+            <div class="message">
+                Pour répondre à ce message, envoyez un email directement à <strong>{{ contact_email }}</strong>.
+            </div>
+            <div class="message">
+                Cordialement,<br>
+                <strong>Système de notification Allocireur</strong>
+            </div>
+        </div>
+        <div class="footer">
+            <p>Allocireur - Service de réparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

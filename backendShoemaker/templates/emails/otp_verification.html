@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code de vérification - Allocireur</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .greeting { font-size: 16px; margin-bottom: 20px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .otp-container { border: 1px solid #e0e0e0; padding: 20px; text-align: center; margin: 25px 0; }
+        .otp-label { font-size: 13px; color: #777777; margin-bottom: 8px; }
+        .otp-code { font-size: 32px; font-weight: bold; color: #333333; letter-spacing: 6px; font-family: 'Courier New', monospace; }
+        .notice { padding: 12px 0; font-size: 14px; color: #555555; margin: 15px 0; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Code de vérification</h1>
+        </div>
+        <div class="content">
+            <div class="greeting">Bonjour {{user_name}},</div>
+            <div class="message">
+                Merci de vous être inscrit sur <strong>Allocireur</strong>. Pour compléter votre inscription et activer votre compte, veuillez utiliser le code de vérification ci-dessous :
+            </div>
+            <div class="otp-container">
+                <div class="otp-label">Votre code de vérification</div>
+                <div class="otp-code">{{otp_code}}</div>
+            </div>
+            <div class="notice">
+                <strong>Attention :</strong> Ce code expirera dans <strong>{{expiry_minutes}} minutes</strong>.
+            </div>
+            <div class="message">
+                Si vous n'avez pas demandé ce code, veuillez ignorer ce message. Ne partagez jamais votre code de vérification avec qui que ce soit.
+            </div>
+        </div>
+        <div class="footer">
+            <p>Allocireur - Service de réparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

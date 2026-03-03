@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle demande de devis</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box p { margin: 6px 0; font-size: 14px; color: #555555; }
+        h3 { font-size: 16px; color: #333333; margin: 25px 0 10px 0; }
+        ul { padding-left: 20px; }
+        li { font-size: 14px; color: #555555; margin-bottom: 10px; line-height: 1.6; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nouvelle demande de devis</h1>
+        </div>
+        <div class="content">
+            <div class="info-box">
+                <p><strong>Code devis :</strong> {{ devis.code_devis }}</p>
+                <p><strong>Client :</strong> {{ devis.nom_complet }}</p>
+                <p><strong>Email :</strong> {{ devis.email }}</p>
+                <p><strong>Téléphone :</strong> {{ devis.telephone }}</p>
+                <p><strong>Nombre de paires :</strong> {{ produits|length }}</p>
+            </div>
+
+            <h3>Produits demandés :</h3>
+            <ul>
+            {% for produit in produits %}
+                <li>
+                    <strong>{{ produit.marque }} - {{ produit.type_chaussure }}</strong><br>
+                    Services : {{ produit.services_names|join:", " }}<br>
+                    {% if produit.description %}Description : {{ produit.description }}{% endif %}
+                </li>
+            {% endfor %}
+            </ul>
+
+            {% if devis.informations_supplementaires %}
+            <div class="info-box">
+                <p><strong>Informations supplémentaires :</strong></p>
+                <p>{{ devis.informations_supplementaires }}</p>
+            </div>
+            {% endif %}
+
+            <div class="message">Merci de traiter cette demande dans les meilleurs délais.</div>
+        </div>
+        <div class="footer">
+            <p>Allocireur - Service de réparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

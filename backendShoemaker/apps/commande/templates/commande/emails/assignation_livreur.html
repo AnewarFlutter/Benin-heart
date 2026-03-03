@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouvelle commande assignee</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        ol { font-size: 14px; color: #555555; line-height: 1.8; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Nouvelle commande assignee</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ livreur.user.get_full_name|default:livreur.user.email }},</p>
+
+            <p class="message">Une nouvelle commande vous a ete assignee.</p>
+
+            <p class="message">Vous avez ete selectionne pour effectuer la collecte de cette commande.</p>
+
+            <div class="info-box">
+                <h3>Informations de la commande</h3>
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Client :</span>
+                    <span class="value">{{ client.get_full_name|default:client.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Telephone client :</span>
+                    <span class="value">{{ client.telephone|default:commande.telephone_collecte }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Nombre de produits :</span>
+                    <span class="value">{{ nombre_produits }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Montant total :</span>
+                    <span class="value">{{ commande.montant_final }} FCFA</span>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Informations de collecte</h3>
+                <div class="info-row">
+                    <span class="label">Date :</span>
+                    <span class="value">{{ commande.date_collecte|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Creneau horaire :</span>
+                    <span class="value">{{ commande.creneau_horaire }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Adresse :</span>
+                    <span class="value">{{ commande.adresse_collecte }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Telephone de contact :</span>
+                    <span class="value">{{ commande.telephone_collecte }}</span>
+                </div>
+                {% if commande.note_collecte %}
+                <div class="info-row">
+                    <span class="label">Note :</span>
+                    <span class="value">{{ commande.note_collecte }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="label" style="font-size: 14px;">Prochaines etapes :</p>
+            <ol>
+                <li>Connectez-vous a votre interface livreur</li>
+                <li>Consultez les details complets de la commande</li>
+                <li><strong>Confirmez la prise en charge de cette commande</strong></li>
+                <li>Effectuez la collecte a la date et l'heure programmees</li>
+            </ol>
+
+            <div class="note-box">
+                <p style="margin: 0;"><strong>Important :</strong> Veuillez confirmer la prise en charge de cette commande des que possible pour que le client soit informe.</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

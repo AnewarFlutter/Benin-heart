@@ -1,0 +1,554 @@
+{
+	"info": {
+		"_postman_id": "delivery-api-shoemaker-2025",
+		"name": "Shoemaker API - DELIVERY",
+		"description": "Collection complète des endpoints API pour les livreurs de l'application Shoemaker.\n\n**Développeurs Backend:**\n- DAMALA Mohamed (dmlattanda@gmail.com)\n- Ismaila Diakhate\n\n**Date:** Décembre 2025\n\n**Authentification:**\nTous les endpoints nécessitent un token JWT Bearer obtenu via l'endpoint de connexion.\n\n**Usage:**\n1. Inscrivez-vous via /register\n2. Vérifiez votre email avec le code OTP via /verify_otp\n3. Connectez-vous via /login\n4. Le token d'accès sera automatiquement sauvegardé dans la variable d'environnement {{access_token}}\n5. Utilisez les autres endpoints avec ce token\n\n**Workflow Livreur:**\n1. Connexion\n2. Voir les commandes assignées\n3. Confirmer la prise en charge d'une commande\n4. Collecter les paires de chaussures et assigner des codes\n5. Valider la collecte complète\n6. (Après réparation) Valider la livraison finale au client",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🔐 Authentification Livreur",
+			"item": [
+				{
+					"name": "Inscription Livreur",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"first_name\": \"Pierre\",\n    \"last_name\": \"Martin\",\n    \"email\": \"pierre.martin@example.com\",\n    \"phone\": \"+33612345679\",\n    \"password\": \"MotDePasse123!\",\n    \"password_confirm\": \"MotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/register/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "register", ""]
+						},
+						"description": "Inscrit un nouveau livreur et envoie un code OTP par email pour vérification du compte.\n\n**Accès:** Public\n\n**Champs requis:**\n- first_name: Prénom\n- last_name: Nom de famille\n- email: Adresse email (unique)\n- phone: Numéro de téléphone\n- password: Mot de passe\n- password_confirm: Confirmation du mot de passe\n\n**Note:** Un profil DeliveryPerson sera automatiquement créé lors de l'inscription."
+					},
+					"response": []
+				},
+				{
+					"name": "Vérifier Code OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pierre.martin@example.com\",\n    \"otp_code\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/verify_otp/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "verify_otp", ""]
+						},
+						"description": "Vérifie le code OTP reçu par email pour activer le compte livreur.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- otp_code: Code à 6 chiffres reçu par email\n\n**Note:** Le code OTP expire après 10 minutes."
+					},
+					"response": []
+				},
+				{
+					"name": "Renvoyer Code OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pierre.martin@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/resend_otp/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "resend_otp", ""]
+						},
+						"description": "Renvoie un nouveau code OTP par email pour la vérification du compte.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte"
+					},
+					"response": []
+				},
+				{
+					"name": "Connexion",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access);",
+									"    pm.environment.set(\"refresh_token\", jsonData.refresh);",
+									"    console.log(\"Tokens sauvegardés avec succès\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"pierre.martin@example.com\",\n    \"password\": \"MotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/login/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "login", ""]
+						},
+						"description": "Connecte un livreur et retourne les tokens JWT (access et refresh).\n\n**Accès:** Public\n\n**Champs requis:**\n- identifier: Email ou numéro de téléphone\n- password: Mot de passe\n\n**Note:** Les tokens sont automatiquement sauvegardés dans les variables d'environnement."
+					},
+					"response": []
+				},
+				{
+					"name": "Rafraîchir Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"access_token\", jsonData.access);",
+									"    if (jsonData.refresh) {",
+									"        pm.environment.set(\"refresh_token\", jsonData.refresh);",
+									"    }",
+									"    console.log(\"Token d'accès rafraîchi\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/token/refresh/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "token", "refresh", ""]
+						},
+						"description": "Rafraîchit le token d'accès en utilisant le refresh token.\n\n**Accès:** Public\n\n**Champs requis:**\n- refresh: Refresh token obtenu lors de la connexion\n\n**Note:** Retourne un nouveau access token (et parfois un nouveau refresh token si rotation activée)."
+					},
+					"response": []
+				},
+				{
+					"name": "Mot de Passe Oublié",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"identifier\": \"pierre.martin@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "forgot_password", ""]
+						},
+						"description": "Demande un code OTP pour réinitialiser le mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- identifier: Email ou numéro de téléphone\n\n**Note:** Un code OTP sera envoyé par email pour vérification."
+					},
+					"response": []
+				},
+				{
+					"name": "Vérifier OTP Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pierre.martin@example.com\",\n    \"otp_code\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/verify_otp_forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "verify_otp_forgot_password", ""]
+						},
+						"description": "Vérifie le code OTP pour la réinitialisation du mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- otp_code: Code à 6 chiffres reçu par email"
+					},
+					"response": []
+				},
+				{
+					"name": "Renvoyer OTP Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pierre.martin@example.com\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/resend_otp_forgot_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "resend_otp_forgot_password", ""]
+						},
+						"description": "Renvoie un nouveau code OTP pour la réinitialisation du mot de passe.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte"
+					},
+					"response": []
+				},
+				{
+					"name": "Réinitialiser Mot de Passe",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"pierre.martin@example.com\",\n    \"new_password\": \"NouveauMotDePasse123!\",\n    \"confirm_password\": \"NouveauMotDePasse123!\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/reset_password/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "reset_password", ""]
+						},
+						"description": "Réinitialise le mot de passe après vérification OTP.\n\n**Accès:** Public\n\n**Champs requis:**\n- email: Adresse email du compte\n- new_password: Nouveau mot de passe\n- confirm_password: Confirmation du nouveau mot de passe\n\n**Note:** Vous devez d'abord avoir vérifié le code OTP."
+					},
+					"response": []
+				},
+				{
+					"name": "Déconnexion",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh_token\": \"{{refresh_token}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/logout/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "logout", ""]
+						},
+						"description": "Déconnecte le livreur et met les tokens (access et refresh) en liste noire.\n\n**Accès:** Authentifié (DELIVERY)\n\n**Champs requis:**\n- refresh_token: Token de rafraîchissement à invalider\n\n**Headers requis:**\n- Authorization: Bearer {access_token}"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints pour l'authentification et la gestion du compte livreur"
+		},
+		{
+			"name": "📦 Mes Commandes Assignées",
+			"item": [
+				{
+					"name": "Liste de Mes Commandes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/?page=1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ""],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Numéro de page (pagination)"
+								}
+							]
+						},
+						"description": "Récupère la liste paginée de toutes les commandes qui me sont assignées.\n\n**Accès:** Authentifié (DELIVERY)\n\n**Paramètres de requête:**\n- page: Numéro de page pour la pagination (optionnel)\n\n**Retourne:**\n- Liste de mes commandes assignées avec statuts, dates, adresses de collecte, informations client"
+					},
+					"response": []
+				},
+				{
+					"name": "Détails d'une Commande",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/:uuid/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ":uuid", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Récupère les détails complets d'une commande qui m'est assignée.\n\n**Accès:** Authentifié (DELIVERY) - Commande assignée uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Retourne:**\n- Détails complets: produits, services, adresse de collecte, coordonnées client, statuts, etc."
+					},
+					"response": []
+				},
+				{
+					"name": "Confirmer Prise en Charge",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/:uuid/confirm_commande/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ":uuid", "confirm_commande", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Confirme que j'ai pris en charge la commande et que je vais la collecter.\n\n**Accès:** Authentifié (DELIVERY) - Commande assignée uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Actions automatiques:**\n1. Change le statut à 'en_collecte'\n2. Enregistre la date de confirmation\n3. Envoie un email au client\n4. Notifie les administrateurs\n\n**Note:** Cette action ne peut être effectuée qu'une seule fois par commande."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des commandes qui me sont assignées"
+		},
+		{
+			"name": "📋 Collecte - Codes et Validation",
+			"item": [
+				{
+					"name": "Liste des Codes Disponibles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/codes-disponibles/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", "codes-disponibles", ""]
+						},
+						"description": "Récupère la liste de tous les codes de collecte disponibles (non utilisés).\n\n**Accès:** Authentifié (DELIVERY)\n\n**Usage:** Ces codes doivent être collés physiquement sur chaque paire de chaussures lors de la collecte, puis enregistrés dans le système via l'endpoint /assign-code.\n\n**Retourne:**\n- Nombre total de codes disponibles\n- Liste des codes avec format: CC-XXXXXX"
+					},
+					"response": []
+				},
+				{
+					"name": "Assigner un Code à une Paire",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"produit_id\": 1,\n    \"code\": \"CC-ABC123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/:uuid/assign-code/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ":uuid", "assign-code", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Assigne un code de collecte unique à une paire de chaussures spécifique.\n\n**Accès:** Authentifié (DELIVERY) - Commande assignée uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Champs requis:**\n- produit_id: ID du produit (paire de chaussures) dans la commande\n- code: Code de collecte (format: CC-XXXXXX)\n\n**Processus:**\n1. Le code doit d'abord être collé physiquement sur la paire\n2. Scanner ou saisir le code dans l'application\n3. Le système enregistre la collecte effective\n4. Le code est marqué comme utilisé\n\n**Validations:**\n- Le code doit exister et ne pas être déjà utilisé\n- Le produit doit appartenir à cette commande\n- Le produit ne doit pas avoir déjà un code assigné"
+					},
+					"response": []
+				},
+				{
+					"name": "Valider Collecte Complète",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/:uuid/validate-collecte/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ":uuid", "validate-collecte", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Valide que toutes les paires de chaussures ont été collectées avec leurs codes.\n\n**Accès:** Authentifié (DELIVERY) - Commande assignée uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Pré-requis:**\n- La commande doit être en statut 'en_collecte'\n- Toutes les paires doivent avoir un code assigné\n\n**Actions automatiques:**\n1. Vérifie que tous les produits ont un code\n2. Change le statut à 'collectée'\n3. Envoie un email de confirmation au client\n4. Notifie les administrateurs\n\n**Note:** Si des paires n'ont pas de code, l'endpoint retournera la liste des paires manquantes."
+					},
+					"response": []
+				}
+			],
+			"description": "Gestion des codes de collecte et validation de la collecte"
+		},
+		{
+			"name": "🚚 Livraison Finale",
+			"item": [
+				{
+					"name": "Valider Livraison au Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{access_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/delivery/commandes/:uuid/validate-livraison/",
+							"host": ["{{base_url}}"],
+							"path": ["api", "delivery", "commandes", ":uuid", "validate-livraison", ""],
+							"variable": [
+								{
+									"key": "uuid",
+									"value": "",
+									"description": "UUID de la commande"
+								}
+							]
+						},
+						"description": "Marque une commande comme livrée au client après réparation (finalise le cycle complet).\n\n**Accès:** Authentifié (DELIVERY) - Livreur de livraison assigné uniquement\n\n**Paramètres:**\n- uuid: Identifiant unique de la commande\n\n**Pré-requis:**\n- La commande doit être en statut 'en_livraison'\n- Je dois être le livreur assigné à la livraison finale (peut être différent du livreur de collecte)\n\n**Actions automatiques:**\n1. Change le statut à 'terminée'\n2. Enregistre la date de livraison effective\n3. Envoie un email de confirmation au client\n4. Notifie les administrateurs\n\n**Note:** Cette action finalise complètement la commande dans le système."
+					},
+					"response": []
+				}
+			],
+			"description": "Validation de la livraison finale au client après réparation"
+		}
+	]
+}

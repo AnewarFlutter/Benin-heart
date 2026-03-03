@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de prise en charge</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-box h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .info-box p { font-size: 14px; color: #555555; margin: 6px 0; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .note-box { border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 14px; color: #555555; }
+        .note-box ul { margin: 10px 0; padding-left: 20px; }
+        .note-box li { padding: 4px 0; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Confirmation de prise en charge</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour,</p>
+
+            <p class="message">Le livreur a confirme la prise en charge de la commande.</p>
+
+            <p class="message">Le livreur <strong>{{ livreur.user.get_full_name|default:livreur.user.email }}</strong> vient de confirmer qu'il prendra en charge la commande <strong>{{ commande.code_unique }}</strong>.</p>
+
+            <div class="info-box">
+                <h3>Informations du livreur</h3>
+                <p><strong>Nom :</strong> {{ livreur.user.get_full_name|default:livreur.user.email }}</p>
+                <p><strong>Email :</strong> {{ livreur.user.email }}</p>
+                {% if livreur.user.telephone %}
+                <p><strong>Telephone :</strong> {{ livreur.user.telephone }}</p>
+                {% endif %}
+                <p><strong>Date de confirmation :</strong> {{ commande.date_confirmation_livreur|date:"d/m/Y à H:i" }}</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Details de la commande</h3>
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Client :</span>
+                    <span class="value">{{ client.get_full_name|default:client.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Email client :</span>
+                    <span class="value">{{ client.email }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Telephone client :</span>
+                    <span class="value">{{ client.telephone|default:commande.telephone_collecte }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Montant total :</span>
+                    <span class="value">{{ commande.montant_final }} FCFA</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Statut actuel :</span>
+                    <span class="value">{{ commande.get_statut_commande_display }}</span>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h3>Informations de collecte</h3>
+                <div class="info-row">
+                    <span class="label">Date :</span>
+                    <span class="value">{{ commande.date_collecte|date:"d/m/Y" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Creneau horaire :</span>
+                    <span class="value">{{ commande.creneau_horaire }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Adresse :</span>
+                    <span class="value">{{ commande.adresse_collecte }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Telephone de contact :</span>
+                    <span class="value">{{ commande.telephone_collecte }}</span>
+                </div>
+                {% if commande.note_collecte %}
+                <div class="info-row">
+                    <span class="label">Note :</span>
+                    <span class="value">{{ commande.note_collecte }}</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="note-box">
+                <p style="margin: 0;"><strong>Actions automatiques :</strong></p>
+                <ul>
+                    <li>Le client a ete notifie par email de la confirmation</li>
+                    <li>Un rappel sera automatiquement envoye au client 1h avant la collecte</li>
+                    <li>Le statut de la commande a ete change en "En collecte"</li>
+                </ul>
+            </div>
+
+            <p class="message">Vous pouvez suivre l'avancement de cette commande depuis l'interface d'administration.</p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

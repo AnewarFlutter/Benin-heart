@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation de commande</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .produit { border: 1px solid #e0e0e0; padding: 20px; margin: 10px 0; }
+        .produit-header { font-weight: 600; color: #333333; margin-bottom: 10px; font-size: 15px; }
+        .service-item { padding: 5px 0; padding-left: 20px; color: #555555; font-size: 14px; }
+        .montant-section { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .montant-section h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .montant-row { padding: 8px 0; font-size: 14px; color: #555555; }
+        .montant-final { font-size: 18px; font-weight: 600; color: #333333; border-top: 1px solid #e0e0e0; padding-top: 10px; margin-top: 10px; }
+        .collecte-info { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .collecte-info h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .collecte-info p { font-size: 14px; color: #555555; margin: 6px 0; }
+        ol { font-size: 14px; color: #555555; line-height: 1.8; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Confirmation de commande</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ user.get_full_name|default:user.email }},</p>
+
+            <p class="message">Votre commande a bien ete enregistree.</p>
+
+            <p class="message">Merci d'avoir passe commande chez Allocireur. Nous avons bien recu votre demande et nous la traitons actuellement.</p>
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date de la commande :</span>
+                    <span class="value">{{ commande.created_at|date:"d/m/Y à H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Moyen de paiement :</span>
+                    <span class="value">{{ commande.moyen_paiement.nom }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Statut du paiement :</span>
+                    <span class="value">{{ commande.get_statut_paiement_display }}</span>
+                </div>
+            </div>
+
+            <p class="label" style="font-size: 16px; margin-bottom: 10px;">Details de votre commande</p>
+
+            {% for produit in produits %}
+            <div class="produit">
+                <div class="produit-header">
+                    Produit {{ forloop.counter }} : {{ produit.marque }} {{ produit.modele }}
+                </div>
+                <div style="font-size: 14px; color: #555555;">
+                    <strong>Couleur :</strong> {{ produit.couleur }}<br>
+                    <strong>Description :</strong> {{ produit.description }}
+                    {% if produit.note_utilisateur %}
+                    <br><strong>Note :</strong> {{ produit.note_utilisateur }}
+                    {% endif %}
+                </div>
+                <div style="margin-top: 10px; font-size: 14px; color: #555555;">
+                    <strong>Services selectionnes :</strong>
+                    {% for service in produit.services.all %}
+                    <div class="service-item">
+                        - {{ service.nom_service }} : {{ service.prix_ttc }} FCFA TTC
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="montant-section">
+                <h3>Recapitulatif des montants</h3>
+                <div class="montant-row">
+                    <span>Montant HT :</span>
+                    <span>{{ commande.montant_ht }} FCFA</span>
+                </div>
+                <div class="montant-row">
+                    <span>TVA :</span>
+                    <span>{{ commande.montant_tva }} FCFA</span>
+                </div>
+                <div class="montant-row">
+                    <span>Montant TTC :</span>
+                    <span>{{ commande.montant_ttc }} FCFA</span>
+                </div>
+                {% if commande.montant_reduction > 0 %}
+                <div class="montant-row">
+                    <span>Reduction{% if commande.code_promo %} ({{ commande.code_promo.code }}){% endif %} :</span>
+                    <span>- {{ commande.montant_reduction }} FCFA</span>
+                </div>
+                {% endif %}
+                <div class="montant-row montant-final">
+                    <span>Total a payer :</span>
+                    <span>{{ commande.montant_final }} FCFA</span>
+                </div>
+            </div>
+
+            <div class="collecte-info">
+                <h3>Informations de collecte</h3>
+                <p><strong>Date :</strong> {{ commande.date_collecte|date:"d/m/Y" }}</p>
+                <p><strong>Creneau horaire :</strong> {{ commande.creneau_horaire }}</p>
+                <p><strong>Adresse :</strong> {{ commande.adresse_collecte }}</p>
+                <p><strong>Telephone de contact :</strong> {{ commande.telephone_collecte }}</p>
+                {% if commande.note_collecte %}
+                <p><strong>Note :</strong> {{ commande.note_collecte }}</p>
+                {% endif %}
+            </div>
+
+            <p class="label" style="font-size: 14px;">Prochaines etapes :</p>
+            <ol>
+                <li>Nous allons examiner votre commande</li>
+                <li>Vous recevrez une confirmation de l'heure exacte de collecte</li>
+                <li>Notre equipe viendra recuperer vos chaussures a l'adresse indiquee</li>
+                <li>Nous effectuerons les reparations necessaires</li>
+                <li>Vos chaussures vous seront livrees une fois les travaux termines</li>
+            </ol>
+
+            <p class="message">Vous pouvez suivre l'etat de votre commande a tout moment depuis votre compte client.</p>
+
+            <p class="message">Merci de votre confiance !</p>
+
+            <p class="message"><strong>L'equipe Allocireur</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

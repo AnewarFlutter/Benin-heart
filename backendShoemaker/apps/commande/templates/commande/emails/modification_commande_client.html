@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modification de votre commande</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f9f9f9; margin: 0; padding: 0; color: #333333; }
+        .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border: 1px solid #e0e0e0; }
+        .header { padding: 30px; border-bottom: 1px solid #e0e0e0; }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 600; color: #333333; }
+        .content { padding: 30px; }
+        .message { font-size: 15px; color: #555555; line-height: 1.7; margin-bottom: 20px; }
+        .info-box { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .info-row { padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+        .info-row:last-child { border-bottom: none; }
+        .label { font-weight: 600; color: #333333; font-size: 14px; }
+        .value { color: #555555; font-size: 14px; }
+        .modifications-section { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .modifications-section h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .modification-item { padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .modification-item:last-child { border-bottom: none; }
+        .modification-item strong { color: #333333; }
+        .old-value { text-decoration: line-through; color: #999999; }
+        .new-value { font-weight: bold; color: #333333; }
+        .collecte-info { border: 1px solid #e0e0e0; padding: 20px; margin: 20px 0; }
+        .collecte-info h3 { margin-top: 0; font-size: 16px; font-weight: 600; color: #333333; }
+        .collecte-info p { font-size: 14px; color: #555555; margin: 6px 0; }
+        .footer { padding: 20px 30px; border-top: 1px solid #e0e0e0; font-size: 12px; color: #999999; }
+        .footer p { margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Modification de votre commande</h1>
+        </div>
+
+        <div class="content">
+            <p class="message">Bonjour {{ user.get_full_name|default:user.email }},</p>
+
+            <p class="message">Votre commande a ete modifiee par notre equipe.</p>
+
+            <p class="message">Nous vous informons que des modifications ont ete apportees a votre commande <strong>#{{ commande.code_unique }}</strong>.</p>
+
+            <div class="info-box">
+                <div class="info-row">
+                    <span class="label">Numero de commande :</span>
+                    <span class="value">{{ commande.code_unique }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date de la commande :</span>
+                    <span class="value">{{ commande.created_at|date:"d/m/Y à H:i" }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Statut actuel :</span>
+                    <span class="value">{{ commande.get_statut_commande_display }}</span>
+                </div>
+            </div>
+
+            {% if modifications %}
+            <div class="modifications-section">
+                <h3>Details des modifications</h3>
+
+                {% if modifications.statut_paiement %}
+                <div class="modification-item">
+                    <strong>Statut du paiement :</strong><br>
+                    <span class="old-value">{{ modifications.statut_paiement.ancien }}</span> =>
+                    <span class="new-value">{{ modifications.statut_paiement.nouveau }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.statut_commande %}
+                <div class="modification-item">
+                    <strong>Statut de la commande :</strong><br>
+                    <span class="old-value">{{ modifications.statut_commande.ancien }}</span> =>
+                    <span class="new-value">{{ modifications.statut_commande.nouveau }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.date_collecte %}
+                <div class="modification-item">
+                    <strong>Date de collecte :</strong><br>
+                    <span class="old-value">{{ modifications.date_collecte.ancien|date:"d/m/Y" }}</span> =>
+                    <span class="new-value">{{ modifications.date_collecte.nouveau|date:"d/m/Y" }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.creneau_horaire %}
+                <div class="modification-item">
+                    <strong>Creneau horaire :</strong><br>
+                    <span class="old-value">{{ modifications.creneau_horaire.ancien }}</span> =>
+                    <span class="new-value">{{ modifications.creneau_horaire.nouveau }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.adresse_collecte %}
+                <div class="modification-item">
+                    <strong>Adresse de collecte :</strong><br>
+                    <span class="old-value">{{ modifications.adresse_collecte.ancien }}</span> =>
+                    <span class="new-value">{{ modifications.adresse_collecte.nouveau }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.telephone_collecte %}
+                <div class="modification-item">
+                    <strong>Telephone de contact :</strong><br>
+                    <span class="old-value">{{ modifications.telephone_collecte.ancien }}</span> =>
+                    <span class="new-value">{{ modifications.telephone_collecte.nouveau }}</span>
+                </div>
+                {% endif %}
+
+                {% if modifications.delivery_person %}
+                <div class="modification-item">
+                    <strong>Livreur assigne :</strong><br>
+                    <span class="old-value">{{ modifications.delivery_person.ancien|default:"Non assigne" }}</span> =>
+                    <span class="new-value">{{ modifications.delivery_person.nouveau|default:"Non assigne" }}</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <div class="collecte-info">
+                <h3>Informations de collecte actuelles</h3>
+                <p><strong>Date :</strong> {{ commande.date_collecte|date:"d/m/Y" }}</p>
+                <p><strong>Creneau horaire :</strong> {{ commande.creneau_horaire }}</p>
+                <p><strong>Adresse :</strong> {{ commande.adresse_collecte }}</p>
+                <p><strong>Telephone de contact :</strong> {{ commande.telephone_collecte }}</p>
+                {% if commande.note_collecte %}
+                <p><strong>Note :</strong> {{ commande.note_collecte }}</p>
+                {% endif %}
+            </div>
+
+            <p class="message"><strong>Montant total :</strong> {{ commande.montant_final }} FCFA</p>
+
+            <p class="message">Si vous avez des questions concernant ces modifications, n'hesitez pas a nous contacter.</p>
+
+            <p class="message">Vous pouvez suivre l'etat de votre commande a tout moment depuis votre compte client.</p>
+
+            <p class="message"><strong>L'equipe Allocireur</strong></p>
+        </div>
+
+        <div class="footer">
+            <p>Allocireur - Service de reparation et livraison de chaussures</p>
+            <p>&copy; {% now "Y" %} Allocireur. Tous droits réservés.</p>
+        </div>
+    </div>
+</body>
+</html>

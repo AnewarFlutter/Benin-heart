@@ -1,0 +1,3 @@
+"""
+Code Promo Client API.
+"""
