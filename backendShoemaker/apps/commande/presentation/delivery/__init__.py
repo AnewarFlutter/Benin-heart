@@ -1,3 +1,0 @@
-"""
-Delivery endpoints package
-"""

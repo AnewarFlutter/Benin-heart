@@ -31,13 +31,6 @@ urlpatterns = [
     # API endpoints
     path('api/', include('apps.users.presentation.users.urls')),  # Client & Delivery
     path('api/', include('apps.users.presentation.admin.urls')),  # Admin
-    path('api/', include('apps.service.presentation.admin.urls')),  # Admin Service
-    path('api/', include('apps.service.presentation.services.urls')),  # Client Service (Public)
-    path('api/', include('apps.commande.presentation.admin.urls')),  # Admin Commandes
-    path('api/', include('apps.commande.presentation.commandes.urls')),  # Client Commandes
-    path('api/', include('apps.commande.presentation.codepromo.urls')),  # Client Codes Promo
-    path('api/', include('apps.commande.presentation.delivery.urls')),  # Delivery Commandes
-    path('api/delivery/', include('apps.users.presentation.delivery.urls')),  # Delivery Profile
     path('api/client/', include('apps.users.presentation.client.urls')),  # Client Profile
     path('api/', include('apps.contact.presentation.admin.urls')),  # Admin Contact
     path('api/', include('apps.contact.presentation.client.urls')),  # Client Contact
@@ -45,10 +38,6 @@ urlpatterns = [
     path('api/', include('apps.faq.presentation.client.urls')),  # Client FAQ
     path('api/', include('apps.temoignage.presentation.admin.urls')),  # Admin Témoignage
     path('api/', include('apps.temoignage.presentation.client.urls')),  # Client Témoignage
-    path('api/', include('apps.devis.presentation.admin.urls')),  # Admin Devis
-    path('api/', include('apps.devis.presentation.client.urls')),  # Client Devis
-    path('api/', include('apps.creneaux.presentation.admin.urls')),  # Admin Créneaux
-    path('api/', include('apps.creneaux.presentation.creneauxs.urls')),  # Client Créneaux
     path('api/', include('apps.storepage.presentation.storepages.urls')),  # Public Storepage (Hero Banners)
 ]
 

@@ -4,7 +4,7 @@ Django Admin configuration for Users app.
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.forms import UserChangeForm
-from .models import User, DeliveryPerson, Role
+from .models import User, Role
 
 
 class CustomUserChangeForm(UserChangeForm):
@@ -96,101 +96,3 @@ class UserAdmin(BaseUserAdmin):
     )
 
     readonly_fields = ['created_at', 'updated_at', 'last_login', 'date_joined', 'otp_created_at', 'deleted_at']
-
-
-@admin.register(DeliveryPerson)
-class DeliveryPersonAdmin(admin.ModelAdmin):
-    """Admin configuration for DeliveryPerson model."""
-    from django.utils.html import format_html
-
-    list_display = ['user', 'is_available', 'commandes_collecte_count', 'commandes_livraison_count', 'created_at']
-    list_filter = ['is_available', 'created_at']
-    search_fields = ['user__email', 'user__first_name', 'user__last_name', 'uuid']
-    ordering = ['-created_at']
-
-    fieldsets = (
-        ('Utilisateur', {'fields': ('user',)}),
-        ('Disponibilité', {'fields': ('is_available',)}),
-        ('Localisation', {'fields': ('current_location_lat', 'current_location_lon')}),
-        ('Statistiques', {
-            'fields': ('commandes_collecte_info', 'commandes_livraison_info'),
-            'description': 'Résumé des commandes assignées à ce livreur'
-        }),
-        ('Dates', {'fields': ('created_at', 'updated_at')}),
-    )
-
-    readonly_fields = ['created_at', 'updated_at', 'commandes_collecte_info', 'commandes_livraison_info']
-
-    def commandes_collecte_count(self, obj):
-        """Nombre de commandes collecte assignées."""
-        count = obj.commandes_collecte.count()
-        en_attente = obj.commandes_collecte.filter(statut_commande='en_attente_collecte').count()
-        if en_attente > 0:
-            from django.utils.html import format_html
-            return format_html('{} <span style="color: orange; font-weight: bold;">({} en attente)</span>', count, en_attente)
-        return count
-    commandes_collecte_count.short_description = 'Collectes'
-
-    def commandes_livraison_count(self, obj):
-        """Nombre de commandes livraison assignées."""
-        count = obj.commandes_livraison.count()
-        en_cours = obj.commandes_livraison.filter(statut_commande='en_cours_livraison').count()
-        if en_cours > 0:
-            from django.utils.html import format_html
-            return format_html('{} <span style="color: blue; font-weight: bold;">({} en cours)</span>', count, en_cours)
-        return count
-    commandes_livraison_count.short_description = 'Livraisons'
-
-    def commandes_collecte_info(self, obj):
-        """Affiche les commandes collecte assignées."""
-        from django.utils.html import format_html
-        commandes = obj.commandes_collecte.all().order_by('-created_at')[:10]
-        if not commandes:
-            return "Aucune commande de collecte assignée"
-
-        html = '<table style="width:100%; border-collapse: collapse;">'
-        html += '<tr style="background: #f5f5f5;"><th style="padding: 8px; text-align: left;">Code</th><th style="padding: 8px;">Client</th><th style="padding: 8px;">Statut</th><th style="padding: 8px;">Date collecte</th></tr>'
-
-        for cmd in commandes:
-            statut_color = {
-                'en_attente_collecte': '#FF9800',
-                'collecte_effectuee': '#4CAF50',
-            }.get(cmd.statut_commande, '#999')
-
-            html += f'<tr style="border-bottom: 1px solid #ddd;">'
-            html += f'<td style="padding: 8px;"><a href="/admin/commande/commande/{cmd.pk}/change/">{cmd.code_unique}</a></td>'
-            html += f'<td style="padding: 8px;">{cmd.user.full_name if cmd.user else "-"}</td>'
-            html += f'<td style="padding: 8px;"><span style="color: {statut_color}; font-weight: bold;">{cmd.get_statut_commande_display()}</span></td>'
-            html += f'<td style="padding: 8px;">{cmd.date_collecte}</td>'
-            html += '</tr>'
-
-        html += '</table>'
-        return format_html(html)
-    commandes_collecte_info.short_description = 'Commandes collecte récentes'
-
-    def commandes_livraison_info(self, obj):
-        """Affiche les commandes livraison assignées."""
-        from django.utils.html import format_html
-        commandes = obj.commandes_livraison.all().order_by('-created_at')[:10]
-        if not commandes:
-            return "Aucune commande de livraison assignée"
-
-        html = '<table style="width:100%; border-collapse: collapse;">'
-        html += '<tr style="background: #f5f5f5;"><th style="padding: 8px; text-align: left;">Code</th><th style="padding: 8px;">Client</th><th style="padding: 8px;">Statut</th><th style="padding: 8px;">Date livraison</th></tr>'
-
-        for cmd in commandes:
-            statut_color = {
-                'en_cours_livraison': '#2196F3',
-                'livraison_effectuee': '#4CAF50',
-            }.get(cmd.statut_commande, '#999')
-
-            html += f'<tr style="border-bottom: 1px solid #ddd;">'
-            html += f'<td style="padding: 8px;"><a href="/admin/commande/commande/{cmd.pk}/change/">{cmd.code_unique}</a></td>'
-            html += f'<td style="padding: 8px;">{cmd.user.full_name if cmd.user else "-"}</td>'
-            html += f'<td style="padding: 8px;"><span style="color: {statut_color}; font-weight: bold;">{cmd.get_statut_commande_display()}</span></td>'
-            html += f'<td style="padding: 8px;">{cmd.date_livraison or "-"}</td>'
-            html += '</tr>'
-
-        html += '</table>'
-        return format_html(html)
-    commandes_livraison_info.short_description = 'Commandes livraison récentes'

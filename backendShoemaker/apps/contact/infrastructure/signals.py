@@ -16,14 +16,4 @@ def send_contact_notification(sender, instance, created, **kwargs):
     - Notification to admins with recevoir_emails_contact=True
     """
     if created:
-        # Import tasks here to avoid circular imports
-        from apps.commande.tasks import (
-            send_contact_confirmation_to_client,
-            send_contact_form_to_admins
-        )
-
-        # Send confirmation to client asynchronously
-        send_contact_confirmation_to_client.delay(instance.id)
-
-        # Send notification to admins asynchronously
-        send_contact_form_to_admins.delay(instance.id)
+        pass

@@ -4,7 +4,7 @@ DRF Serializers for Users API.
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
-from ...models import User, DeliveryPerson
+from ...models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -99,40 +99,6 @@ class ClientRegisterSerializer(RegisterSerializer):
     last_name = serializers.CharField(
         max_length=150,
         help_text="Nom de famille de l'utilisateur"
-    )
-    phone = serializers.CharField(
-        max_length=20,
-        help_text="Numéro de téléphone unique (format: +221 XX XXX XXXX)"
-    )
-
-    class Meta(RegisterSerializer.Meta):
-        fields = ['id', 'email', 'password', 'password_confirm', 'first_name', 'last_name', 'phone']
-
-
-class DeliveryRegisterSerializer(RegisterSerializer):
-    """
-    Serializer for DELIVERY registration.
-    Le rôle DELIVERY est automatiquement assigné lors de l'inscription.
-    """
-    email = serializers.EmailField(help_text="Adresse email unique du livreur (ex: livreur@example.com)")
-    password = serializers.CharField(
-        write_only=True,
-        min_length=8,
-        style={'input_type': 'password'},
-        help_text="Mot de passe (minimum 8 caractères)"
-    )
-    password_confirm = serializers.CharField(
-        write_only=True,
-        style={'input_type': 'password'},
-        help_text="Confirmation du mot de passe (doit être identique au mot de passe)"
-    )
-    first_name = serializers.CharField(
-        max_length=150,
-        help_text="Prénom du livreur"
-    )
-    last_name = serializers.CharField(
-        max_length=150,
-        help_text="Nom de famille du livreur"
     )
     phone = serializers.CharField(
         max_length=20,
@@ -252,38 +218,6 @@ class ChangePasswordSerializer(serializers.Serializer):
         return attrs
 
 
-class DeliveryPersonSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(source='uuid', read_only=True)
-    """Serializer for DeliveryPerson model."""
-
-    user = UserSerializer(read_only=True)
-
-    class Meta:
-        model = DeliveryPerson
-        fields = [
-            'id', 'user', 'vehicle_type', 'license_number', 'is_available',
-            'current_location_lat', 'current_location_lon',
-            'created_at', 'updated_at'
-        ]
-        read_only_fields = ['id', 'created_at', 'updated_at']
-
-
-class CreateDeliveryPersonSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(source='uuid', read_only=True)
-    """Serializer for creating delivery person profile."""
-
-    class Meta:
-        model = DeliveryPerson
-        fields = ['id', 'vehicle_type', 'license_number']
-
-
-class UpdateLocationSerializer(serializers.Serializer):
-    """Serializer for updating delivery person location."""
-
-    latitude = serializers.FloatField(min_value=-90, max_value=90)
-    longitude = serializers.FloatField(min_value=-180, max_value=180)
-
-
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
     """
     Custom JWT serializer to allow login with email OR phone.
@@ -302,9 +236,9 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             help_text="Mot de passe de l'utilisateur"
         )
         self.fields['context'] = serializers.ChoiceField(
-            choices=['CLIENT', 'DELIVERY', 'ADMIN', 'SUPERADMIN'],
+            choices=['CLIENT', 'ADMIN', 'SUPERADMIN'],
             required=True,
-            help_text="Contexte de connexion - Rôle de l'utilisateur. Choix possibles: CLIENT (client), DELIVERY (livreur), ADMIN (administrateur), SUPERADMIN (super administrateur)"
+            help_text="Contexte de connexion - Rôle de l'utilisateur. Choix possibles: CLIENT (client), ADMIN (administrateur), SUPERADMIN (super administrateur)"
         )
         self.fields.pop('username', None)
 

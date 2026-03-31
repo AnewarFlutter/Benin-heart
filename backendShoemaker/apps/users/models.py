@@ -10,12 +10,11 @@ from core.base_models import TimeStampedModel
 
 class Role(models.Model):
     """
-    Role model for user roles (CLIENT, DELIVERY, ADMIN, SUPERADMIN).
+    Role model for user roles (CLIENT, ADMIN, SUPERADMIN).
     Permet à un utilisateur d'avoir plusieurs rôles.
     """
     ROLE_CHOICES = [
         ('CLIENT', 'Client'),
-        ('DELIVERY', 'Delivery Person'),
         ('ADMIN', 'Administrator'),
         ('SUPERADMIN', 'Super Administrator'),
     ]
@@ -106,7 +105,7 @@ class User(AbstractUser, TimeStampedModel):
         Vérifie si l'utilisateur possède un rôle spécifique.
 
         Args:
-            role_name (str): Nom du rôle (CLIENT, DELIVERY, ADMIN, SUPERADMIN)
+            role_name (str): Nom du rôle (CLIENT, ADMIN, SUPERADMIN)
 
         Returns:
             bool: True si l'utilisateur a ce rôle
@@ -168,33 +167,3 @@ class User(AbstractUser, TimeStampedModel):
         """
         first_role = self.roles.first()
         return first_role.name if first_role else None
-
-
-class DeliveryPerson(TimeStampedModel):
-    """
-    Delivery person profile with additional information.
-    """
-    uuid = models.UUIDField(
-        default=uuid.uuid4,
-        unique=True,
-        editable=False,
-        db_index=True,
-        verbose_name="UUID"
-    )
-    user = models.OneToOneField(
-        User,
-        on_delete=models.CASCADE,
-        related_name='delivery_profile'
-    )
-
-    is_available = models.BooleanField(default=True)
-    current_location_lat = models.FloatField(null=True, blank=True)
-    current_location_lon = models.FloatField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'delivery_persons'
-        verbose_name = 'Livreur'
-        verbose_name_plural = 'Livreurs'
-
-    def __str__(self):
-        return f"{self.user.full_name} - Livreur"

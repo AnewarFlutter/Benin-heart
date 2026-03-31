@@ -4,13 +4,13 @@ These are abstract base classes that define the contract for data access.
 """
 from abc import ABC, abstractmethod
 from typing import Optional, List
-from .entities import UserEntity, DeliveryPersonEntity
+from .entities import UserEntity
 
 
 class IUserRepository(ABC):
    
     """
-        Interface du repository User et DeliveryPerson.
+        Interface du repository User.
         
         POURQUOI UNE INTERFACE ?
         - Le domain ne doit PAS savoir qu'on utilise Django, PostgreSQL, etc.
@@ -57,37 +57,6 @@ class IUserRepository(ABC):
     def exists_by_email(self, email: str) -> bool:
             """Check if user exists by email."""
             pass
-
-
-class IDeliveryPersonRepository(ABC):
-    """
-    Interface for DeliveryPerson repository.
-    """
-
-    @abstractmethod
-    def get_by_user_id(self, user_id: int) -> Optional[DeliveryPersonEntity]:
-        """Get delivery person by user ID."""
-        pass
-
-    @abstractmethod
-    def create(self, delivery_person: DeliveryPersonEntity) -> DeliveryPersonEntity:
-        """Create a new delivery person."""
-        pass
-
-    @abstractmethod
-    def update(self, delivery_person: DeliveryPersonEntity) -> DeliveryPersonEntity:
-        """Update delivery person information."""
-        pass
-
-    @abstractmethod
-    def list_available(self) -> List[DeliveryPersonEntity]:
-        """List all available delivery persons."""
-        pass
-
-    @abstractmethod
-    def find_nearest(self, lat: float, lon: float, limit: int = 5) -> List[DeliveryPersonEntity]:
-        """Find nearest delivery persons to given location."""
-        pass
 
  #Les Repository Interfaces (Abstractions)
 #Définition : les interfaces définissent COMMENT on accède aux données, SANS spécifier l'implémentation.

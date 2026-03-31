@@ -39,9 +39,4 @@ def debug_task(self):
 
 
 # Celery Beat Schedule
-app.conf.beat_schedule = {
-    'check-pickup-reminders-every-15-minutes': {
-        'task': 'apps.commande.tasks.check_and_send_pickup_reminders',
-        'schedule': 900.0,  # Every 15 minutes (900 seconds)
-    },
-}
+app.conf.beat_schedule = {}

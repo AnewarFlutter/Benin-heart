@@ -9,10 +9,10 @@ from django.utils import timezone
 from django.db.models import Q
 from drf_spectacular.utils import extend_schema
 
-from ...models import User, DeliveryPerson
+from ...models import User
 from .permissions import IsAdminOrSuperAdmin, CanManageUsers, IsSuperAdminOnly
 from .serializers import (
-    UserSerializer, UserListSerializer, DeliveryPersonSerializer,
+    UserSerializer, UserListSerializer,
     ManageRolesSerializer, BlockUnblockUserSerializer, ActivateDeactivateUserSerializer,
     ValidateOTPSerializer, AdminResetPasswordSerializer, AdminChangePasswordSerializer,
     AdminCreateUserSerializer, AdminUpdateUserSerializer,
@@ -100,7 +100,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
         Filtre le queryset selon les paramètres de requête.
         Supporte: role, is_active, is_verified, is_blocked, is_deleted
         """
-        queryset = User.objects.select_related('delivery_profile').prefetch_related('roles').order_by('-created_at')
+        queryset = User.objects.prefetch_related('roles').order_by('-created_at')
 
         # Pour les actions restore et soft_delete, on doit pouvoir accéder aux utilisateurs supprimés
         if self.action in ['restore', 'soft_delete']:
@@ -154,7 +154,6 @@ class AdminUserViewSet(viewsets.ModelViewSet):
         """
         total_users = User.objects.filter(is_deleted=False).count()
         clients = User.objects.filter(roles__name='CLIENT', is_deleted=False).count()
-        deliveries = User.objects.filter(roles__name='DELIVERY', is_deleted=False).count()
         admins = User.objects.filter(roles__name='ADMIN', is_deleted=False).count()
         superadmins = User.objects.filter(roles__name='SUPERADMIN', is_deleted=False).count()
         verified = User.objects.filter(is_verified=True, is_deleted=False).count()
@@ -166,7 +165,6 @@ class AdminUserViewSet(viewsets.ModelViewSet):
             'total_users': total_users,
             'by_role': {
                 'clients': clients,
-                'deliveries': deliveries,
                 'admins': admins,
                 'superadmins': superadmins,
             },
@@ -181,7 +179,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
     @extend_schema(
         tags=['Admin - Gestion des utilisateurs'],
         summary='Gérer les rôles d\'un utilisateur',
-        description='Modifier le rôle d\'un utilisateur (CLIENT, DELIVERY, ADMIN, SUPERADMIN)',
+        description='Modifier le rôle d\'un utilisateur (CLIENT, ADMIN, SUPERADMIN)',
         request=ManageRolesSerializer
     )
     @action(detail=True, methods=['post'])
@@ -191,7 +189,7 @@ class AdminUserViewSet(viewsets.ModelViewSet):
         POST /api/admin/users/{id}/manage_roles/
 
         Body: {
-            "roles": ["CLIENT", "DELIVERY"],
+            "roles": ["CLIENT", "ADMIN"],
             "action": "add" | "remove" | "set"
         }
 
@@ -217,45 +215,24 @@ class AdminUserViewSet(viewsets.ModelViewSet):
                     )
 
         old_roles = user.get_roles_list()
-        had_delivery_role = 'DELIVERY' in old_roles
 
         if action_type == 'add':
-            # Ajouter les rôles
             for role_name in roles:
                 user.add_role(role_name)
             message = f'Rôles ajoutés: {", ".join(roles)}'
 
         elif action_type == 'remove':
-            # Retirer les rôles
             for role_name in roles:
                 user.remove_role(role_name)
             message = f'Rôles retirés: {", ".join(roles)}'
 
         elif action_type == 'set':
-            # Définir exactement ces rôles (remplacer tous)
             user.roles.clear()
             for role_name in roles:
                 user.add_role(role_name)
             message = f'Rôles définis: {", ".join(roles)}'
 
         new_roles = user.get_roles_list()
-        has_delivery_role = 'DELIVERY' in new_roles
-
-        # Gestion automatique du profil DeliveryPerson
-        # Si le rôle DELIVERY est ajouté et qu'il n'y a pas de profil, créer le profil
-        if has_delivery_role and not had_delivery_role:
-            if not hasattr(user, 'delivery_profile'):
-                DeliveryPerson.objects.create(
-                    user=user,
-                    is_available=True
-                )
-                message += ' | Profil livreur créé automatiquement'
-
-        # Si le rôle DELIVERY est retiré et qu'il y a un profil, supprimer le profil
-        elif not has_delivery_role and had_delivery_role:
-            if hasattr(user, 'delivery_profile'):
-                user.delivery_profile.delete()
-                message += ' | Profil livreur supprimé automatiquement'
 
         return Response({
             'message': message,
@@ -511,106 +488,6 @@ class AdminUserViewSet(viewsets.ModelViewSet):
         return Response({
             'message': 'Compte restauré avec succès',
             'user': UserSerializer(user).data
-        })
-
-
-class AdminDeliveryPersonViewSet(viewsets.ModelViewSet):
-    lookup_field = 'uuid'
-    """
-    Admin-only ViewSet for managing delivery persons.
-    """
-    queryset = DeliveryPerson.objects.select_related('user').all()
-    serializer_class = DeliveryPersonSerializer
-    permission_classes = [IsAdminOrSuperAdmin]
-    http_method_names = ['get', 'post', 'put', 'delete', 'head', 'options']  # Exclure PATCH
-
-    def get_queryset(self):
-        """
-        Filtre le queryset selon les paramètres de requête.
-        Supporte: is_available, search (par nom/email)
-        """
-        queryset = DeliveryPerson.objects.select_related('user').all().order_by('-created_at')
-
-        # Filtre par disponibilité
-        is_available = self.request.query_params.get('is_available', None)
-        if is_available is not None:
-            queryset = queryset.filter(is_available=is_available.lower() == 'true')
-
-        # Recherche par nom ou email de l'utilisateur
-        search = self.request.query_params.get('search', None)
-        if search:
-            queryset = queryset.filter(
-                Q(user__email__icontains=search) |
-                Q(user__first_name__icontains=search) |
-                Q(user__last_name__icontains=search)
-            )
-
-        return queryset
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Liste des livreurs',
-        description='Récupère la liste de tous les livreurs avec leurs profils. Filtrable par disponibilité (is_available) et recherche (search)'
-    )
-    def list(self, request, *args, **kwargs):
-        return super().list(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Détails d\'un livreur',
-        description='Récupère les détails complets d\'un livreur spécifique'
-    )
-    def retrieve(self, request, *args, **kwargs):
-        return super().retrieve(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Créer un profil livreur',
-        description='Créer un nouveau profil de livreur'
-    )
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Modifier un livreur',
-        description='Modifier complètement un profil de livreur'
-    )
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs)
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Supprimer un livreur',
-        description='Supprimer un profil de livreur'
-    )
-    def destroy(self, request, *args, **kwargs):
-        delivery_person = self.get_object()
-        user_name = delivery_person.user.full_name
-        delivery_person.delete()
-        return Response({
-            'message': f'Profil livreur de {user_name} supprimé avec succès'
-        }, status=status.HTTP_200_OK)
-
-    @extend_schema(
-        tags=['Admin - Gestion des livreurs'],
-        summary='Statistiques des livreurs',
-        description='Récupère les statistiques des livreurs (total, disponibles)'
-    )
-    @action(detail=False, methods=['get'])
-    def statistics(self, request):
-        """
-        Get delivery person statistics.
-        GET /api/admin/delivery-persons/statistics/
-        """
-        total = DeliveryPerson.objects.count()
-        available = DeliveryPerson.objects.filter(is_available=True).count()
-        unavailable = DeliveryPerson.objects.filter(is_available=False).count()
-
-        return Response({
-            'total_delivery_persons': total,
-            'available': available,
-            'unavailable': unavailable,
         })
 
 

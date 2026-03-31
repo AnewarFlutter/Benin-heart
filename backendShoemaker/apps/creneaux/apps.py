@@ -1,7 +1,0 @@
-from django.apps import AppConfig
-
-
-class CreneauxConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'apps.creneaux'
-    verbose_name = 'Creneaux'

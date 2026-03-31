@@ -44,7 +44,7 @@ class IsSuperAdminOnly(permissions.BasePermission):
 class CanManageUsers(permissions.BasePermission):
     """
     Permission pour gérer les utilisateurs.
-    ADMIN peut gérer CLIENT et DELIVERY.
+    ADMIN peut gérer CLIENT.
     SUPERADMIN peut tout gérer, y compris les ADMIN.
     """
     message = "Vous n'avez pas les permissions nécessaires pour gérer cet utilisateur."
@@ -74,7 +74,7 @@ class CanManageUsers(permissions.BasePermission):
         if user.is_superuser or user.has_role('SUPERADMIN'):
             return True
 
-        # ADMIN peut gérer CLIENT et DELIVERY uniquement
+        # ADMIN peut gérer CLIENT uniquement
         if user.is_staff or user.has_role('ADMIN'):
             # Vérifier que l'utilisateur cible n'a pas de rôles ADMIN ou SUPERADMIN
             return not target_user.has_any_role(['ADMIN', 'SUPERADMIN'])
@@ -96,15 +96,3 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         return obj == request.user
 
 
-class IsDeliveryPersonOwner(permissions.BasePermission):
-    """
-    Permission to only allow delivery person to access their own profile.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Admin can access any delivery person
-        if request.user.is_staff:
-            return True
-
-        # Delivery person can only access their own profile
-        return obj.user == request.user

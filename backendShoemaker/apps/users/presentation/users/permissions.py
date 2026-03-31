@@ -18,15 +18,3 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         return obj == request.user
 
 
-class IsDeliveryPersonOwner(permissions.BasePermission):
-    """
-    Permission to only allow delivery person to access their own profile.
-    """
-
-    def has_object_permission(self, request, view, obj):
-        # Admin can access any delivery person
-        if request.user.is_staff:
-            return True
-
-        # Delivery person can only access their own profile
-        return obj.user == request.user

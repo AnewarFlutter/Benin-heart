@@ -2,7 +2,7 @@
 DRF Serializers for Admin API.
 """
 from rest_framework import serializers
-from ...models import User, DeliveryPerson, Role
+from ...models import User, Role
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -11,13 +11,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     full_name = serializers.ReadOnlyField()
     roles = serializers.SerializerMethodField()
-    delivery_person_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             'id', 'email', 'username', 'first_name', 'last_name', 'full_name',
-            'phone', 'roles', 'delivery_person_id', 'is_active', 'is_verified', 'is_staff', 'is_superuser',
+            'phone', 'roles', 'is_active', 'is_verified', 'is_staff', 'is_superuser',
             'is_blocked', 'is_deleted', 'deleted_at',
             'created_at', 'updated_at'
         ]
@@ -27,12 +26,6 @@ class UserSerializer(serializers.ModelSerializer):
         """Retourne la liste des noms de rôles de l'utilisateur."""
         return obj.get_roles_list()
 
-    def get_delivery_person_id(self, obj):
-        """Retourne le delivery_person_id si l'utilisateur a le rôle DELIVERY (même avec plusieurs rôles)."""
-        if obj.has_role('DELIVERY') and hasattr(obj, 'delivery_profile') and obj.delivery_profile:
-            return str(obj.delivery_profile.uuid)
-        return None
-
 
 class UserListSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
@@ -40,25 +33,18 @@ class UserListSerializer(serializers.ModelSerializer):
 
     full_name = serializers.ReadOnlyField()
     roles = serializers.SerializerMethodField()
-    delivery_person_id = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = [
             'id', 'email', 'first_name', 'last_name', 'full_name',
-            'phone', 'roles', 'delivery_person_id', 'is_active', 'is_verified', 'is_blocked',
+            'phone', 'roles', 'is_active', 'is_verified', 'is_blocked',
             'is_deleted', 'created_at'
         ]
 
     def get_roles(self, obj):
         """Retourne la liste des noms de rôles de l'utilisateur."""
         return obj.get_roles_list()
-
-    def get_delivery_person_id(self, obj):
-        """Retourne le delivery_person_id si l'utilisateur a le rôle DELIVERY (même avec plusieurs rôles)."""
-        if obj.has_role('DELIVERY') and hasattr(obj, 'delivery_profile') and obj.delivery_profile:
-            return str(obj.delivery_profile.uuid)
-        return None
 
 
 class ManageRolesSerializer(serializers.Serializer):
@@ -209,7 +195,7 @@ class AdminCreateUserSerializer(serializers.ModelSerializer):
     )
     roles = RolesField(
         required=False,
-        help_text="Liste des rôles à assigner (CLIENT, DELIVERY, ADMIN, SUPERADMIN)"
+        help_text="Liste des rôles à assigner (CLIENT, ADMIN, SUPERADMIN)"
     )
 
     class Meta:
@@ -256,15 +242,6 @@ class AdminCreateUserSerializer(serializers.ModelSerializer):
         else:
             # Default role if none specified
             user.add_role('CLIENT')
-
-        # Create DeliveryPerson profile automatically if DELIVERY role is assigned
-        if 'DELIVERY' in roles_data:
-            # Vérifier si le profil n'existe pas déjà
-            if not hasattr(user, 'delivery_profile'):
-                DeliveryPerson.objects.create(
-                    user=user,
-                    is_available=True  # Par défaut, le livreur est disponible
-                )
 
         return user
 
@@ -354,48 +331,6 @@ class ChangePasswordSerializer(serializers.Serializer):
             raise serializers.ValidationError({"new_password": "Passwords do not match"})
         attrs.pop('new_password_confirm')
         return attrs
-
-
-class DeliveryPersonSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(source='user.uuid', read_only=True)
-    """Serializer for DeliveryPerson model."""
-
-    # Flatten user fields at the root level
-    delivery_person_id = serializers.UUIDField(source='uuid', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
-    username = serializers.CharField(source='user.username', read_only=True)
-    first_name = serializers.CharField(source='user.first_name', read_only=True)
-    last_name = serializers.CharField(source='user.last_name', read_only=True)
-    full_name = serializers.CharField(source='user.full_name', read_only=True)
-    phone = serializers.CharField(source='user.phone', read_only=True)
-    is_verified = serializers.BooleanField(source='user.is_verified', read_only=True)
-    is_active = serializers.BooleanField(source='user.is_active', read_only=True)
-
-    class Meta:
-        model = DeliveryPerson
-        fields = [
-            'id', 'delivery_person_id', 'email', 'username', 'first_name', 'last_name', 'full_name', 'phone',
-            'is_verified', 'is_active', 'is_available',
-            'current_location_lat', 'current_location_lon',
-            'created_at', 'updated_at'
-        ]
-        read_only_fields = ['id', 'delivery_person_id', 'created_at', 'updated_at']
-
-
-class CreateDeliveryPersonSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(source='uuid', read_only=True)
-    """Serializer for creating delivery person profile."""
-
-    class Meta:
-        model = DeliveryPerson
-        fields = ['id']
-
-
-class UpdateLocationSerializer(serializers.Serializer):
-    """Serializer for updating delivery person location."""
-
-    latitude = serializers.FloatField(min_value=-90, max_value=90)
-    longitude = serializers.FloatField(min_value=-180, max_value=180)
 
 
 class AdminProfileSerializer(serializers.ModelSerializer):

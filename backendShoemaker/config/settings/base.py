@@ -35,13 +35,9 @@ INSTALLED_APPS = [
     # Local apps
     'core',
     'apps.users',
-    'apps.service',
     'apps.faq',
     'apps.contact.apps.ContactConfig',
-    'apps.commande',
     'apps.temoignage',
-    'apps.devis',
-    'apps.creneaux',
     'apps.storepage',
     'django_filters',  # Ajoutez cette ligne
 

@@ -9,8 +9,8 @@ from datetime import datetime, timedelta
 from django.core.mail import send_mail
 from django.conf import settings
 from core.exceptions import ValidationException, AlreadyExistsException, NotFoundException
-from .entities import UserEntity, DeliveryPersonEntity
-from .repositories import IUserRepository, IDeliveryPersonRepository
+from .entities import UserEntity
+from .repositories import IUserRepository
 
 
 class UserService:
@@ -97,53 +97,4 @@ class OTPService:
         return timezone.now() < expiry_time
 
 
-class DeliveryPersonService:
-    """
-    Domain service for delivery person business logic.
-    """
-
-    def __init__(
-        self,
-        delivery_repository: IDeliveryPersonRepository,
-        user_repository: IUserRepository
-    ):
-        self.delivery_repository = delivery_repository
-        self.user_repository = user_repository
-
-    def validate_delivery_person_creation(self, user_id: int) -> None:
-        """
-        Validate if a delivery person can be created.
-        """
-        user = self.user_repository.get_by_id(user_id)
-        if not user:
-            raise NotFoundException("User", str(user_id))
-
-        if not user.is_delivery_person():
-            raise ValidationException("User must have DELIVERY role")
-
-        existing = self.delivery_repository.get_by_user_id(user_id)
-        if existing:
-            raise AlreadyExistsException("DeliveryPerson", f"user_id {user_id}")
-
-    def find_best_delivery_person(
-        self,
-        pickup_lat: float,
-        pickup_lon: float
-    ) -> Optional[DeliveryPersonEntity]:
-        """
-        Find the best available delivery person for a pickup location.
-        Currently uses nearest delivery person, but can be extended with more logic.
-        """
-        available_persons = self.delivery_repository.find_nearest(
-            pickup_lat,
-            pickup_lon,
-            limit=5
-        )
-
-        if not available_persons:
-            return None
-
-        # For now, return the nearest one
-        # Can be extended to consider: rating, number of active deliveries, etc.
-        return available_persons[0]
 

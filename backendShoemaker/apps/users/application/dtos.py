@@ -51,35 +51,3 @@ class ChangePasswordDTO:
     new_password: str
 
 
-@dataclass
-class DeliveryPersonDTO:
-    """DTO for delivery person data."""
-    user: UserDTO
-    vehicle_type: Optional[str]
-    license_number: Optional[str]
-    is_available: bool
-    current_location_lat: Optional[float]
-    current_location_lon: Optional[float]
-
-
-@dataclass
-class CreateDeliveryPersonDTO:
-    """DTO for creating a delivery person profile."""
-    user_id: int
-    vehicle_type: str
-    license_number: str
-
-
-@dataclass
-class UpdateDeliveryPersonDTO:
-    """DTO for updating delivery person information."""
-    vehicle_type: Optional[str] = None
-    license_number: Optional[str] = None
-    is_available: Optional[bool] = None
-
-
-@dataclass
-class UpdateLocationDTO:
-    """DTO for updating delivery person location."""
-    latitude: float
-    longitude: float

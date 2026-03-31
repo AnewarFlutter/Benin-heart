@@ -70,40 +70,10 @@ class UserValidator:
     @staticmethod
     def validate_role(role: str) -> None:
         """Validate user role."""
-        valid_roles = ['CLIENT', 'DELIVERY', 'ADMIN']
+        valid_roles = ['CLIENT', 'ADMIN']
         if role not in valid_roles:
             raise ValidationException(
                 f"Invalid role: {role}. Must be one of: {', '.join(valid_roles)}"
             )
 
 
-class DeliveryPersonValidator:
-    """Validator for delivery person-related data."""
-
-    @staticmethod
-    def validate_vehicle_type(vehicle_type: str) -> None:
-        """Validate vehicle type."""
-        valid_types = ['BIKE', 'MOTORCYCLE', 'CAR', 'VAN']
-        if vehicle_type not in valid_types:
-            raise ValidationException(
-                f"Invalid vehicle type: {vehicle_type}. "
-                f"Must be one of: {', '.join(valid_types)}"
-            )
-
-    @staticmethod
-    def validate_license_number(license_number: str) -> None:
-        """Validate license number."""
-        if not license_number:
-            raise ValidationException("License number is required")
-
-        if len(license_number) < 5:
-            raise ValidationException("License number must be at least 5 characters long")
-
-    @staticmethod
-    def validate_location(latitude: float, longitude: float) -> None:
-        """Validate GPS coordinates."""
-        if not (-90 <= latitude <= 90):
-            raise ValidationException(f"Invalid latitude: {latitude}. Must be between -90 and 90")
-
-        if not (-180 <= longitude <= 180):
-            raise ValidationException(f"Invalid longitude: {longitude}. Must be between -180 and 180")
