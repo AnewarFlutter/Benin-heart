@@ -3,7 +3,7 @@ services:
   # PostgreSQL Database
   db:
     image: postgres:15-alpine
-    container_name: shoemaker_db_prod
+    container_name: beninheart_db_prod
     env_file:
       - .env
     volumes:
@@ -14,7 +14,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     networks:
-      - shoemaker-network
+      - beninheart-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 10s
@@ -25,13 +25,13 @@ services:
   # Redis
   redis:
     image: redis:7-alpine
-    container_name: shoemaker_redis_prod
-    hostname: shoemaker-redis
+    container_name: beninheart_redis_prod
+    hostname: beninheart-redis
     command: redis-server --protected-mode no
     volumes:
       - redis_data:/data
     networks:
-      - shoemaker-network
+      - beninheart-network
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -42,11 +42,11 @@ services:
   # pgAdmin (for database management)
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: shoemaker_pgadmin_prod
+    container_name: beninheart_pgadmin_prod
     env_file:
       - .env
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@shoemaker.com}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@beninheart.com}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: 'True'
     ports:
@@ -57,7 +57,7 @@ services:
       db:
         condition: service_healthy
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
 
   celery_worker:
@@ -65,7 +65,7 @@ services:
       context: .
       network: host
       dockerfile: Dockerfile
-    container_name: shoemaker_celery_worker_prod
+    container_name: beninheart_celery_worker_prod
     entrypoint: []
     command: >
       sh -c "
@@ -99,7 +99,7 @@ services:
       web:
         condition: service_started
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
 
   # Celery Beat
@@ -108,7 +108,7 @@ services:
       context: .
       network: host
       dockerfile: Dockerfile
-    container_name: shoemaker_celery_beat_prod
+    container_name: beninheart_celery_beat_prod
     entrypoint: []
     command: >
       sh -c "
@@ -141,7 +141,7 @@ services:
       web:
         condition: service_started
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
 
   web:
@@ -149,7 +149,7 @@ services:
       context: .
       network: host
       dockerfile: Dockerfile
-    container_name: shoemaker_web_prod
+    container_name: beninheart_web_prod
     command: /app/entrypoint.sh
     env_file:
       - .env
@@ -181,27 +181,27 @@ services:
       # redis:
       #   condition: service_healthy
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
   # ==================== NGINX & SSL ====================
 
   # Nginx Reverse Proxy
   nginx:
     image: nginx:alpine
-    container_name: shoemaker_nginx_prod
+    container_name: beninheart_nginx_prod
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ../nginx/nginx-shoemaker.conf:/etc/nginx/nginx.conf:ro
+      - ../nginx/nginx-beninheart.conf:/etc/nginx/nginx.conf:ro
       - certbot_conf:/etc/letsencrypt:ro
       - certbot_www:/var/www/certbot:ro
-      - static_volume:/var/www/shoemaker/static:ro
-      - media_volume:/var/www/shoemaker/media:ro
+      - static_volume:/var/www/beninheart/static:ro
+      - media_volume:/var/www/beninheart/media:ro
     depends_on:
       - web
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
     healthcheck:
       test: ["CMD", "nginx", "-t"]
@@ -212,13 +212,13 @@ services:
   # Certbot for SSL (Let's Encrypt)
   certbot:
     image: certbot/certbot
-    container_name: shoemaker_certbot_prod
+    container_name: beninheart_certbot_prod
     volumes:
       - certbot_conf:/etc/letsencrypt
       - certbot_www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
     networks:
-      - shoemaker-network
+      - beninheart-network
     restart: always
 
 volumes:
@@ -231,5 +231,5 @@ volumes:
   certbot_www:
 
 networks:
-  shoemaker-network:
+  beninheart-network:
     external: true

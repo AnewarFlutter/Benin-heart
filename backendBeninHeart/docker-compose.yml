@@ -5,11 +5,11 @@ services:
   # PostgreSQL Database
   db:
     image: postgres:15-alpine
-    container_name: shoemaker_db_dev
+    container_name: beninheart_db_dev
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: shoemaker_db
+      POSTGRES_DB: beninheart_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
@@ -23,7 +23,7 @@ services:
   # Redis (for caching and sessions)
   redis:
     image: redis:7-alpine
-    container_name: shoemaker_redis_dev
+    container_name: beninheart_redis_dev
     ports:
       - "6379:6379"
     healthcheck:
@@ -35,7 +35,7 @@ services:
   # pgAdmin (for database management)
   pgadmin:
     image: dpage/pgadmin4:latest
-    container_name: shoemaker_pgadmin_dev
+    container_name: beninheart_pgadmin_dev
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
@@ -51,7 +51,7 @@ services:
   # Celery Worker (for async tasks like sending emails)
   celery_worker:
     build: .
-    container_name: shoemaker_celery_worker_dev
+    container_name: beninheart_celery_worker_dev
     entrypoint: []
     command: sh -c "sleep 5 && celery -A config worker --loglevel=info"
     working_dir: /app
@@ -59,7 +59,7 @@ services:
       - .:/app
     environment:
       - DEBUG=True
-      - DB_NAME=shoemaker_db
+      - DB_NAME=beninheart_db
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_HOST=db
@@ -78,7 +78,7 @@ services:
   # Celery Beat (for periodic tasks)
   celery_beat:
     build: .
-    container_name: shoemaker_celery_beat_dev
+    container_name: beninheart_celery_beat_dev
     entrypoint: []
     command: sh -c "sleep 5 && celery -A config beat --loglevel=info"
     working_dir: /app
@@ -86,7 +86,7 @@ services:
       - .:/app
     environment:
       - DEBUG=True
-      - DB_NAME=shoemaker_db
+      - DB_NAME=beninheart_db
       - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_HOST=db
@@ -105,7 +105,7 @@ services:
   # Flower (Celery monitoring tool - optional)
   flower:
     build: .
-    container_name: shoemaker_flower_dev
+    container_name: beninheart_flower_dev
     entrypoint: []
     command: sh -c "sleep 5 && celery -A config flower --port=5555"
     working_dir: /app
@@ -127,4 +127,4 @@ volumes:
 
 networks:
   default:
-    name: shoemaker_network_dev
+    name: beninheart_network_dev
