@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 
 interface TinderCardProps {
   profile: {
-    id: number;
+    id: string | number;
     images: string[];
     name: string;
     age?: number;
