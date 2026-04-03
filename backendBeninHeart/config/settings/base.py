@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'apps.abonnement',
     'apps.profil',
     'apps.like',
+    'apps.conversation',
     'django_filters',
     'channels',
 ]

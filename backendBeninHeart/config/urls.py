@@ -44,6 +44,7 @@ urlpatterns = [
     path('api/', include('apps.profil.presentation.profils.urls')),  # Client Profils
     path('api/', include('apps.profil.presentation.admin.urls')),  # Admin Profils
     path('api/', include('apps.like.presentation.likes.urls')),  # Client Likes & Matchs
+    path('api/', include('apps.conversation.presentation.conversations.urls')),  # Client Conversations
 ]
 
 # Serve media files in development
