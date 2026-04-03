@@ -19,7 +19,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(','
 
 # Application definition
 INSTALLED_APPS = [
-    'daphne',  # ASGI server — doit être en premier pour gérer les WebSockets
+    # 'daphne',  # ASGI server — doit être en premier pour gérer les WebSockets
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,8 +40,9 @@ INSTALLED_APPS = [
     'apps.contact.apps.ContactConfig',
     'apps.temoignage',
     'apps.storepage',
+    'apps.abonnement',
     'django_filters',
-    'channels',
+    # 'channels',
 ]
 
 # ASGI Application (remplace WSGI pour le support WebSocket)
