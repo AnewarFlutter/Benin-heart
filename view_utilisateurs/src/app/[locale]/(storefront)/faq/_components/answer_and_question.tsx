@@ -1,6 +1,7 @@
 'use client';
 
 import FAQ from '@/components/faq';
+import { EntityFaq } from '@/modules/beninheart/storefront/faq/domain/entities/entity_faq';
 
 const defaultFAQs = [
   {
@@ -29,7 +30,14 @@ const defaultFAQs = [
   }
 ];
 
-export default function AnswerAndQuestion() {
-  
-  return <FAQ faq={defaultFAQs} />;
+interface AnswerAndQuestionProps {
+  faqs?: EntityFaq[];
+}
+
+export default function AnswerAndQuestion({ faqs }: AnswerAndQuestionProps) {
+  const items = faqs && faqs.length > 0
+    ? faqs.map((f) => ({ question: f.question, answer: f.answer }))
+    : defaultFAQs;
+
+  return <FAQ faq={items} />;
 }

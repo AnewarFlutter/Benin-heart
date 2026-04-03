@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { APP_ROUTES } from '@/shared/constants/routes';
 import { APP_IMAGES } from '@/shared/constants/images';
 
+import { EntityHeroBanner } from '@/modules/beninheart/storefront/hero/domain/entities/entity_hero';
+
 interface BannerSlide {
   id: number;
   title: string;
@@ -34,7 +36,7 @@ const defaultSlides: BannerSlide[] = [
     title: 'Des Rencontres Sérieuses',
     description: 'Construisez une relation durable avec la bonne personne',
     image: APP_IMAGES.heroCarousel.slide2,
-    cta: {  
+    cta: {
       text: 'Découvrir nos abonnements',
       href: APP_ROUTES.home.abonnements
     }
@@ -51,12 +53,24 @@ const defaultSlides: BannerSlide[] = [
   }
 ];
 
-export default function HeroBannerCarousel() {
+interface HeroBannerCarouselProps {
+  banners?: EntityHeroBanner[];
+}
+
+export default function HeroBannerCarousel({ banners }: HeroBannerCarouselProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const router = useRouter();
 
-  const slides = defaultSlides;
+  const slides: BannerSlide[] = banners && banners.length > 0
+    ? banners.map((b) => ({
+        id: b.id,
+        title: b.titre,
+        description: b.description,
+        image: b.image ?? defaultSlides[0].image,
+        cta: b.boutonLien ? { text: b.boutonTexte ?? 'En savoir plus', href: b.boutonLien } : undefined,
+      }))
+    : defaultSlides;
 
   useEffect(() => {
     if (!isAutoPlaying) return;

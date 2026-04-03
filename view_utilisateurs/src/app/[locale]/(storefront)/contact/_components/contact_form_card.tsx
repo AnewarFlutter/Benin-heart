@@ -7,30 +7,24 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { sendContactAction } from '@/actions/beninheart/storefront/actions';
 
-interface ContactFormCardProps {
-  onSubmit?: (data: FormData) => void;
-}
-
-export default function ContactFormCard({ onSubmit }: ContactFormCardProps) {
+export default function ContactFormCard() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: '',
-    message: ''
+    sujet: '',
+    message: '',
   });
-
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,30 +32,22 @@ export default function ContactFormCard({ onSubmit }: ContactFormCardProps) {
     setIsSubmitting(true);
 
     try {
-      // Simuler l'envoi
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      if (onSubmit) {
-        const formDataObj = new FormData();
-        Object.entries(formData).forEach(([key, value]) => {
-          formDataObj.append(key, value);
-        });
-        onSubmit(formDataObj);
-      }
-
-      // Réinitialiser le formulaire
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        subject: '',
-        message: ''
+      const result = await sendContactAction({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        sujet: formData.sujet,
+        message: formData.message,
       });
 
-      alert('Message envoyé avec succès !');
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi:', error);
-      alert('Erreur lors de l\'envoi du message');
+      if (result.success) {
+        toast.success('Message envoyé ! Nous vous répondrons sous 24h.');
+        setFormData({ name: '', email: '', phone: '', sujet: '', message: '' });
+      } else {
+        toast.error(result.error ?? "Erreur lors de l'envoi du message.");
+      }
+    } catch {
+      toast.error("Une erreur inattendue s'est produite.");
     } finally {
       setIsSubmitting(false);
     }
@@ -118,7 +104,7 @@ export default function ContactFormCard({ onSubmit }: ContactFormCardProps) {
                 id="phone"
                 name="phone"
                 type="tel"
-                placeholder="+33 6 12 34 56 78"
+                placeholder="+229 97 00 00 00"
                 value={formData.phone}
                 onChange={handleChange}
                 className="h-12 text-base"
@@ -128,15 +114,15 @@ export default function ContactFormCard({ onSubmit }: ContactFormCardProps) {
 
           {/* Sujet */}
           <div className="space-y-2">
-            <Label htmlFor="subject" className="text-base">
+            <Label htmlFor="sujet" className="text-base">
               Sujet <span className="text-destructive">*</span>
             </Label>
             <Input
-              id="subject"
-              name="subject"
+              id="sujet"
+              name="sujet"
               type="text"
               placeholder="Sujet de votre message"
-              value={formData.subject}
+              value={formData.sujet}
               onChange={handleChange}
               required
               className="h-12 text-base"

@@ -24,6 +24,21 @@ import { UpdateUserUseCase } from "@/modules/magasin/user/domain/usecases/update
 
 // ─── Benin Heart ───────────────────────────────────────────────────────────────
 
+import { StorefrontController } from "@/adapters/beninheart/storefront_controller";
+import { RestApiHeroDataSourceImpl } from "@/modules/beninheart/storefront/hero/data/datasources/rest_api_hero_data_source_impl";
+import { HeroRepositoryImpl } from "@/modules/beninheart/storefront/hero/data/repositories/hero_repository_impl";
+import { GetHeroBannersUseCase } from "@/modules/beninheart/storefront/hero/domain/usecases/get_hero_banners_usecase";
+import { RestApiTemoignageDataSourceImpl } from "@/modules/beninheart/storefront/temoignage/data/datasources/rest_api_temoignage_data_source_impl";
+import { TemoignageRepositoryImpl } from "@/modules/beninheart/storefront/temoignage/data/repositories/temoignage_repository_impl";
+import { GetTemoignagesUseCase } from "@/modules/beninheart/storefront/temoignage/domain/usecases/get_temoignages_usecase";
+import { RestApiFaqDataSourceImpl } from "@/modules/beninheart/storefront/faq/data/datasources/rest_api_faq_data_source_impl";
+import { FaqRepositoryImpl } from "@/modules/beninheart/storefront/faq/data/repositories/faq_repository_impl";
+import { GetFaqsUseCase } from "@/modules/beninheart/storefront/faq/domain/usecases/get_faqs_usecase";
+import { RestApiContactDataSourceImpl } from "@/modules/beninheart/storefront/contact/data/datasources/rest_api_contact_data_source_impl";
+import { ContactRepositoryImpl } from "@/modules/beninheart/storefront/contact/data/repositories/contact_repository_impl";
+import { GetContactInfoUseCase } from "@/modules/beninheart/storefront/contact/domain/usecases/get_contact_info_usecase";
+import { SendContactUseCase } from "@/modules/beninheart/storefront/contact/domain/usecases/send_contact_usecase";
+
 import { AuthController } from "@/adapters/beninheart/auth_controller";
 import { ConversationController } from "@/adapters/beninheart/conversation_controller";
 import { LikeController } from "@/adapters/beninheart/like_controller";
@@ -159,6 +174,35 @@ const getMessagesUseCase = new GetMessagesUseCase(conversationRepository);
 const conversationController = new ConversationController(getConversationsUseCase, getMessagesUseCase);
 
 // ──────────────────────────────────────────────────────────────────────────────
+// Benin Heart — Storefront DI
+// ──────────────────────────────────────────────────────────────────────────────
+
+const heroDataSource = new RestApiHeroDataSourceImpl();
+const heroRepository = new HeroRepositoryImpl(heroDataSource);
+const getHeroBannersUseCase = new GetHeroBannersUseCase(heroRepository);
+
+const temoignageDataSource = new RestApiTemoignageDataSourceImpl();
+const temoignageRepository = new TemoignageRepositoryImpl(temoignageDataSource);
+const getTemoignagesUseCase = new GetTemoignagesUseCase(temoignageRepository);
+
+const faqDataSource = new RestApiFaqDataSourceImpl();
+const faqRepository = new FaqRepositoryImpl(faqDataSource);
+const getFaqsUseCase = new GetFaqsUseCase(faqRepository);
+
+const contactDataSource = new RestApiContactDataSourceImpl();
+const contactRepository = new ContactRepositoryImpl(contactDataSource);
+const getContactInfoUseCase = new GetContactInfoUseCase(contactRepository);
+const sendContactUseCase = new SendContactUseCase(contactRepository);
+
+const storefrontController = new StorefrontController(
+    getHeroBannersUseCase,
+    getTemoignagesUseCase,
+    getFaqsUseCase,
+    getContactInfoUseCase,
+    sendContactUseCase,
+);
+
+// ──────────────────────────────────────────────────────────────────────────────
 // Exports
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -173,4 +217,5 @@ export const featuresDi = {
     profilController,
     likeController,
     conversationController,
+    storefrontController,
 };

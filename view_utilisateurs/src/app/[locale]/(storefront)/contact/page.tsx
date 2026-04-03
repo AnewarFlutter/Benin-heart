@@ -1,63 +1,65 @@
-'use client';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import ContactInfoCard from './_components/contact_info_card';
 import MapCard from './_components/map_card';
 import ContactFormCard from './_components/contact_form_card';
+import { getContactInfoAction } from '@/actions/beninheart/storefront/actions';
+import { EntityContactInfo } from '@/modules/beninheart/storefront/contact/domain/entities/entity_contact';
 
-interface ContactInfo {
-  icon: React.ReactNode;
-  title: string;
-  details: string[];
+function buildContactInfoItems(info: EntityContactInfo) {
+  return [
+    {
+      icon: <MapPin className="h-5 w-5" />,
+      title: 'Adresse',
+      details: [info.adresse, `${info.ville}, ${info.pays}`].filter(Boolean),
+    },
+    {
+      icon: <Phone className="h-5 w-5" />,
+      title: 'Téléphone',
+      details: info.telephones.length > 0 ? info.telephones : ['+229 97 00 00 00'],
+    },
+    {
+      icon: <Mail className="h-5 w-5" />,
+      title: 'Email',
+      details: info.emails.length > 0 ? info.emails : ['contact@beninheart.com'],
+    },
+    {
+      icon: <Clock className="h-5 w-5" />,
+      title: 'Support disponible',
+      details: info.horaires ? [info.horaires] : ['Lun - Ven: 9h00 - 20h00'],
+    },
+  ];
 }
 
-interface ContactPageProps {
-  contactInfos?: ContactInfo[];
-  mapUrl?: string;
-  onSubmit?: (data: FormData) => void;
-}
-
-const defaultContactInfos: ContactInfo[] = [
+const fallbackContactInfos = [
   {
     icon: <MapPin className="h-5 w-5" />,
     title: 'Adresse',
-    details: [
-      '123 Avenue des Rencontres',
-      '75001 Paris, France'
-    ]
+    details: ['Cotonou, Bénin'],
   },
   {
     icon: <Phone className="h-5 w-5" />,
     title: 'Téléphone',
-    details: [
-      '+33 1 23 45 67 89',
-      '+33 6 12 34 56 78'
-    ]
+    details: ['+229 97 00 00 00'],
   },
   {
     icon: <Mail className="h-5 w-5" />,
     title: 'Email',
-    details: [
-      'contact@rencontre-serieuse.fr',
-      'support@rencontre-serieuse.fr'
-    ]
+    details: ['contact@beninheart.com'],
   },
   {
     icon: <Clock className="h-5 w-5" />,
     title: 'Support disponible',
-    details: [
-      'Lun - Ven: 9h00 - 20h00',
-      'Sam - Dim: 10h00 - 18h00',
-      'Support VIP: 24/7'
-    ]
-  }
+    details: ['Lun - Ven: 9h00 - 20h00', 'Sam: 10h00 - 16h00'],
+  },
 ];
 
-export default function ContactPage({
-  contactInfos = defaultContactInfos,
-  mapUrl,
-  onSubmit
-}: ContactPageProps) {
+export default async function ContactPage() {
+  const result = await getContactInfoAction();
+  const contactInfos = result.success && result.data
+    ? buildContactInfoItems(result.data)
+    : fallbackContactInfos;
+
   return (
     <main className="min-h-screen">
       <section className="py-12 md:py-20 px-4 bg-muted/30">
@@ -77,14 +79,14 @@ export default function ContactPage({
 
           {/* Grille Contact Info + Formulaire */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Colonne Gauche - Informations de contact */}
+            {/* Colonne Gauche */}
             <div className="space-y-6">
               <ContactInfoCard contactInfos={contactInfos} />
-              <MapCard mapUrl={mapUrl} />
+              <MapCard />
             </div>
 
-            {/* Colonne Droite - Formulaire de contact */}
-            <ContactFormCard onSubmit={onSubmit} />
+            {/* Colonne Droite — formulaire connecté */}
+            <ContactFormCard />
           </div>
         </div>
       </section>

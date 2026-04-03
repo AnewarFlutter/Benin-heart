@@ -3,6 +3,7 @@
 import { Badge } from '@/components/ui/badge';
 import { APP_IMAGES } from '@/shared/constants/images';
 import dynamic from 'next/dynamic';
+import { EntityTemoignage } from '@/modules/beninheart/storefront/temoignage/domain/entities/entity_temoignage';
 
 
 const AnimatedTestimonialsssr = dynamic(
@@ -10,7 +11,7 @@ const AnimatedTestimonialsssr = dynamic(
   { ssr: false }
 );
 
-const testimonials = [
+const defaultTestimonials = [
   {
     quote: "J'avais perdu espoir de trouver quelqu'un qui me comprenne vraiment. Grâce à cette plateforme, j'ai rencontré l'amour de ma vie ! Nous sommes ensemble depuis 2 ans maintenant.",
     name: "Adjoa Hounkpatin",
@@ -29,27 +30,25 @@ const testimonials = [
     designation: "Fiancée",
     src: APP_IMAGES.beforeAfter.image3,
   },
-  {
-    quote: "En tant que musulmane pratiquante, il était important pour moi de trouver quelqu'un qui partage mes valeurs. Cette application m'a aidée à rencontrer un homme formidable et respectueux. Nous préparons notre mariage !",
-    name: "Aminata Soumanou",
-    designation: "Fiancée",
-    src: APP_IMAGES.beforeAfter.image4,
-  },
-  {
-    quote: "Je recherchais une femme pieuse et éduquée pour fonder une famille. Alhamdulillah, j'ai trouvé ma moitié sur cette plateforme. Nous partageons les mêmes objectifs de vie et sommes très heureux ensemble.",
-    name: "Abdoul-Razak Alassane",
-    designation: "Marié depuis 6 mois",
-    src: APP_IMAGES.beforeAfter.image5,
-  }
 ];
 
 interface BeforeAndAfterSectionProps {
   autoplay?: boolean;
+  temoignages?: EntityTemoignage[];
 }
 
-export default function BeforeAndAfterSection({ 
-  autoplay = true 
+export default function BeforeAndAfterSection({
+  autoplay = true,
+  temoignages,
 }: BeforeAndAfterSectionProps) {
+  const testimonials = temoignages && temoignages.length > 0
+    ? temoignages.map((t, i) => ({
+        quote: t.description,
+        name: t.name,
+        designation: t.profession,
+        src: t.photo ?? defaultTestimonials[i % defaultTestimonials.length].src,
+      }))
+    : defaultTestimonials;
   return (
     <section id="testimonials" className="py-16 md:py-24 px-4 md:px-6 bg-gradient-to-br from-slate-50 to-gray-100 dark:from-black dark:to-black">
       <div className="container mx-auto max-w-7xl">
@@ -72,7 +71,7 @@ export default function BeforeAndAfterSection({
           <div className="absolute inset-0 bg-white dark:bg-accent/30 rounded-3xl"></div>
           <div className="relative z-10">
             <AnimatedTestimonialsssr
-              testimonials={testimonials}
+              testimonials={testimonials as { quote: string; name: string; designation: string; src: string }[]}
               autoplay={autoplay}
             />
           </div>
