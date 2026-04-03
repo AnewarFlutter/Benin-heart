@@ -28,7 +28,7 @@ python manage.py collectstatic --noinput
 if [ "$DEBUG" = "True" ]; then
     echo "Creating superuser..."
     python manage.py shell << END
-from apps.users.infrastructure.models import User
+from apps.users.models import User
 if not User.objects.filter(email='admin@admin.com').exists():
     User.objects.create_superuser(
         email='admin@admin.com',

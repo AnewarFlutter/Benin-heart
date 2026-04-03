@@ -1,0 +1,23 @@
+# ====================== HELLO RESTAURATION APP CONFIGURATION ======================
+
+$ProjectName: Hello Restauration Admin    # Nom complet de l'application
+$Version: 1.0.0                           # Version initiale
+$Language: fr                             # Langue principale
+$environnement: dev                       # Environnement cible : dev, staging, prod
+
+# API principale exposée par le backend
+$primaryApi:
+  $include: "./apis/root_v1.yml"
+
+# Modules applicatifs
+$modules:
+
+  # ─────────────────────────────────────────────
+  # Auth - 0
+  # ─────────────────────────────────────────────
+  - $include: "./modules/auth/root.yml"   # → API : AUTH (login, logout, token management)
+
+  # ─────────────────────────────────────────────
+  # User - 1
+  # ─────────────────────────────────────────────
+  - $include: "./modules/user/root.yml"   # → API : USER (profil admin, gestion utilisateurs, RBAC)

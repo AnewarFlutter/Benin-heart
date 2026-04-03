@@ -6,7 +6,7 @@
 set -e  # Arrêter le script en cas d'erreur
 
 echo "=========================================="
-echo "   DÉMARRAGE DU BACKEND SHOEMAKER"
+echo "   DÉMARRAGE DU BACKEND BENINHEART"
 echo "=========================================="
 echo ""
 
@@ -26,9 +26,9 @@ PYTHON_VERSION=$(python --version)
 echo -e "${GREEN}✓ Python installé: $PYTHON_VERSION${NC}"
 echo ""
 
-# Se déplacer dans le répertoire backendShoemaker
-echo -e "${YELLOW}[2/7] Navigation vers backendShoemaker...${NC}"
-cd "$(dirname "$0")/backendShoemaker" || exit 1
+# Se déplacer dans le répertoire backendBeninHeart
+echo -e "${YELLOW}[2/7] Navigation vers backendBeninHeart...${NC}"
+cd "$(dirname "$0")" || exit 1
 echo -e "${GREEN}✓ Répertoire: $(pwd)${NC}"
 echo ""
 
