@@ -19,6 +19,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1').split(','
 
 # Application definition
 INSTALLED_APPS = [
+    'daphne',  # ASGI server — doit être en premier pour gérer les WebSockets
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -39,9 +40,27 @@ INSTALLED_APPS = [
     'apps.contact.apps.ContactConfig',
     'apps.temoignage',
     'apps.storepage',
-    'django_filters',  # Ajoutez cette ligne
-
+    'django_filters',
+    'channels',
 ]
+
+# ASGI Application (remplace WSGI pour le support WebSocket)
+ASGI_APPLICATION = 'config.asgi.application'
+
+# Django Channels — Redis comme channel layer (Redis déjà présent pour Celery)
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [(
+                config('REDIS_HOST', default='localhost'),
+                config('REDIS_PORT', default=6379, cast=int)
+            )],
+            'capacity': 1500,
+            'expiry': 10,
+        },
+    },
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -44,18 +44,16 @@ END
 fi
 
 # Start server
+# Daphne remplace Gunicorn — supporte HTTP + WebSocket (ASGI)
 if [ "$ENVIRONMENT" = "production" ]; then
-    echo "Starting Gunicorn server..."
-    gunicorn config.wsgi:application \
-        --bind 0.0.0.0:8000 \
-        --workers 4 \
-        --threads 2 \
-        --worker-class gthread \
-        --worker-tmp-dir /dev/shm \
-        --log-level info \
-        --access-logfile - \
-        --error-logfile -
+    echo "Starting Daphne ASGI server (production)..."
+    daphne -b 0.0.0.0 -p 8000 \
+        --websocket_timeout 86400 \
+        --proxy-headers \
+        config.asgi:application
 else
-    echo "Starting Django development server..."
-    python manage.py runserver 0.0.0.0:8000
+    echo "Starting Daphne ASGI server (development)..."
+    daphne -b 0.0.0.0 -p 8000 \
+        --websocket_timeout 86400 \
+        config.asgi:application
 fi
