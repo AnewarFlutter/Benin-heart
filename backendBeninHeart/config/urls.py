@@ -41,6 +41,8 @@ urlpatterns = [
     path('api/', include('apps.storepage.presentation.storepages.urls')),  # Public Storepage (Hero Banners)
     path('api/', include('apps.abonnement.presentation.abonnements.urls')),  # Client Abonnements
     path('api/', include('apps.abonnement.presentation.admin.urls')),  # Admin Abonnements
+    path('api/', include('apps.profil.presentation.profils.urls')),  # Client Profils
+    path('api/', include('apps.profil.presentation.admin.urls')),  # Admin Profils
 ]
 
 # Serve media files in development

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'apps.temoignage',
     'apps.storepage',
     'apps.abonnement',
+    'apps.profil',
     'django_filters',
     'channels',
 ]
