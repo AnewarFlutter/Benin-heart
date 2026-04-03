@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class LikeConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.like'
+    verbose_name = 'Like'
+
+    def ready(self):
+        import apps.like.signals  # noqa: F401

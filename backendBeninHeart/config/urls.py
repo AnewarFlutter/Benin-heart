@@ -43,6 +43,7 @@ urlpatterns = [
     path('api/', include('apps.abonnement.presentation.admin.urls')),  # Admin Abonnements
     path('api/', include('apps.profil.presentation.profils.urls')),  # Client Profils
     path('api/', include('apps.profil.presentation.admin.urls')),  # Admin Profils
+    path('api/', include('apps.like.presentation.likes.urls')),  # Client Likes & Matchs
 ]
 
 # Serve media files in development
