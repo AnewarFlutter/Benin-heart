@@ -30,6 +30,7 @@ export const APP_ROUTES = {
         register: "/customer/auth/register",
         logout: "/logout",
         otp: "/customer/auth/otp",
+        onboarding: "/customer/auth/onboarding",
         forgotPassword: "/customer/auth/forgot-password",
         resetPassword: "/customer/auth/reset-password",
     },

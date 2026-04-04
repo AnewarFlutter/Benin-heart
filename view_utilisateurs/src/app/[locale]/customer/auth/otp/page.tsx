@@ -1,3 +1,5 @@
+"use client"
+
 import { OTPForm } from "@/components/otp-form"
 import { otpConfig } from "./_components/otp.config"
 import { APP_IMAGES } from "@/shared/constants/images"
@@ -5,8 +7,33 @@ import { APP_ROUTES } from "@/shared/constants/routes"
 import { APP_TEXTE } from "@/shared/constants/texte"
 import Link from "next/link"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/shared/hooks/useAuth"
+import { useAuthStore } from "@/stores/auth_store"
+import { toast } from "sonner"
 
 export default function OTPPage() {
+  const router = useRouter()
+  const { verifyOTP, resendOTP } = useAuth()
+  const pendingEmail = useAuthStore((s) => s.pendingEmail)
+
+  const handleSubmit = async (data: { code: string }) => {
+    if (!pendingEmail) {
+      toast.error("Email introuvable. Veuillez recommencer l'inscription.")
+      router.push(APP_ROUTES.auth.register)
+      return
+    }
+    const success = await verifyOTP(pendingEmail, data.code)
+    if (success) {
+      router.push(APP_ROUTES.auth.onboarding)
+    }
+  }
+
+  const handleResend = async () => {
+    if (!pendingEmail) return
+    await resendOTP(pendingEmail)
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -24,7 +51,7 @@ export default function OTPPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-sm">
-            <OTPForm config={otpConfig} />
+            <OTPForm config={otpConfig} onSubmit={handleSubmit} onResend={handleResend} />
           </div>
         </div>
       </div>

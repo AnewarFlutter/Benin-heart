@@ -1,6 +1,6 @@
 # État du Projet — Benin Heart
 
-> Mise à jour : 2026-04-03
+> Mise à jour : 2026-04-04
 > Branche active : `anewar`
 > Nature : Application de rencontres (style Tinder) — marché béninois
 
@@ -43,31 +43,45 @@
 | Composants | TinderCard, Cart, Checkout, Chatbot widget, Notifications, PWA |
 | Système SCAF | Orchestrateur TypeScript opérationnel |
 | Module `magasin` | ⚠️ TEST UNIQUEMENT — ne fait PAS partie du vrai projet |
+| **Clean Architecture** | ✅ Modules beninheart : auth, abonnement, profil, like, conversation |
+| **Modules domain** | ✅ Entities, Repositories, UseCases pour chaque feature |
+| **Modules data** | ✅ Models, DataSources (REST), RepositoryImpl pour chaque feature |
+| **Controllers** | ✅ adapters/beninheart/ : AuthController, PlanController, ProfilController, LikeController, ConversationController |
+| **Server Actions** | ✅ actions/beninheart/ : auth, abonnement, profil, like, conversation |
+| **DI** | ✅ features_di.ts mis à jour avec tous les controllers beninheart |
+| **Pages connectées** | ✅ TOUTES les pages connectées au backend (voir détail ci-dessous) |
+| **useAuth hook** | ✅ Migré vers featuresDi.authController (plus de beninheart_api direct) |
+| **StorageController** | ✅ StorefrontController + actions storefront |
+| **actions/plan** | ✅ getPlansAction, getMonAbonnementAction, souscrireAction |
 
 ---
 
 ## Ce qui est À FAIRE ❌
 
-### Priorité HAUTE — Frontend (connexion aux APIs backend)
+### Priorité HAUTE — ✅ TOUT CONNECTÉ
 
-| Tâche | Fichier frontend | API backend |
-|-------|-----------------|-------------|
-| Connecter Hero Banners | `hero_banner_carousel.tsx` | `GET /api/client/hero-banners/` ✅ |
-| Connecter Témoignages | `before_and_after.tsx` | `GET /api/client/temoignages/` ✅ |
-| Connecter FAQ | `faq/page.tsx` | `GET /api/client/faq/` ✅ |
-| Connecter Contact | `contact/page.tsx` | `POST /api/client/contacts/` ✅ |
-| Connecter Auth | Login/Register forms | `POST /api/client/login/` + `/api/client/register/` ✅ |
-| Connecter Plans abonnement | `abonnements/page.tsx` | `GET /api/client/plans/` ✅ |
-| Connecter Swipe | `tomeetsomeone/page.tsx` | `GET /api/client/profils/` ✅ |
-| Connecter Likes/Matchs | `likes/`, `favorites/` | `/api/client/likes/`, `/api/client/mes-matchs/` ✅ |
-| Connecter Chat | `chatlike/page.tsx` | `WS /ws/chat/{uuid}/` ✅ |
-| WebSocket notifications | `notifications/` | `WS /ws/notifications/` ✅ |
+| Tâche | Fichier frontend | Statut |
+|-------|-----------------|--------|
+| Hero Banners | `hero_banner_carousel.tsx` | ✅ |
+| Témoignages | `before_and_after.tsx` | ✅ |
+| FAQ | `faq/page.tsx` | ✅ |
+| Contact | `contact/page.tsx` | ✅ |
+| Auth (login/register/OTP/forgot) | auth pages | ✅ |
+| Plans abonnement | `abonnements/page.tsx` | ✅ |
+| Swipe | `tomeetsomeone/page.tsx` | ✅ |
+| Likes & Matchs | `likes/page.tsx` | ✅ |
+| Superlikes (Coup de cœur) | `favorites/page.tsx` | ✅ |
+| Paramètres profil | `settings/page.tsx` | ✅ |
+| Mon abonnement | `abonnement/page.tsx` | ✅ |
+| Stats dashboard | `home/page.tsx` + `StatsCards` | ✅ |
+| Chat | `chatlike/page.tsx` | ✅ |
+| WebSocket notifications | hook `useWebSocket` | ✅ |
 
 ### Priorité MOYENNE
 
 | Tâche | Description |
 |-------|-------------|
-| Créer profil à l'inscription | Après register, rediriger vers création profil |
+| Créer profil à l'inscription | Après register, rediriger vers création profil (page onboarding) |
 | Dashboard admin frontend | À créer plus tard (APIs admin déjà prêtes) |
 | Paiement en ligne | Intégration à faire quand le prestataire est choisi |
 
