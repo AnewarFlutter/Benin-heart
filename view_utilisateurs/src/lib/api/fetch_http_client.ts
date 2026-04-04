@@ -54,16 +54,17 @@ export class FetchHttpClient implements ApiHttpClient {
                 // check if the endpoint is an absolute url
                 const isAbsoluteUrl = /^https?:\/\//i.test(endpoint);
 
+                const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
                 const res = await fetch(isAbsoluteUrl ? endpoint : `${APP_CONFIG.API.baseUrl}${endpoint}`, {
                     method: finalOptions.method,
                     headers: {
-                        "Content-Type": "application/json",
+                        ...(isFormData ? {} : { "Content-Type": "application/json" }),
                         ...(finalOptions.token
                             ? { Authorization: `Bearer ${finalOptions.token}` }
                             : {}),
                         ...finalOptions.headers,
                     },
-                    body: body ? JSON.stringify(body) : undefined,
+                    body: isFormData ? (body as unknown as BodyInit) : (body ? JSON.stringify(body) : undefined),
                     signal: controller.signal,
                 });
 

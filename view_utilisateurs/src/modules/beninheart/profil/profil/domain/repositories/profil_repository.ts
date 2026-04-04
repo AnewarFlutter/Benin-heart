@@ -9,5 +9,6 @@ export interface ProfilRepository {
     getMonProfil(): Promise<EntityMonProfil | null>;
     updateMonProfil(data: Partial<EntityMonProfil>): Promise<EntityMonProfil | null>;
     uploadPhoto(formData: FormData): Promise<boolean>;
+    uploadVideo(formData: FormData): Promise<boolean>;
     deletePhoto(uuid: string): Promise<boolean>;
 }

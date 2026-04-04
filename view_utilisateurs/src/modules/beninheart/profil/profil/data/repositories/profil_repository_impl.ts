@@ -45,6 +45,14 @@ export class ProfilRepositoryImpl implements ProfilRepository {
         }
     }
 
+    async uploadVideo(formData: FormData): Promise<boolean> {
+        try {
+            return await this.datasource.uploadVideo(formData);
+        } catch (e) {
+            throw e;
+        }
+    }
+
     async deletePhoto(uuid: string): Promise<boolean> {
         try {
             return await this.datasource.deletePhoto(uuid);

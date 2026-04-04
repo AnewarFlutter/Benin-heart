@@ -19,15 +19,19 @@ export default function LoginPage() {
   const { pendingEmail, setPendingEmail } = useAuthStore()
 
   const handleLogin = async (data: any) => {
+    console.log('[LoginPage] handleLogin() → email:', data.email, '| pendingEmail (nouvel user):', pendingEmail)
     setLoading(true)
     const isNewUser = !!pendingEmail
     const success = await login(data.email, data.password)
     setLoading(false)
+    console.log('[LoginPage] login() ← success:', success, '| isNewUser:', isNewUser)
     if (success) {
       if (isNewUser) {
+        console.log('[LoginPage] nouvel utilisateur → redirection onboarding')
         setPendingEmail(null)
         router.push(APP_ROUTES.auth.onboarding)
       } else {
+        console.log('[LoginPage] utilisateur existant → redirection home')
         router.push(APP_ROUTES.customer.root)
       }
     }

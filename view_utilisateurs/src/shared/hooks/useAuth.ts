@@ -17,18 +17,22 @@ export function useAuth() {
     const { setTokens, setUser, setPendingEmail, logout: clearAuth, isAuthenticated } = useAuthStore();
 
     async function login(email: string, password: string): Promise<boolean> {
+        console.log('[useAuth] login() → email:', email);
         const session = await featuresDi.authController.login(email, password);
+        console.log('[useAuth] login() ← session:', session);
         if (!session?.accessToken || !session.refreshToken) {
+            console.warn('[useAuth] login() — tokens manquants dans la réponse');
             toast.error('Identifiants incorrects.');
             return false;
         }
         setTokens(session.accessToken, session.refreshToken);
+        console.log('[useAuth] login() — tokens stockés, récupération profil /me ...');
 
-        // Récupérer le profil utilisateur avec le token fraîchement obtenu
         const me = await apiClient<{
             id: string; email: string; first_name: string; last_name: string;
             phone: string; is_active: boolean;
         }>(API_ROUTES.AUTH.ME, { token: session.accessToken });
+        console.log('[useAuth] login() /me ←', me);
         if (me.data) {
             setUser({
                 id: me.data.id,
@@ -38,6 +42,9 @@ export function useAuth() {
                 phone: me.data.phone,
                 is_active: me.data.is_active,
             });
+            console.log('[useAuth] login() — user stocké');
+        } else {
+            console.warn('[useAuth] login() — /me échoué, status:', me.status, 'error:', me.error);
         }
 
         toast.success('Connexion réussie !');
@@ -52,6 +59,7 @@ export function useAuth() {
         last_name: string;
         phone: string;
     }): Promise<boolean> {
+        console.log('[useAuth] register() → payload:', { ...data, password: '***', password_confirm: '***' });
         const result = await featuresDi.authController.register({
             email: data.email,
             password: data.password,
@@ -60,29 +68,37 @@ export function useAuth() {
             lastName: data.last_name,
             phone: data.phone,
         });
+        console.log('[useAuth] register() ← result:', result);
         if (!result) {
+            console.warn('[useAuth] register() — échec, result est null');
             toast.error("Erreur lors de l'inscription.");
             return false;
         }
         setPendingEmail(data.email);
+        console.log('[useAuth] register() — pendingEmail défini:', data.email);
         toast.success('Inscription réussie ! Vérifiez votre email pour le code OTP.');
         return true;
     }
 
     async function verifyOTP(email: string, otp_code: string): Promise<boolean> {
+        console.log('[useAuth] verifyOTP() → email:', email, 'code:', otp_code);
         const success = await featuresDi.authController.verifyOTP(email, otp_code);
+        console.log('[useAuth] verifyOTP() ← success:', success);
         if (!success) {
+            console.warn('[useAuth] verifyOTP() — code invalide ou erreur backend');
             toast.error('Code OTP invalide.');
             return false;
         }
-        // Le backend verify_otp ne retourne pas de tokens — l'utilisateur doit se connecter
         toast.success('Email vérifié ! Connectez-vous pour accéder à votre compte.');
         return true;
     }
 
     async function resendOTP(email: string): Promise<boolean> {
+        console.log('[useAuth] resendOTP() → email:', email);
         const success = await featuresDi.authController.resendOTP(email);
+        console.log('[useAuth] resendOTP() ← success:', success);
         if (!success) {
+            console.warn('[useAuth] resendOTP() — échec');
             toast.error('Erreur lors du renvoi du code OTP.');
             return false;
         }
@@ -91,8 +107,11 @@ export function useAuth() {
     }
 
     async function forgotPassword(email: string): Promise<boolean> {
+        console.log('[useAuth] forgotPassword() → email:', email);
         const success = await featuresDi.authController.forgotPassword(email);
+        console.log('[useAuth] forgotPassword() ← success:', success);
         if (!success) {
+            console.warn('[useAuth] forgotPassword() — échec');
             toast.error("Erreur lors de l'envoi du code de réinitialisation.");
             return false;
         }
@@ -102,8 +121,11 @@ export function useAuth() {
     }
 
     async function resetPassword(email: string, otp_code: string, new_password: string, new_password_confirm: string): Promise<boolean> {
+        console.log('[useAuth] resetPassword() → email:', email);
         const success = await featuresDi.authController.resetPassword(email, otp_code, new_password, new_password_confirm);
+        console.log('[useAuth] resetPassword() ← success:', success);
         if (!success) {
+            console.warn('[useAuth] resetPassword() — échec');
             toast.error('Erreur lors de la réinitialisation du mot de passe.');
             return false;
         }
@@ -113,10 +135,14 @@ export function useAuth() {
 
     async function logout() {
         const refreshToken = useAuthStore.getState().refreshToken;
+        console.log('[useAuth] logout() → refreshToken présent:', !!refreshToken);
         if (refreshToken) {
-            await featuresDi.authController.logout(refreshToken).catch(() => {});
+            await featuresDi.authController.logout(refreshToken).catch((e) => {
+                console.warn('[useAuth] logout() — erreur backend (ignorée):', e);
+            });
         }
         clearAuth();
+        console.log('[useAuth] logout() — store vidé, redirection login');
         router.push(APP_ROUTES.auth.login);
     }
 

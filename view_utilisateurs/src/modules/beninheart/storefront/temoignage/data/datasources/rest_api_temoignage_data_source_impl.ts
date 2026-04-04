@@ -6,10 +6,11 @@ import { ModelTemoignage } from '../models/model_temoignage';
 
 export class RestApiTemoignageDataSourceImpl implements TemoignageDataSource {
   async getTemoignages(): Promise<EntityTemoignage[]> {
-    const res = await apiClient<Record<string, unknown>[]>({
-      endpoint: API_ROUTES.STOREFRONT.TEMOIGNAGES,
-      method: 'GET',
-    });
-    return res.map((item) => ModelTemoignage.fromJson(item).toEntity());
+    const { data, error } = await apiClient<Record<string, unknown>[]>(
+      API_ROUTES.STOREFRONT.TEMOIGNAGES,
+      { method: 'GET' }
+    );
+    if (error || !data) return [];
+    return data.map((item) => ModelTemoignage.fromJson(item).toEntity());
   }
 }

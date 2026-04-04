@@ -21,15 +21,18 @@ export default function OTPPage() {
   const pendingEmail = useAuthStore((s) => s.pendingEmail)
 
   const handleSubmit = async (data: { code: string }) => {
+    console.log('[OTPPage] handleSubmit() → code:', data.code, '| pendingEmail:', pendingEmail, '| mode:', mode)
     if (!pendingEmail) {
+      console.warn('[OTPPage] handleSubmit() — pendingEmail introuvable, redirection')
       toast.error("Email introuvable. Veuillez recommencer.")
       router.push(mode === 'forgot' ? APP_ROUTES.auth.forgotPassword : APP_ROUTES.auth.register)
       return
     }
 
     if (mode === 'forgot') {
-      // Vérification OTP pour réinitialisation de mot de passe
+      console.log('[OTPPage] mode forgot — vérification OTP reset password')
       const success = await featuresDi.authController.verifyOTPForgotPassword(pendingEmail, data.code)
+      console.log('[OTPPage] verifyOTPForgotPassword() ← success:', success)
       if (success) {
         toast.success('Code vérifié ! Entrez votre nouveau mot de passe.')
         router.push(APP_ROUTES.auth.resetPassword)
@@ -37,15 +40,18 @@ export default function OTPPage() {
         toast.error('Code OTP invalide.')
       }
     } else {
-      // Vérification OTP pour l'inscription
+      console.log('[OTPPage] mode register — vérification OTP inscription')
       const success = await verifyOTP(pendingEmail, data.code)
+      console.log('[OTPPage] verifyOTP() ← success:', success)
       if (success) {
+        console.log('[OTPPage] OTP valide → redirection login')
         router.push(APP_ROUTES.auth.login)
       }
     }
   }
 
   const handleResend = async () => {
+    console.log('[OTPPage] handleResend() → pendingEmail:', pendingEmail)
     if (!pendingEmail) return
     await resendOTP(pendingEmail)
   }

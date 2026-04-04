@@ -6,10 +6,11 @@ import { ModelHeroBanner } from '../models/model_hero';
 
 export class RestApiHeroDataSourceImpl implements HeroDataSource {
   async getHeroBanners(): Promise<EntityHeroBanner[]> {
-    const res = await apiClient<Record<string, unknown>[]>({
-      endpoint: API_ROUTES.STOREFRONT.HERO_BANNERS,
-      method: 'GET',
-    });
-    return res.map((item) => ModelHeroBanner.fromJson(item).toEntity());
+    const { data, error } = await apiClient<Record<string, unknown>[]>(
+      API_ROUTES.STOREFRONT.HERO_BANNERS,
+      { method: 'GET' }
+    );
+    if (error || !data) return [];
+    return data.map((item) => ModelHeroBanner.fromJson(item).toEntity());
   }
 }

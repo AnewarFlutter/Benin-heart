@@ -67,10 +67,13 @@ import { ProfilRepositoryImpl } from "@/modules/beninheart/profil/profil/data/re
 import { GetMonProfilUseCase } from "@/modules/beninheart/profil/profil/domain/usecases/get_mon_profil_usecase";
 import { GetProfilsUseCase } from "@/modules/beninheart/profil/profil/domain/usecases/get_profils_usecase";
 import { UpdateMonProfilUseCase } from "@/modules/beninheart/profil/profil/domain/usecases/update_mon_profil_usecase";
+import { UploadPhotoUseCase } from "@/modules/beninheart/profil/profil/domain/usecases/upload_photo_usecase";
+import { UploadVideoUseCase } from "@/modules/beninheart/profil/profil/domain/usecases/upload_video_usecase";
 
 import { RestApiLikeDataSourceImpl } from "@/modules/beninheart/like/like/data/datasources/rest_api_like_data_source_impl";
 import { LikeRepositoryImpl } from "@/modules/beninheart/like/like/data/repositories/like_repository_impl";
 import { GetMatchsUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_matchs_usecase";
+import { GetMesLikesUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_mes_likes_usecase";
 import { GetMesStatsUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_mes_stats_usecase";
 import { SwipeUseCase } from "@/modules/beninheart/like/like/domain/usecases/swipe_usecase";
 
@@ -150,7 +153,9 @@ const profilRepository = new ProfilRepositoryImpl(profilDataSource);
 const getProfilsUseCase = new GetProfilsUseCase(profilRepository);
 const getMonProfilUseCase = new GetMonProfilUseCase(profilRepository);
 const updateMonProfilUseCase = new UpdateMonProfilUseCase(profilRepository);
-const profilController = new ProfilController(getProfilsUseCase, getMonProfilUseCase, updateMonProfilUseCase);
+const uploadPhotoUseCase = new UploadPhotoUseCase(profilRepository);
+const uploadVideoUseCase = new UploadVideoUseCase(profilRepository);
+const profilController = new ProfilController(getProfilsUseCase, getMonProfilUseCase, updateMonProfilUseCase, uploadPhotoUseCase, uploadVideoUseCase);
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Benin Heart — Like DI
@@ -161,7 +166,8 @@ const likeRepository = new LikeRepositoryImpl(likeDataSource);
 const swipeUseCase = new SwipeUseCase(likeRepository);
 const getMatchsUseCase = new GetMatchsUseCase(likeRepository);
 const getMesStatsUseCase = new GetMesStatsUseCase(likeRepository);
-const likeController = new LikeController(swipeUseCase, getMatchsUseCase, getMesStatsUseCase);
+const getMesLikesUseCase = new GetMesLikesUseCase(likeRepository);
+const likeController = new LikeController(swipeUseCase, getMatchsUseCase, getMesStatsUseCase, getMesLikesUseCase);
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Benin Heart — Conversation DI

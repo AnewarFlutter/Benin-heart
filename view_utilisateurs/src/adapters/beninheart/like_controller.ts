@@ -1,6 +1,7 @@
 
 import { EntityLikeResult, EntityLikeStats, EntityMatch, TypeSwipe } from "@/modules/beninheart/like/like/domain/entities/entity_like";
 import { GetMatchsUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_matchs_usecase";
+import { GetMesLikesUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_mes_likes_usecase";
 import { GetMesStatsUseCase } from "@/modules/beninheart/like/like/domain/usecases/get_mes_stats_usecase";
 import { SwipeUseCase } from "@/modules/beninheart/like/like/domain/usecases/swipe_usecase";
 
@@ -13,6 +14,7 @@ export class LikeController {
         private readonly swipeUseCase: SwipeUseCase,
         private readonly getMatchsUseCase: GetMatchsUseCase,
         private readonly getMesStatsUseCase: GetMesStatsUseCase,
+        private readonly getMesLikesUseCase: GetMesLikesUseCase,
     ) {}
 
     swipe = async (profilUuid: string, typeAction: TypeSwipe): Promise<EntityLikeResult | null> => {
@@ -39,6 +41,15 @@ export class LikeController {
         } catch (e) {
             console.error("LikeController.getMesStats error:", e);
             return null;
+        }
+    };
+
+    getMesLikes = async (): Promise<EntityMatch[]> => {
+        try {
+            return await this.getMesLikesUseCase.execute();
+        } catch (e) {
+            console.error("LikeController.getMesLikes error:", e);
+            return [];
         }
     };
 }

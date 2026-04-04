@@ -1,18 +1,32 @@
 "use server";
 
 import { featuresDi } from "@/di/features_di";
-import { EntityProfilPublic } from "@/modules/beninheart/profil/profil/domain/entities/entity_profil";
+import { EntityProfilPublic, EntityMonProfil } from "@/modules/beninheart/profil/profil/domain/entities/entity_profil";
 import { AppActionResult } from "@/shared/types/global";
 
-/**
- * Retrieves the list of public profiles for swipe (authenticated endpoint).
- * Note: token is read from auth store — must be called from a client context.
- */
 export async function getProfilsAction(): Promise<AppActionResult<EntityProfilPublic[]>> {
-    const profils = await featuresDi.profilController.getProfils();
-    return {
-        success: true,
-        message: "Profils retrieved.",
-        data: profils,
-    };
+    try {
+        const data = await featuresDi.profilController.getProfils();
+        return { success: true, data };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Erreur profils' };
+    }
+}
+
+export async function getMonProfilAction(): Promise<AppActionResult<EntityMonProfil | null>> {
+    try {
+        const data = await featuresDi.profilController.getMonProfil();
+        return { success: true, data };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Erreur mon profil' };
+    }
+}
+
+export async function updateMonProfilAction(fields: Partial<EntityMonProfil>): Promise<AppActionResult<EntityMonProfil | null>> {
+    try {
+        const data = await featuresDi.profilController.updateMonProfil(fields);
+        return { success: true, data };
+    } catch (e) {
+        return { success: false, error: e instanceof Error ? e.message : 'Erreur mise à jour profil' };
+    }
 }

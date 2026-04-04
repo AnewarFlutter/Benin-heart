@@ -10,5 +10,6 @@ export interface ProfilDataSource {
     getMonProfil(): Promise<ModelMonProfil | null>;
     updateMonProfil(data: Partial<EntityMonProfil>): Promise<ModelMonProfil | null>;
     uploadPhoto(formData: FormData): Promise<boolean>;
+    uploadVideo(formData: FormData): Promise<boolean>;
     deletePhoto(uuid: string): Promise<boolean>;
 }

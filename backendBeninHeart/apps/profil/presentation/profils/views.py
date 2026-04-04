@@ -66,12 +66,17 @@ class MonProfilView(APIView):
     def put(self, request):
         try:
             profil = request.user.profil
+            # Profil existant → mise à jour
+            serializer = CreerProfilSerializer(profil, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            profil = serializer.save()
+            return Response(MonProfilSerializer(profil).data)
         except Profil.DoesNotExist:
-            return Response({'detail': 'Profil introuvable.'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = CreerProfilSerializer(profil, data=request.data, partial=True)
-        serializer.is_valid(raise_exception=True)
-        profil = serializer.save()
-        return Response(MonProfilSerializer(profil).data)
+            # Profil inexistant → création (upsert)
+            serializer = CreerProfilSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            profil = serializer.save(user=request.user)
+            return Response(MonProfilSerializer(profil).data, status=status.HTTP_201_CREATED)
 
 
 class ProfilsListView(APIView):

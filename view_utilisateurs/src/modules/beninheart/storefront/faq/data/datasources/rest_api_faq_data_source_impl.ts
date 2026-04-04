@@ -6,10 +6,11 @@ import { ModelFaq } from '../models/model_faq';
 
 export class RestApiFaqDataSourceImpl implements FaqDataSource {
   async getFaqs(): Promise<EntityFaq[]> {
-    const res = await apiClient<Record<string, unknown>[]>({
-      endpoint: API_ROUTES.STOREFRONT.FAQ,
-      method: 'GET',
-    });
-    return res.map((item) => ModelFaq.fromJson(item).toEntity());
+    const { data, error } = await apiClient<Record<string, unknown>[]>(
+      API_ROUTES.STOREFRONT.FAQ,
+      { method: 'GET' }
+    );
+    if (error || !data) return [];
+    return data.map((item) => ModelFaq.fromJson(item).toEntity());
   }
 }
