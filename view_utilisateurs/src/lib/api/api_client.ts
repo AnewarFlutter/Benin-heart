@@ -1,11 +1,11 @@
 import { ApiHttpClient, ApiOptions } from "./api_http_client";
-import { AxiosHttpClient } from "./axios_http_client";
+import { FetchHttpClient } from "./fetch_http_client";
 
 /**
  *  API Client générique
  *  Generic API client
  */
-let defaultHttpClient: ApiHttpClient = new AxiosHttpClient();
+let defaultHttpClient: ApiHttpClient = new FetchHttpClient();
 
 export function setDefaultHttpClient(client: ApiHttpClient) {
     defaultHttpClient = client;
