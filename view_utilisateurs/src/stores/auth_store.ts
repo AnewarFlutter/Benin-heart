@@ -20,7 +20,7 @@ export interface AuthState {
 export interface AuthActions {
     setTokens: (access: string, refresh: string) => void;
     setUser: (user: AuthUser) => void;
-    setPendingEmail: (email: string) => void;
+    setPendingEmail: (email: string | null) => void;
     logout: () => void;
     isAuthenticated: () => boolean;
 }
@@ -35,7 +35,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
             setTokens: (access, refresh) => set({ accessToken: access, refreshToken: refresh }),
             setUser: (user) => set({ user }),
-            setPendingEmail: (email) => set({ pendingEmail: email }),
+            setPendingEmail: (email) => set({ pendingEmail: email ?? null }),
             logout: () => set({ accessToken: null, refreshToken: null, user: null, pendingEmail: null }),
             isAuthenticated: () => !!get().accessToken,
         }),

@@ -70,29 +70,13 @@ export function useAuth() {
     }
 
     async function verifyOTP(email: string, otp_code: string): Promise<boolean> {
-        const session = await featuresDi.authController.verifyOTP(email, otp_code);
-        if (!session?.accessToken || !session.refreshToken) {
+        const success = await featuresDi.authController.verifyOTP(email, otp_code);
+        if (!success) {
             toast.error('Code OTP invalide.');
             return false;
         }
-        setTokens(session.accessToken, session.refreshToken);
-
-        const me = await apiClient<{
-            id: string; email: string; first_name: string; last_name: string;
-            phone: string; is_active: boolean;
-        }>(API_ROUTES.AUTH.ME, { token: session.accessToken });
-        if (me.data) {
-            setUser({
-                id: me.data.id,
-                email: me.data.email,
-                first_name: me.data.first_name,
-                last_name: me.data.last_name,
-                phone: me.data.phone,
-                is_active: me.data.is_active,
-            });
-        }
-
-        toast.success('Email vérifié ! Bienvenue sur Benin Heart.');
+        // Le backend verify_otp ne retourne pas de tokens — l'utilisateur doit se connecter
+        toast.success('Email vérifié ! Connectez-vous pour accéder à votre compte.');
         return true;
     }
 

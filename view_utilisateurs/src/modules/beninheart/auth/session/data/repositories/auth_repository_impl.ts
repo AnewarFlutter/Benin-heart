@@ -28,10 +28,9 @@ export class AuthRepositoryImpl implements AuthRepository {
         }
     }
 
-    async verifyOTP(email: string, otpCode: string): Promise<EntitySession | null> {
+    async verifyOTP(email: string, otpCode: string): Promise<boolean> {
         try {
-            const data = await this.datasource.verifyOTP(email, otpCode);
-            return data ? data.toEntity() : null;
+            return await this.datasource.verifyOTP(email, otpCode);
         } catch (e) {
             throw e;
         }

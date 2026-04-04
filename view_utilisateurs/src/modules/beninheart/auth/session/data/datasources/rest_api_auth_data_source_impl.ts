@@ -14,7 +14,7 @@ export class RestApiAuthDataSourceImpl implements AuthDataSource {
         try {
             const { data, error } = await apiClient<Record<string, unknown>>(
                 API_ROUTES.AUTH.LOGIN,
-                { method: "POST", body: { email, password } }
+                { method: "POST", body: { identifier: email, password, context: 'CLIENT' } }
             );
             if (error || !data) return null;
             return ModelSession.fromLoginJson(data);
@@ -48,17 +48,17 @@ export class RestApiAuthDataSourceImpl implements AuthDataSource {
         }
     }
 
-    async verifyOTP(email: string, otpCode: string): Promise<ModelSession | null> {
+    async verifyOTP(email: string, otpCode: string): Promise<boolean> {
         try {
             const { data, error } = await apiClient<Record<string, unknown>>(
                 API_ROUTES.AUTH.VERIFY_OTP,
                 { method: "POST", body: { email, otp_code: otpCode } }
             );
-            if (error || !data) return null;
-            return ModelSession.fromOTPJson(data);
+            // Le backend retourne {message, user} — pas de tokens
+            return !error && data != null && !!data['message'];
         } catch (e) {
             console.error("verifyOTP error:", e);
-            return null;
+            return false;
         }
     }
 
@@ -78,7 +78,7 @@ export class RestApiAuthDataSourceImpl implements AuthDataSource {
         try {
             const { error } = await apiClient(
                 API_ROUTES.AUTH.LOGOUT,
-                { method: "POST", body: { refresh: refreshToken } }
+                { method: "POST", body: { refresh_token: refreshToken } }
             );
             return !error;
         } catch {
@@ -90,7 +90,7 @@ export class RestApiAuthDataSourceImpl implements AuthDataSource {
         try {
             const { error } = await apiClient(
                 API_ROUTES.AUTH.FORGOT_PASSWORD,
-                { method: "POST", body: { email } }
+                { method: "POST", body: { identifier: email } }
             );
             return !error;
         } catch {

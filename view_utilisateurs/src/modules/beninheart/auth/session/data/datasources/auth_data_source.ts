@@ -8,7 +8,7 @@ import { ModelPendingRegistration, ModelSession } from "../models/model_session"
 export interface AuthDataSource {
     login(email: string, password: string): Promise<ModelSession | null>;
     register(input: EntityRegisterInput): Promise<ModelPendingRegistration | null>;
-    verifyOTP(email: string, otpCode: string): Promise<ModelSession | null>;
+    verifyOTP(email: string, otpCode: string): Promise<boolean>;
     resendOTP(email: string): Promise<boolean>;
     logout(refreshToken: string): Promise<boolean>;
     forgotPassword(email: string): Promise<boolean>;

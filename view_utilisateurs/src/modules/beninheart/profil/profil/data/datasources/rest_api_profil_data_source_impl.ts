@@ -46,7 +46,7 @@ export class RestApiProfilDataSourceImpl implements ProfilDataSource {
             const model = new ModelMonProfil(partial);
             const { data, error } = await apiClient<Record<string, unknown>>(
                 API_ROUTES.PROFILS.MON_PROFIL,
-                { method: "PATCH", body: model.toJson(), token: getToken() }
+                { method: "PUT", body: model.toJson(), token: getToken() }
             );
             if (error || !data) return null;
             return ModelMonProfil.fromJson(data);

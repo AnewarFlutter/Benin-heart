@@ -1,5 +1,4 @@
 
-import { EntitySession } from "../entities/entity_session";
 import { AuthRepository } from "../repositories/auth_repository";
 
 /**
@@ -8,7 +7,7 @@ import { AuthRepository } from "../repositories/auth_repository";
 export class VerifyOTPUseCase {
     constructor(private readonly repository: AuthRepository) {}
 
-    async execute(email: string, otpCode: string): Promise<EntitySession | null> {
+    async execute(email: string, otpCode: string): Promise<boolean> {
         return this.repository.verifyOTP(email, otpCode);
     }
 }

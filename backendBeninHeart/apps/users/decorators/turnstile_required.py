@@ -26,6 +26,11 @@ def turnstile_required(view_func):
     """
     @wraps(view_func)
     def wrapper(self_or_request, *args, **kwargs):
+        # En mode DEBUG, bypasser la vérification Turnstile
+        from django.conf import settings
+        if getattr(settings, 'DEBUG', False):
+            return view_func(self_or_request, *args, **kwargs)
+
         # Handle both function-based views (request is 1st arg)
         # and ViewSet methods (self is 1st arg, request is 2nd arg)
         from rest_framework.request import Request as DRFRequest

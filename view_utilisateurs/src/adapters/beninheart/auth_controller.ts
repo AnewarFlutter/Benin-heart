@@ -1,5 +1,5 @@
 
-import { EntityPendingRegistration, EntityRegisterInput, EntitySession } from "@/modules/beninheart/auth/session/domain/entities/entity_session";
+import { EntityPendingRegistration, EntityRegisterInput } from "@/modules/beninheart/auth/session/domain/entities/entity_session";
 import { ForgotPasswordUseCase } from "@/modules/beninheart/auth/session/domain/usecases/forgot_password_usecase";
 import { LoginUseCase } from "@/modules/beninheart/auth/session/domain/usecases/login_usecase";
 import { LogoutUseCase } from "@/modules/beninheart/auth/session/domain/usecases/logout_usecase";
@@ -43,12 +43,12 @@ export class AuthController {
         }
     };
 
-    verifyOTP = async (email: string, otpCode: string): Promise<EntitySession | null> => {
+    verifyOTP = async (email: string, otpCode: string): Promise<boolean> => {
         try {
             return await this.verifyOTPUseCase.execute(email, otpCode);
         } catch (e) {
             console.error("AuthController.verifyOTP error:", e);
-            return null;
+            return false;
         }
     };
 

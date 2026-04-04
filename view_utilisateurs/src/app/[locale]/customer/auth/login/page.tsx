@@ -8,26 +8,29 @@ import { APP_TEXTE } from "@/shared/constants/texte"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import { useAuth } from "@/shared/hooks/useAuth"
+import { useAuthStore } from "@/stores/auth_store"
+import { useState } from "react"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const { pendingEmail, setPendingEmail } = useAuthStore()
 
   const handleLogin = async (data: any) => {
-    // Simuler une connexion réussie
-    // TODO: Ajouter la vraie logique d'authentification ici
-    console.log("Données de connexion:", data)
-
-    // Afficher un message de succès
-    toast.success("Connexion réussie !", {
-      position: "top-right",
-      duration: 2000,
-    })
-
-    // Rediriger vers la page "Faire des rencontres"
-    setTimeout(() => {
-      router.push(APP_ROUTES.customer.tomeetsomeone)
-    }, 500)
+    setLoading(true)
+    const isNewUser = !!pendingEmail
+    const success = await login(data.email, data.password)
+    setLoading(false)
+    if (success) {
+      if (isNewUser) {
+        setPendingEmail(null)
+        router.push(APP_ROUTES.auth.onboarding)
+      } else {
+        router.push(APP_ROUTES.customer.root)
+      }
+    }
   }
 
   return (

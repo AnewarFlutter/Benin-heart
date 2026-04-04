@@ -7,25 +7,41 @@ import { APP_ROUTES } from "@/shared/constants/routes"
 import { APP_TEXTE } from "@/shared/constants/texte"
 import Link from "next/link"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useAuth } from "@/shared/hooks/useAuth"
 import { useAuthStore } from "@/stores/auth_store"
 import { toast } from "sonner"
+import { featuresDi } from "@/di/features_di"
 
 export default function OTPPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const mode = searchParams.get('mode') // 'forgot' | null (default = register)
   const { verifyOTP, resendOTP } = useAuth()
   const pendingEmail = useAuthStore((s) => s.pendingEmail)
 
   const handleSubmit = async (data: { code: string }) => {
     if (!pendingEmail) {
-      toast.error("Email introuvable. Veuillez recommencer l'inscription.")
-      router.push(APP_ROUTES.auth.register)
+      toast.error("Email introuvable. Veuillez recommencer.")
+      router.push(mode === 'forgot' ? APP_ROUTES.auth.forgotPassword : APP_ROUTES.auth.register)
       return
     }
-    const success = await verifyOTP(pendingEmail, data.code)
-    if (success) {
-      router.push(APP_ROUTES.auth.onboarding)
+
+    if (mode === 'forgot') {
+      // Vérification OTP pour réinitialisation de mot de passe
+      const success = await featuresDi.authController.verifyOTPForgotPassword(pendingEmail, data.code)
+      if (success) {
+        toast.success('Code vérifié ! Entrez votre nouveau mot de passe.')
+        router.push(APP_ROUTES.auth.resetPassword)
+      } else {
+        toast.error('Code OTP invalide.')
+      }
+    } else {
+      // Vérification OTP pour l'inscription
+      const success = await verifyOTP(pendingEmail, data.code)
+      if (success) {
+        router.push(APP_ROUTES.auth.login)
+      }
     }
   }
 
