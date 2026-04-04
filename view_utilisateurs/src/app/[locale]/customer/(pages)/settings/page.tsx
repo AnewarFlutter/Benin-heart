@@ -11,10 +11,11 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { CalendarIcon, Palette, User, Key, Bell, Settings, Camera, Video, GraduationCap, Upload, Trash2, X } from 'lucide-react';
+import { CalendarIcon, Palette, User, Key, Bell, Settings, Camera, Video, GraduationCap, Upload, Trash2, X, Loader2 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { getMonProfilAction, updateMonProfilAction } from '@/actions/beninheart/profil/actions';
 
 type SettingsSection = 'profile' | 'account' | 'photos' | 'video' | 'education' | 'appearance' | 'notifications';
 
@@ -25,20 +26,52 @@ export default function SettingsPage() {
   const [activeSection, setActiveSection] = useState<SettingsSection>(section || 'profile');
   const [date, setDate] = useState<Date>();
   const [selectedTheme, setSelectedTheme] = useState<'light' | 'dark'>('light');
-  const [photos, setPhotos] = useState<(string | null)[]>([
-    'https://i.pravatar.cc/400?img=5', null, null, null
-  ]);
+  const [photos, setPhotos] = useState<(string | null)[]>([null, null, null, null]);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [videoError, setVideoError] = useState<string | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
+  const [prenom, setPrenom] = useState('');
+  const [bio, setBio] = useState('');
+  const [profilLoading, setProfilLoading] = useState(true);
+  const [savingProfil, setSavingProfil] = useState(false);
+
   useEffect(() => {
     if (section && ['profile', 'account', 'photos', 'video', 'education', 'appearance', 'notifications'].includes(section)) {
       setActiveSection(section as SettingsSection);
     }
   }, [section]);
+
+  useEffect(() => {
+    async function loadProfil() {
+      const res = await getMonProfilAction();
+      if (res.success && res.data) {
+        setPrenom(res.data.prenom ?? '');
+        setBio(res.data.bio ?? '');
+        if (res.data.photoPrincipale) {
+          setPhotos([res.data.photoPrincipale, null, null, null]);
+        }
+        if (res.data.dateNaissance) {
+          setDate(new Date(res.data.dateNaissance));
+        }
+      }
+      setProfilLoading(false);
+    }
+    loadProfil();
+  }, []);
+
+  const handleSaveProfil = async () => {
+    setSavingProfil(true);
+    const res = await updateMonProfilAction({ prenom, bio });
+    if (res.success) {
+      toast.success('Profil mis à jour', { description: 'Vos informations de profil ont été enregistrées' });
+    } else {
+      toast.error(res.error ?? 'Erreur lors de la mise à jour');
+    }
+    setSavingProfil(false);
+  };
 
   const menuItems = [
     { id: 'profile' as SettingsSection, label: 'Profil', icon: User },
@@ -107,46 +140,44 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <div className="space-y-6">
-                    {/* Username */}
-                    <div className="space-y-2">
-                      <Label htmlFor="username">{"Nom d'utilisateur"}</Label>
-                      <Input id="username" placeholder="utilisateur" defaultValue="utilisateur" />
-                      <p className="text-sm text-muted-foreground">
-                        {"C'est votre nom d'affichage public. Il peut s'agir de votre vrai nom ou d'un pseudonyme. Vous ne pouvez le modifier qu'une fois tous les 30 jours."}
-                      </p>
+                  {profilLoading ? (
+                    <div className="flex justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                     </div>
+                  ) : (
+                    <div className="space-y-6">
+                      {/* Prénom */}
+                      <div className="space-y-2">
+                        <Label htmlFor="username">Prénom</Label>
+                        <Input
+                          id="username"
+                          placeholder="Votre prénom"
+                          value={prenom}
+                          onChange={(e) => setPrenom(e.target.value)}
+                        />
+                        <p className="text-sm text-muted-foreground">
+                          {"C'est votre nom d'affichage public visible par les autres utilisateurs."}
+                        </p>
+                      </div>
 
-                    {/* Email */}
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="exemple@mail.com"
-                        defaultValue="exemple@mail.com"
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Vous pouvez gérer vos adresses email vérifiées dans les paramètres email.
-                      </p>
+                      {/* Bio */}
+                      <div className="space-y-2">
+                        <Label htmlFor="bio">Biographie</Label>
+                        <Textarea
+                          id="bio"
+                          placeholder="Parlez-nous un peu de vous"
+                          value={bio}
+                          onChange={(e) => setBio(e.target.value)}
+                          className="min-h-[100px]"
+                        />
+                      </div>
+
+                      <Button onClick={handleSaveProfil} disabled={savingProfil}>
+                        {savingProfil && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                        Mettre à jour le profil
+                      </Button>
                     </div>
-
-                    {/* Bio */}
-                    <div className="space-y-2">
-                      <Label htmlFor="bio">Biographie</Label>
-                      <Textarea
-                        id="bio"
-                        placeholder="Parlez-nous un peu de vous"
-                        defaultValue="Passionné par la restauration."
-                        className="min-h-[100px]"
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        Vous pouvez <span className="text-primary">@mentionner</span> {"d'autres utilisateurs et organisations pour créer des liens."}
-                      </p>
-                    </div>
-
-                    <Button onClick={() => toast.success("Profil mis à jour", { description: "Vos informations de profil ont été enregistrées" })}>Mettre à jour le profil</Button>
-                  </div>
+                  )}
                 </div>
               )}
 

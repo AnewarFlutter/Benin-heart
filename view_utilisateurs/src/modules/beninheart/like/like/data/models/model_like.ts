@@ -33,6 +33,7 @@ export class ModelMatch implements EntityMatch {
     uuid?: string | null;
     autreUtilisateur?: { uuid?: string | null; prenom?: string | null; photoPrincipale?: string | null; estEnLigne?: boolean | null } | null;
     createdAt?: string | null;
+    typeAction?: string | null;
 
     constructor(data: EntityMatch) {
         Object.assign(this, data);
@@ -43,16 +44,22 @@ export class ModelMatch implements EntityMatch {
     }
 
     static fromJson(json: Record<string, unknown>): ModelMatch {
-        const autre = json.autre_utilisateur as Record<string, unknown> | null;
+        // Gère MatchSerializer: {avec_uuid, avec_prenom, avec_photo, avec_est_en_ligne}
+        // ET LikeReçuSerializer: {expediteur_uuid, expediteur_prenom, expediteur_photo, type_action}
+        const autreUtilisateur = (json.avec_uuid || json.expediteur_uuid)
+            ? {
+                uuid: (json.avec_uuid ?? json.expediteur_uuid) as string | null,
+                prenom: (json.avec_prenom ?? json.expediteur_prenom) as string | null,
+                photoPrincipale: (json.avec_photo ?? json.expediteur_photo) as string | null,
+                estEnLigne: (json.avec_est_en_ligne ?? false) as boolean,
+              }
+            : null;
+
         return new ModelMatch({
             uuid: json.uuid as string ?? null,
-            autreUtilisateur: autre ? {
-                uuid: autre.uuid as string ?? null,
-                prenom: autre.prenom as string ?? null,
-                photoPrincipale: autre.photo_principale as string ?? null,
-                estEnLigne: autre.est_en_ligne as boolean ?? false,
-            } : null,
+            autreUtilisateur,
             createdAt: json.created_at as string ?? null,
+            typeAction: (json.type_action as string | null) ?? null,
         });
     }
 

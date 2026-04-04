@@ -1,72 +1,56 @@
 'use client';
 
-import { useState } from 'react';
-import { ScanHeart, Heart, X, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ScanHeart, Heart, X, Star, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { BreadcrumbDemo } from '../_components/breadcrumb';
+import { getMesLikesAction, swipeAction } from '@/actions/beninheart/like/actions';
+import { EntityMatch } from '@/modules/beninheart/like/like/domain/entities/entity_like';
 
-const initialProfiles = [
-  {
-    id: 1,
-    images: ['https://i.pravatar.cc/400?img=1'],
-    name: 'Marie, 25 ans',
-    job: 'Designer graphique',
-    location: 'Paris, France',
-  },
-  {
-    id: 2,
-    images: ['https://i.pravatar.cc/400?img=16'],
-    name: 'Léa, 24 ans',
-    job: 'Artiste peintre',
-    location: 'Bordeaux, France',
-  },
-  {
-    id: 3,
-    images: ['https://i.pravatar.cc/400?img=28'],
-    name: 'Laura, 30 ans',
-    job: 'Avocate',
-    location: 'Paris, France',
-  },
-  {
-    id: 4,
-    images: ['https://i.pravatar.cc/400?img=33'],
-    name: 'Océane, 27 ans',
-    job: 'Photographe',
-    location: 'Montpellier, France',
-  },
-  {
-    id: 5,
-    images: ['https://i.pravatar.cc/400?img=41'],
-    name: 'Pauline, 28 ans',
-    job: 'Journaliste',
-    location: 'Lille, France',
-  },
-  {
-    id: 6,
-    images: ['https://i.pravatar.cc/400?img=48'],
-    name: 'Alice, 27 ans',
-    job: 'Ingénieure',
-    location: 'Grenoble, France',
-  },
-];
+interface SuperlikeProfile {
+  uuid: string;
+  prenom: string;
+  photo: string | null;
+}
+
+function toProfile(match: EntityMatch): SuperlikeProfile {
+  return {
+    uuid: match.uuid ?? '',
+    prenom: match.autreUtilisateur?.prenom ?? 'Anonyme',
+    photo: match.autreUtilisateur?.photoPrincipale ?? null,
+  };
+}
 
 export default function FavoritesPage() {
-  const [profiles, setProfiles] = useState(initialProfiles);
+  const [profiles, setProfiles] = useState<SuperlikeProfile[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLike = (id: number, name: string) => {
-    toast.success(`C'est un match avec ${name} !`, {
-      position: 'top-right',
-      duration: 2000,
-    });
-    setProfiles((prev) => prev.filter((p) => p.id !== id));
+  useEffect(() => {
+    async function load() {
+      const res = await getMesLikesAction();
+      if (res.success && res.data) {
+        const superlikes = res.data.filter((m) => m.typeAction === 'SUPERLIKE');
+        setProfiles(superlikes.map(toProfile));
+      }
+      setLoading(false);
+    }
+    load();
+  }, []);
+
+  const handleLike = async (uuid: string, prenom: string) => {
+    const res = await swipeAction(uuid, 'LIKE');
+    if (res.success && res.data?.estMatch) {
+      toast.success(`C'est un match avec ${prenom} !`);
+    } else {
+      toast.success(`Like envoyé à ${prenom}`);
+    }
+    setProfiles((prev) => prev.filter((p) => p.uuid !== uuid));
   };
 
-  const handlePass = (id: number) => {
-    toast.error('Profil ignoré', {
-      position: 'top-right',
-      duration: 2000,
-    });
-    setProfiles((prev) => prev.filter((p) => p.id !== id));
+  const handlePass = async (uuid: string) => {
+    await swipeAction(uuid, 'DISLIKE');
+    toast.error('Profil ignoré');
+    setProfiles((prev) => prev.filter((p) => p.uuid !== uuid));
   };
 
   return (
@@ -79,49 +63,49 @@ export default function FavoritesPage() {
           <ScanHeart className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-500" />
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold">Coup de cœur</h1>
-            <p className="text-sm text-muted-foreground">
-              {profiles.length} personne{profiles.length > 1 ? 's' : ''} vous ont super-liké
-            </p>
+            {!loading && (
+              <p className="text-sm text-muted-foreground">
+                {profiles.length} personne{profiles.length > 1 ? 's' : ''} vous ont super-liké
+              </p>
+            )}
           </div>
         </div>
 
-        {profiles.length > 0 ? (
+        {loading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          </div>
+        ) : profiles.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
             {profiles.map((profile) => (
               <div
-                key={profile.id}
+                key={profile.uuid}
                 className="group relative overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800"
               >
                 <div className="aspect-[3/4] relative">
-                  <img
-                    src={profile.images[0]}
-                    alt={profile.name}
-                    className="h-full w-full object-cover"
-                  />
-                  {/* Badge Super Like */}
+                  {profile.photo ? (
+                    <img src={profile.photo} alt={profile.prenom} className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-muted text-4xl">⭐</div>
+                  )}
                   <div className="absolute top-2 right-2 z-10 flex items-center justify-center h-8 w-8 rounded-full bg-blue-500 shadow-lg">
                     <Star className="h-4 w-4 text-white fill-white" />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <h3 className="text-sm sm:text-base font-semibold text-white truncate">
-                      {profile.name}
-                    </h3>
-                    {profile.job && (
-                      <p className="text-xs text-white/80 truncate">{profile.job}</p>
-                    )}
+                    <h3 className="text-sm sm:text-base font-semibold text-white truncate">{profile.prenom}</h3>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-2">
                   <button
-                    onClick={() => handlePass(profile.id)}
+                    onClick={() => handlePass(profile.uuid)}
                     className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg border border-red-200 dark:border-red-800 text-red-500 hover:bg-red-50 dark:hover:bg-red-950 transition-colors text-xs sm:text-sm"
                   >
                     <X className="h-4 w-4" />
                     <span className="hidden sm:inline">Passer</span>
                   </button>
                   <button
-                    onClick={() => handleLike(profile.id, profile.name)}
+                    onClick={() => handleLike(profile.uuid, profile.prenom)}
                     className="flex-1 flex items-center justify-center gap-1 py-2 rounded-lg bg-pink-500 text-white hover:bg-pink-600 transition-colors text-xs sm:text-sm"
                   >
                     <Heart className="h-4 w-4" />

@@ -25,6 +25,7 @@ export interface EntityMatch {
     uuid?: string | null;
     autreUtilisateur?: EntityMatchProfil | null;
     createdAt?: string | null;
+    typeAction?: string | null;
 }
 
 /**

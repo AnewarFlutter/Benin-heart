@@ -20,13 +20,11 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
+import { EntityLikeStats } from "@/modules/beninheart/like/like/domain/entities/entity_like"
 
-// === LIKES ===
-const likesData = [
-  { category: "matchs", value: 104, fill: "var(--color-matchs)" },
-  { category: "sent", value: 310, fill: "var(--color-sent)" },
-  { category: "received", value: 820, fill: "var(--color-received)" },
-]
+interface StatsCardsProps {
+  stats?: EntityLikeStats | null;
+}
 
 const likesConfig = {
   value: {
@@ -46,13 +44,6 @@ const likesConfig = {
   },
 } satisfies ChartConfig
 
-// === COUP DE COEUR ===
-const favoritesData = [
-  { category: "matchs", value: 42, fill: "var(--color-matchs)" },
-  { category: "sent", value: 145, fill: "var(--color-sent)" },
-  { category: "received", value: 380, fill: "var(--color-received)" },
-]
-
 const favoritesConfig = {
   value: {
     label: "Total",
@@ -71,7 +62,17 @@ const favoritesConfig = {
   },
 } satisfies ChartConfig
 
-export function StatsCards() {
+export function StatsCards({ stats }: StatsCardsProps) {
+  const likesData = [
+    { category: "matchs", value: stats?.totalMatchs ?? 0, fill: "var(--color-matchs)" },
+    { category: "sent", value: stats?.totalLikesEnvoyes ?? 0, fill: "var(--color-sent)" },
+    { category: "received", value: stats?.totalLikesRecus ?? 0, fill: "var(--color-received)" },
+  ]
+
+  const favoritesData = [
+    { category: "received", value: stats?.totalSuperlikesRecus ?? 0, fill: "var(--color-received)" },
+  ]
+
   return (
     <div className="grid gap-4 px-4 md:grid-cols-2 lg:px-6">
       {/* Likes */}

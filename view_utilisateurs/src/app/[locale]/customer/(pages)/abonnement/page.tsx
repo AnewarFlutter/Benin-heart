@@ -1,6 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { getMonAbonnementAction } from '@/actions/beninheart/plan/actions';
+import { EntitySouscription } from '@/modules/beninheart/abonnement/plan/domain/entities/entity_plan';
+import { Loader2 } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -47,17 +50,11 @@ import {
   IconCircleCheck,
 } from '@tabler/icons-react';
 
-// Données fictives
-const subscriptionData = {
-  plan: 'Pro',
-  billing: 'Mensuel',
-  renewalDate: '21 févr. 2026',
-  paymentMethod: {
-    type: 'Visa',
-    last4: '0973',
-  },
-  paymentWarning:
-    'Votre abonnement est en retard de paiement. Veuillez modifier votre mode de paiement et régler votre facture impayée, ou annuler votre abonnement.',
+// Données statiques de fallback
+const defaultSubscriptionData = {
+  plan: '—',
+  billing: '—',
+  renewalDate: '—',
 };
 
 const invoicesData = [
@@ -108,6 +105,27 @@ type Invoice = (typeof invoicesData)[number];
 export default function AbonnementPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
+  const [abonnement, setAbonnement] = useState<EntitySouscription | null>(null);
+  const [loadingAbonnement, setLoadingAbonnement] = useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const res = await getMonAbonnementAction();
+      if (res.success && res.data) {
+        setAbonnement(res.data);
+      }
+      setLoadingAbonnement(false);
+    }
+    load();
+  }, []);
+
+  const subscriptionData = {
+    plan: abonnement?.plan?.titre ?? defaultSubscriptionData.plan,
+    billing: abonnement?.plan?.duree ?? defaultSubscriptionData.billing,
+    renewalDate: abonnement?.dateFin
+      ? new Date(abonnement.dateFin).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+      : defaultSubscriptionData.renewalDate,
+  };
 
   return (
     <div className="flex flex-1 flex-col w-full overflow-y-auto">
@@ -115,7 +133,7 @@ export default function AbonnementPage() {
         {/* En-tête du forfait */}
         <div className="flex items-start gap-4 py-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg border bg-muted">
-            <IconCrown className="size-7 text-primary" />
+            {loadingAbonnement ? <Loader2 className="size-7 animate-spin text-muted-foreground" /> : <IconCrown className="size-7 text-primary" />}
           </div>
           <div className="flex flex-col gap-0.5">
             <h2 className="text-lg font-semibold">
@@ -124,10 +142,12 @@ export default function AbonnementPage() {
             <p className="text-sm text-muted-foreground">
               {subscriptionData.billing}
             </p>
-            <p className="text-sm text-muted-foreground">
-              Votre abonnement se renouvellera automatiquement le{' '}
-              {subscriptionData.renewalDate}.
-            </p>
+            {subscriptionData.renewalDate !== '—' && (
+              <p className="text-sm text-muted-foreground">
+                Votre abonnement se renouvellera automatiquement le{' '}
+                {subscriptionData.renewalDate}.
+              </p>
+            )}
           </div>
         </div>
 
@@ -142,9 +162,8 @@ export default function AbonnementPage() {
               <div className="flex h-10 w-10 items-center justify-center rounded-md border bg-muted">
                 <IconCreditCard className="size-5" />
               </div>
-              <span className="text-sm">
-                {subscriptionData.paymentMethod.type} &#8226;&#8226;&#8226;&#8226;{' '}
-                {subscriptionData.paymentMethod.last4}
+              <span className="text-sm text-muted-foreground">
+                Moyen de paiement non disponible
               </span>
             </div>
             <Dialog>
@@ -189,11 +208,6 @@ export default function AbonnementPage() {
             </Dialog>
           </div>
 
-          {subscriptionData.paymentWarning && (
-            <p className="mt-4 text-sm text-red-400 leading-relaxed">
-              {subscriptionData.paymentWarning}
-            </p>
-          )}
         </div>
 
         <Separator />
@@ -317,14 +331,6 @@ export default function AbonnementPage() {
                 <div className="flex justify-between">
                   <span className="text-sm text-muted-foreground">Type</span>
                   <span className="text-sm font-medium">{subscriptionData.billing}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Moyen de paiement</span>
-                  <span className="text-sm font-medium">
-                    {subscriptionData.paymentMethod.type} ••••{' '}
-                    {subscriptionData.paymentMethod.last4}
-                  </span>
                 </div>
                 <Separator />
                 <div className="flex justify-between">
