@@ -1,10 +1,5 @@
 import { AppStatus } from "../enums/app_status";
 import { AppLocalesValues } from "../types/global";
-import { config } from 'dotenv';
-import { resolve } from 'path';
-
-// Charger le fichier .env.frontend-local
-config({ path: resolve(process.cwd(), '.env.local') });
 
 export const APP_CONFIG = {
 
